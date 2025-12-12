@@ -91,6 +91,24 @@ git push origin v1.0.0
 ```
 
 ---
+# RessourceRelationnel - Stack Docker
 
+## Prérequis
+- Docker Desktop (Linux containers)
+- Ports utilisés :
+  - API: 8080
+  - Front dev: 4200
+  - Front prod (nginx): 8081
+  - MySQL host: 3307 (conteneur: 3306)
+
+## 1 Initialiser (UNE SEULE FOIS)
+Génère automatiquement le projet Angular et la solution .NET si absents.
+
+```powershell
+docker compose --profile init up
+
+
+------
+Lancer docker compose --profile dev up --buildConfig pour lancer le conteneur
 
 
