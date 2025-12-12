@@ -1,0 +1,127 @@
+services:
+
+  # ----------------------------
+  # INIT (à lancer UNE seule fois)
+  # ----------------------------
+
+  frontend-init:
+    image: node:20-alpine
+    working_dir: /workspace
+    volumes:
+      - ./:/workspace
+    command: >
+      sh -c "
+      if [ ! -f /workspace/frontend/package.json ]; then
+        echo 'Initializing Angular app in ./frontend...';
+        cd /workspace;
+        npx -y @angular/cli@19 new RessourceRelationnel --directory frontend --routing --style=scss --skip-git;
+      else
+        echo 'frontend already exists. Skipping.';
+      fi
+      "
+    profiles: ["init"]
+
+  backend-init:
+    image: mcr.microsoft.com/dotnet/sdk:8.0
+    working_dir: /workspace
+    volumes:
+      - ./:/workspace
+    command: >
+      sh -c "
+      if [ ! -f /workspace/backend/RessourceRelationnel.sln ]; then
+        echo 'Initializing .NET 8 solution in ./backend...';
+        mkdir -p /workspace/backend;
+        cd /workspace/backend;
+        dotnet new sln -n RessourceRelationnel;
+        dotnet new webapi -n RessourceRelationnel.Api -f net8.0;
+        dotnet sln RessourceRelationnel.sln add RessourceRelationnel.Api/RessourceRelationnel.Api.csproj;
+      else
+        echo 'backend already exists. Skipping.';
+      fi
+      "
+    profiles: ["init"]
+
+  # ----------------------------
+  # DATABASE
+  # ----------------------------
+
+  db:
+    image: mysql:8.4
+    container_name: rr-mysql
+    environment:
+      MYSQL_DATABASE: ${MYSQL_DATABASE:-rr}
+      MYSQL_USER: ${MYSQL_USER:-rr_user}
+      MYSQL_PASSWORD: ${MYSQL_PASSWORD:-rr_pass}
+      MYSQL_ROOT_PASSWORD: ${MYSQL_ROOT_PASSWORD:-root_pass}
+    # IMPORTANT: si 3306 est déjà pris sur Windows, utilisez 3307:3306
+    ports:
+      - "3307:3306"
+    volumes:
+      - db_data:/var/lib/mysql
+      - ./db/init:/docker-entrypoint-initdb.d:ro
+    healthcheck:
+      test: ["CMD", "mysqladmin", "ping", "-h", "localhost", "-uroot", "-p${MYSQL_ROOT_PASSWORD}"]
+      interval: 10s
+      timeout: 5s
+      retries: 20
+    profiles: ["dev", "prod"]
+
+  # ----------------------------
+  # API (.NET 8)
+  # ----------------------------
+
+  api:
+    build:
+      context: ./backend
+      dockerfile: Dockerfile
+    container_name: rr-api
+    environment:
+      ASPNETCORE_URLS: http://0.0.0.0:8080
+      # Pour Swagger en dev uniquement (si vous activez Swagger en Development dans Program.cs)
+      ASPNETCORE_ENVIRONMENT: Development
+      ConnectionStrings__Default: "Server=db;Port=3306;Database=${MYSQL_DATABASE:-rr};User=${MYSQL_USER:-rr_user};Password=${MYSQL_PASSWORD:-rr_pass};"
+    ports:
+      - "8080:8080"
+    depends_on:
+      db:
+        condition: service_healthy
+    profiles: ["dev", "prod"]
+
+  # ----------------------------
+  # FRONT - DEV (Angular live reload)
+  # ----------------------------
+
+  web-dev:
+    image: node:20-alpine
+    working_dir: /workspace/frontend
+    volumes:
+      - ./:/workspace
+      - frontend_node_modules:/workspace/frontend/node_modules
+    ports:
+      - "4200:4200"
+    environment:
+      CHOKIDAR_USEPOLLING: "true"
+    command: >
+      sh -c "npm install && npx ng serve --host 0.0.0.0 --port 4200"
+    depends_on:
+      - api
+    profiles: ["dev"]
+
+  # ----------------------------
+  # FRONT - PROD (Nginx)
+  # ----------------------------
+
+  web:
+    build:
+      context: .
+      dockerfile: frontend/Dockerfile
+    container_name: rr-web
+    ports:
+      - "8081:80"
+    depends_on:
+      - api
+    profiles: ["prod"]
+
+volumes:
+  db_data:
+  frontend_node_modules:
