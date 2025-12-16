@@ -112,3 +112,7 @@ docker compose --profile init up
 Lancer docker compose --profile dev up --build pour lancer le conteneur
 
 
+-----
+## Suppromer les anciennes depéndancs 
+Remove-Item -Recurse -Force node_modules
+Remove-Item package-lock.json

@@ -47,12 +47,6 @@ export class HomeComponent implements OnInit {
       color: 'orange'
     },
     {
-      icon: '🔒',
-      title: 'France Connect',
-      description: 'Connexion sécurisée avec votre compte France Connect pour plus de simplicité.',
-      color: 'red'
-    },
-    {
       icon: '📱',
       title: 'Accessible Partout',
       description: 'Accédez à vos ressources depuis n\'importe quel appareil, à tout moment.',
