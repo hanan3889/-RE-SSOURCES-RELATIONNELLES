@@ -109,6 +109,6 @@ docker compose --profile init up
 
 
 ------
-Lancer docker compose --profile dev up --buildConfig pour lancer le conteneur
+Lancer docker compose --profile dev up --build pour lancer le conteneur
 
 
