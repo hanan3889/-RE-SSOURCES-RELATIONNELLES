@@ -1,0 +1,305 @@
+<section class="hero-section relative bg-gradient-to-br from-blue-600 via-purple-600 to-pink-500 text-white overflow-hidden">
+  <!-- Background Pattern -->
+  <div class="absolute inset-0 opacity-10">
+    <div class="absolute top-0 left-0 w-96 h-96 bg-white rounded-full blur-3xl"></div>
+    <div class="absolute bottom-0 right-0 w-96 h-96 bg-white rounded-full blur-3xl"></div>
+  </div>
+
+  <div class="container mx-auto px-4 py-20 md:py-32 relative z-10">
+    <div class="max-w-4xl mx-auto text-center">
+      <!-- Badge -->
+      <div class="inline-flex items-center gap-2 bg-white/20 backdrop-blur-sm px-4 py-2 rounded-full text-sm mb-6 animate-bounce">
+        <span>✨</span>
+        <span>Nouvelle plateforme de développement personnel</span>
+      </div>
+
+      <!-- Title -->
+      <h1 class="text-4xl md:text-6xl font-bold mb-6 leading-tight">
+        Développez vos
+        <span class="text-yellow-300">Relations</span>
+        et
+        <span class="text-yellow-300">Compétences</span>
+      </h1>
+
+      <!-- Subtitle -->
+      <p class="text-xl md:text-2xl mb-8 text-white/90 max-w-2xl mx-auto">
+        Accédez à des centaines de ressources pour améliorer votre intelligence émotionnelle, 
+        votre communication et vos relations professionnelles.
+      </p>
+
+      <!-- CTA Buttons -->
+      <div class="flex flex-col sm:flex-row gap-4 justify-center items-center">
+        <a 
+          routerLink="/auth/register" 
+          class="btn-primary bg-white text-purple-600 hover:bg-gray-100 px-8 py-4 rounded-full font-semibold text-lg shadow-xl hover:shadow-2xl transform hover:scale-105 transition-all duration-300 inline-flex items-center gap-2">
+        </a>
+        
+        <button 
+          (click)="scrollToSection('features')"
+          class="btn-secondary bg-white/10 backdrop-blur-sm text-white hover:bg-white/20 px-8 py-4 rounded-full font-semibold text-lg border-2 border-white/30 transition-all duration-300 inline-flex items-center gap-2">
+          <span>En savoir plus</span>
+          <span>↓</span>
+        </button>
+      </div>
+
+      <!-- Trust Indicators -->
+      <div class="mt-12 flex flex-wrap justify-center items-center gap-8 text-sm text-white/80">
+        <div class="flex items-center gap-2">
+          <span>✓</span>
+          <span>Sans engagement</span>
+        </div>
+    
+        <div class="flex items-center gap-2">
+          <span>✓</span>
+          <span>Données sécurisées</span>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- Wave Divider -->
+  <div class="absolute bottom-0 left-0 right-0">
+    <svg viewBox="0 0 1440 120" fill="none" xmlns="http://www.w3.org/2000/svg" class="w-full">
+      <path d="M0,64L80,69.3C160,75,320,85,480,80C640,75,800,53,960,48C1120,43,1280,53,1360,58.7L1440,64L1440,120L1360,120C1280,120,1120,120,960,120C800,120,640,120,480,120C320,120,160,120,80,120L0,120Z" fill="white"/>
+    </svg>
+  </div>
+</section>
+
+<!-- ============================================ -->
+<!-- STATS SECTION -->
+<!-- ============================================ -->
+<section class="stats-section py-20 bg-white">
+  <div class="container mx-auto px-4">
+    <div class="grid grid-cols-2 md:grid-cols-4 gap-8 max-w-5xl mx-auto">
+      @for (stat of stats; track stat.value) {
+        <div class="text-center scroll-animation">
+          <div class="text-5xl mb-3">{{ stat.icon }}</div>
+          <div class="text-3xl md:text-4xl font-bold text-gray-900 mb-2">{{ stat.value }}</div>
+          <div class="text-gray-600">{{ stat.label }}</div>
+        </div>
+      }
+    </div>
+  </div>
+</section>
+
+<!-- ============================================ -->
+<!-- FEATURES SECTION -->
+<!-- ============================================ -->
+<section id="features" class="features-section py-20 bg-gray-50">
+  <div class="container mx-auto px-4">
+    <!-- Section Header -->
+    <div class="text-center mb-16 scroll-animation">
+      <h2 class="text-3xl md:text-4xl font-bold text-gray-900 mb-4">
+        Tout ce dont vous avez besoin pour progresser
+      </h2>
+      <p class="text-xl text-gray-600 max-w-2xl mx-auto">
+        Une plateforme complète pour développer vos compétences relationnelles et émotionnelles
+      </p>
+    </div>
+
+    <!-- Features Grid -->
+    <div class="grid md:grid-cols-2 lg:grid-cols-3 gap-8 max-w-6xl mx-auto">
+      @for (feature of features; track feature.title) {
+        <div class="feature-card bg-white p-8 rounded-2xl shadow-lg hover:shadow-xl transition-all duration-300 transform hover:-translate-y-2 scroll-animation">
+          <div class="text-5xl mb-4">{{ feature.icon }}</div>
+          <h3 class="text-xl font-bold text-gray-900 mb-3">{{ feature.title }}</h3>
+          <p class="text-gray-600">{{ feature.description }}</p>
+        </div>
+      }
+    </div>
+  </div>
+</section>
+
+<!-- ============================================ -->
+<!-- CATEGORIES SECTION -->
+<!-- ============================================ -->
+<section class="categories-section py-20 bg-white">
+  <div class="container mx-auto px-4">
+    <!-- Section Header -->
+    <div class="text-center mb-16 scroll-animation">
+      <h2 class="text-3xl md:text-4xl font-bold text-gray-900 mb-4">
+        Explorez nos catégories
+      </h2>
+      <p class="text-xl text-gray-600 max-w-2xl mx-auto">
+        Des ressources organisées par thématiques pour répondre à tous vos besoins
+      </p>
+    </div>
+
+    <!-- Categories Grid -->
+    <div class="grid md:grid-cols-2 lg:grid-cols-3 gap-6 max-w-6xl mx-auto">
+      @for (category of categories; track category.name) {
+        <div class="category-card group cursor-pointer rounded-2xl overflow-hidden shadow-lg hover:shadow-2xl transition-all duration-300 transform hover:-translate-y-2 scroll-animation">
+          <!-- Card Header -->
+          <div [class]="category.color + ' p-6 text-white relative overflow-hidden'">
+            <div class="absolute top-0 right-0 text-8xl opacity-20 transform translate-x-4 -translate-y-4">
+              {{ category.icon }}
+            </div>
+            <div class="relative z-10">
+              <div class="text-4xl mb-2">{{ category.icon }}</div>
+              <h3 class="text-xl font-bold mb-1">{{ category.name }}</h3>
+              <p class="text-sm text-white/90">{{ category.resourceCount }} ressources</p>
+            </div>
+          </div>
+          <!-- Card Body -->
+          <div class="bg-white p-6">
+            <p class="text-gray-600">{{ category.description }}</p>
+            <button class="mt-4 text-blue-600 font-semibold hover:text-blue-700 inline-flex items-center gap-2 group-hover:gap-3 transition-all">
+              <span>Explorer</span>
+              <span>→</span>
+            </button>
+          </div>
+        </div>
+      }
+    </div>
+
+    <!-- View All Button -->
+    <div class="text-center mt-12">
+      <a 
+        routerLink="/resources" 
+        class="inline-flex items-center gap-2 bg-blue-600 text-white px-8 py-4 rounded-full font-semibold hover:bg-blue-700 transition-all duration-300 shadow-lg hover:shadow-xl">
+        <span>Voir toutes les ressources</span>
+        <span>→</span>
+      </a>
+    </div>
+  </div>
+</section>
+
+<!-- ============================================ -->
+<!-- TESTIMONIALS SECTION -->
+<!-- ============================================ -->
+<section class="testimonials-section py-20 bg-gradient-to-br from-purple-50 to-blue-50">
+  <div class="container mx-auto px-4">
+    <!-- Section Header -->
+    <div class="text-center mb-16 scroll-animation">
+      <h2 class="text-3xl md:text-4xl font-bold text-gray-900 mb-4">
+        Ce que disent nos utilisateurs
+      </h2>
+      <p class="text-xl text-gray-600 max-w-2xl mx-auto">
+        Rejoignez des milliers de personnes qui ont transformé leurs relations
+      </p>
+    </div>
+
+    <!-- Testimonials Grid -->
+    <div class="grid md:grid-cols-3 gap-8 max-w-6xl mx-auto">
+      @for (testimonial of testimonials; track testimonial.name) {
+        <div class="testimonial-card bg-white p-8 rounded-2xl shadow-lg scroll-animation">
+          <!-- Stars -->
+          <div class="flex gap-1 mb-4">
+            @for (star of getStars(testimonial.rating); track $index) {
+              <span class="text-yellow-400 text-xl">⭐</span>
+            }
+          </div>
+          <!-- Content -->
+          <p class="text-gray-700 mb-6 italic">"{{ testimonial.content }}"</p>
+          <!-- Author -->
+          <div class="flex items-center gap-4">
+            <div class="text-4xl">{{ testimonial.avatar }}</div>
+            <div>
+              <div class="font-semibold text-gray-900">{{ testimonial.name }}</div>
+              <div class="text-sm text-gray-600">{{ testimonial.role }}</div>
+            </div>
+          </div>
+        </div>
+      }
+    </div>
+  </div>
+</section>
+
+<!-- ============================================ -->
+<!-- CTA SECTION -->
+<!-- ============================================ -->
+<section class="cta-section py-20 bg-gradient-to-r from-blue-600 to-purple-600 text-white relative overflow-hidden">
+  <!-- Background Pattern -->
+  <div class="absolute inset-0 opacity-10">
+    <div class="absolute top-1/2 left-1/2 transform -translate-x-1/2 -translate-y-1/2 w-96 h-96 bg-white rounded-full blur-3xl"></div>
+  </div>
+
+  <div class="container mx-auto px-4 relative z-10">
+    <div class="max-w-3xl mx-auto text-center scroll-animation">
+      <h2 class="text-3xl md:text-5xl font-bold mb-6">
+        Prêt à transformer vos relations ?
+      </h2>
+      <p class="text-xl mb-8 text-white/90">
+        Rejoignez notre communauté et commencez votre parcours de développement personnel dès aujourd'hui. 
+        C'est gratuit et sans engagement.
+      </p>
+      
+      <div class="flex flex-col sm:flex-row gap-4 justify-center">
+        <a 
+          routerLink="/auth/register" 
+          class="bg-white text-purple-600 hover:bg-gray-100 px-8 py-4 rounded-full font-semibold text-lg shadow-xl hover:shadow-2xl transform hover:scale-105 transition-all duration-300 inline-flex items-center gap-2 justify-center">
+          <span>Créer un compte gratuit</span>
+          <span>→</span>
+        </a>
+        
+        <a 
+          routerLink="/auth/login" 
+          class="bg-white/10 backdrop-blur-sm text-white hover:bg-white/20 px-8 py-4 rounded-full font-semibold text-lg border-2 border-white/30 transition-all duration-300 inline-flex items-center gap-2 justify-center">
+          <span>Se connecter</span>
+        </a>
+      </div>
+
+
+    </div>
+  </div>
+</section>
+
+<!-- ============================================ -->
+<!-- FOOTER -->
+<!-- ============================================ -->
+<footer class="footer bg-gray-900 text-white py-12">
+  <div class="container mx-auto px-4">
+    <div class="grid md:grid-cols-4 gap-8 mb-8">
+      <!-- About -->
+      <div>
+        <h3 class="text-xl font-bold mb-4">Ressources Relationnelles</h3>
+        <p class="text-gray-400 mb-4">
+          Votre plateforme de développement personnel et professionnel.
+        </p>
+        <div class="flex gap-4">
+          <a href="#" class="text-gray-400 hover:text-white transition-colors">🔗</a>
+          <a href="#" class="text-gray-400 hover:text-white transition-colors">📧</a>
+          <a href="#" class="text-gray-400 hover:text-white transition-colors">💬</a>
+        </div>
+      </div>
+
+      <!-- Ressources -->
+      <div>
+        <h4 class="font-semibold mb-4">Ressources</h4>
+        <ul class="space-y-2 text-gray-400">
+          <li><a routerLink="/resources" class="hover:text-white transition-colors">Toutes les ressources</a></li>
+          <li><a routerLink="/categories" class="hover:text-white transition-colors">Catégories</a></li>
+          <li><a href="#" class="hover:text-white transition-colors">Blog</a></li>
+          <li><a href="#" class="hover:text-white transition-colors">Guides</a></li>
+        </ul>
+      </div>
+
+      <!-- Entreprise -->
+      <div>
+        <h4 class="font-semibold mb-4">Entreprise</h4>
+        <ul class="space-y-2 text-gray-400">
+          <li><a href="#" class="hover:text-white transition-colors">À propos</a></li>
+          <li><a href="#" class="hover:text-white transition-colors">Équipe</a></li>
+          <li><a href="#" class="hover:text-white transition-colors">Carrières</a></li>
+          <li><a href="#" class="hover:text-white transition-colors">Contact</a></li>
+        </ul>
+      </div>
+
+      <!-- Légal -->
+      <div>
+        <h4 class="font-semibold mb-4">Légal</h4>
+        <ul class="space-y-2 text-gray-400">
+          <li><a href="#" class="hover:text-white transition-colors">Confidentialité</a></li>
+          <li><a href="#" class="hover:text-white transition-colors">CGU</a></li>
+          <li><a href="#" class="hover:text-white transition-colors">Cookies</a></li>
+          <li><a href="#" class="hover:text-white transition-colors">Mentions légales</a></li>
+        </ul>
+      </div>
+    </div>
+
+    <!-- Bottom Bar -->
+    <div class="border-t border-gray-800 pt-8 text-center text-gray-400">
+      <p>&copy; 2025 Ressources Relationnelles. Tous droits réservés.</p>
+    </div>
+  </div>
+</footer>
