@@ -2130,39 +2130,32 @@
     ]
   },
   "packageFolders": {
-    "C:\\Users\\ZBOOK 17\\.nuget\\packages\\": {},
-    "C:\\Program Files (x86)\\Microsoft Visual Studio\\Shared\\NuGetPackages": {}
+    "/root/.nuget/packages/": {}
   },
   "project": {
     "version": "1.0.0",
     "restore": {
-      "projectUniqueName": "C:\\Users\\ZBOOK 17\\Documents\\-RE-SSOURCES-RELATIONNELLES\\backend\\RessourceRelationnel.Infrastructure\\RessourceRelationnel.Infrastructure.csproj",
+      "projectUniqueName": "/workspace/RessourceRelationnel.Infrastructure/RessourceRelationnel.Infrastructure.csproj",
       "projectName": "RessourceRelationnel.Infrastructure",
-      "projectPath": "C:\\Users\\ZBOOK 17\\Documents\\-RE-SSOURCES-RELATIONNELLES\\backend\\RessourceRelationnel.Infrastructure\\RessourceRelationnel.Infrastructure.csproj",
-      "packagesPath": "C:\\Users\\ZBOOK 17\\.nuget\\packages\\",
-      "outputPath": "C:\\Users\\ZBOOK 17\\Documents\\-RE-SSOURCES-RELATIONNELLES\\backend\\RessourceRelationnel.Infrastructure\\obj\\",
+      "projectPath": "/workspace/RessourceRelationnel.Infrastructure/RessourceRelationnel.Infrastructure.csproj",
+      "packagesPath": "/root/.nuget/packages/",
+      "outputPath": "/workspace/RessourceRelationnel.Infrastructure/obj/",
       "projectStyle": "PackageReference",
-      "fallbackFolders": [
-        "C:\\Program Files (x86)\\Microsoft Visual Studio\\Shared\\NuGetPackages"
-      ],
       "configFilePaths": [
-        "C:\\Users\\ZBOOK 17\\AppData\\Roaming\\NuGet\\NuGet.Config",
-        "C:\\Program Files (x86)\\NuGet\\Config\\Microsoft.VisualStudio.FallbackLocation.config",
-        "C:\\Program Files (x86)\\NuGet\\Config\\Microsoft.VisualStudio.Offline.config"
+        "/root/.nuget/NuGet/NuGet.Config"
       ],
       "originalTargetFrameworks": [
         "net8.0"
       ],
       "sources": {
-        "C:\\Program Files (x86)\\Microsoft SDKs\\NuGetPackages\\": {},
         "https://api.nuget.org/v3/index.json": {}
       },
       "frameworks": {
         "net8.0": {
           "targetAlias": "net8.0",
           "projectReferences": {
-            "C:\\Users\\ZBOOK 17\\Documents\\-RE-SSOURCES-RELATIONNELLES\\backend\\RessourceRelationnel.Domain\\RessourceRelationnel.Domain.csproj": {
-              "projectPath": "C:\\Users\\ZBOOK 17\\Documents\\-RE-SSOURCES-RELATIONNELLES\\backend\\RessourceRelationnel.Domain\\RessourceRelationnel.Domain.csproj"
+            "/workspace/RessourceRelationnel.Domain/RessourceRelationnel.Domain.csproj": {
+              "projectPath": "/workspace/RessourceRelationnel.Domain/RessourceRelationnel.Domain.csproj"
             }
           }
         }
@@ -2176,8 +2169,7 @@
         "enableAudit": "true",
         "auditLevel": "low",
         "auditMode": "direct"
-      },
-      "SdkAnalysisLevel": "9.0.300"
+      }
     },
     "frameworks": {
       "net8.0": {
@@ -2214,7 +2206,7 @@
             "privateAssets": "all"
           }
         },
-        "runtimeIdentifierGraphPath": "C:\\Program Files\\dotnet\\sdk\\9.0.305/PortableRuntimeIdentifierGraph.json"
+        "runtimeIdentifierGraphPath": "/usr/share/dotnet/sdk/8.0.416/PortableRuntimeIdentifierGraph.json"
       }
     }
   }
