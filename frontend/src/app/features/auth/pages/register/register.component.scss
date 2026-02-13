@@ -1,0 +1,35 @@
+/* Styles pour l'input password */
+input[type="password"],
+input[type="text"] {
+  &::placeholder {
+    color: #9ca3af;
+  }
+}
+
+/* Assurer que le texte des inputs est visible */
+input {
+  color: #d1d5db !important;
+  
+  &::selection {
+    background-color: #3b82f6;
+    color: white;
+  }
+}
+
+/* Style spécifique pour le champ password */
+input[type="password"] {
+  color: #d1d5db !important;
+  caret-color: #3b82f6;
+  
+  /* Affiche les dots en blanc/gris visible */
+  &::-webkit-outer-spin-button,
+  &::-webkit-inner-spin-button {
+    -webkit-appearance: none;
+    margin: 0;
+  }
+}
+
+/* Pour Firefox */
+input[type="password"]::placeholder {
+  color: #d1d5db;
+}

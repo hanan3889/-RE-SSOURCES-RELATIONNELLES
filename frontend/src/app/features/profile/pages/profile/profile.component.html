@@ -1,0 +1,455 @@
+<div class="min-h-screen bg-gray-50">
+  <!-- Header avec info utilisateur -->
+  <div class="bg-gradient-to-r from-blue-600 to-purple-600 text-white py-12">
+    <div class="container mx-auto px-4">
+      <div class="flex items-center gap-6">
+        <div class="text-7xl">{{ user.avatar }}</div>
+        <div>
+          <h1 class="text-4xl font-bold">{{ user.firstName }} {{ user.lastName }}</h1>
+          <p class="text-blue-100">{{ '@' }}{{ user.username }} • {{ user.role }}</p>
+          <p class="text-sm text-blue-100 mt-2">Inscrit depuis {{ formatDate(user.registrationDate) }}</p>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- Statistiques rapides -->
+  <div class="bg-white border-b border-gray-200 py-8">
+    <div class="container mx-auto px-4">
+      <div class="grid grid-cols-2 md:grid-cols-5 gap-6">
+        <div class="text-center">
+          <div class="text-3xl font-bold text-blue-600">{{ stats.resourcesViewed }}</div>
+          <p class="text-gray-600 text-sm">Ressources consultées</p>
+        </div>
+        <div class="text-center">
+          <div class="text-3xl font-bold text-green-600">{{ stats.resourcesUsed }}</div>
+          <p class="text-gray-600 text-sm">Ressources exploitées</p>
+        </div>
+        <div class="text-center">
+          <div class="text-3xl font-bold text-purple-600">{{ stats.resourcesPublished }}</div>
+          <p class="text-gray-600 text-sm">Publications</p>
+        </div>
+        <div class="text-center">
+          <div class="text-3xl font-bold text-yellow-600">{{ stats.favoriteCount }}</div>
+          <p class="text-gray-600 text-sm">Favoris</p>
+        </div>
+        <div class="text-center">
+          <div class="text-3xl font-bold text-orange-600">{{ stats.savedForLater }}</div>
+          <p class="text-gray-600 text-sm">Sauvegardés</p>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- Menu de navigation par onglets -->
+  <div class="bg-white border-b border-gray-200 sticky top-0 z-40">
+    <div class="container mx-auto px-4">
+      <div class="flex overflow-x-auto gap-1">
+        <button
+          (click)="selectTab('identity')"
+          [class.tab-active]="activeTab === 'identity'"
+          class="px-6 py-4 font-semibold border-b-2 border-transparent hover:border-blue-500 transition-colors whitespace-nowrap"
+          [class.border-blue-600]="activeTab === 'identity'"
+          [class.text-blue-600]="activeTab === 'identity'"
+        >
+          👤 Identité & Compte
+        </button>
+        <button
+          (click)="selectTab('progress')"
+          [class.tab-active]="activeTab === 'progress'"
+          class="px-6 py-4 font-semibold border-b-2 border-transparent hover:border-blue-500 transition-colors whitespace-nowrap"
+          [class.border-blue-600]="activeTab === 'progress'"
+          [class.text-blue-600]="activeTab === 'progress'"
+        >
+          📊 Progression
+        </button>
+        <button
+          (click)="selectTab('contributions')"
+          [class.tab-active]="activeTab === 'contributions'"
+          class="px-6 py-4 font-semibold border-b-2 border-transparent hover:border-blue-500 transition-colors whitespace-nowrap"
+          [class.border-blue-600]="activeTab === 'contributions'"
+          [class.text-blue-600]="activeTab === 'contributions'"
+        >
+          ✍️ Contributions
+        </button>
+        <button
+          (click)="selectTab('social')"
+          [class.tab-active]="activeTab === 'social'"
+          class="px-6 py-4 font-semibold border-b-2 border-transparent hover:border-blue-500 transition-colors whitespace-nowrap"
+          [class.border-blue-600]="activeTab === 'social'"
+          [class.text-blue-600]="activeTab === 'social'"
+        >
+          💬 Interactions
+        </button>
+      </div>
+    </div>
+  </div>
+
+  <!-- Contenu principal -->
+  <div class="container mx-auto px-4 py-12">
+    <!-- TAB 1: IDENTITÉ ET COMPTE -->
+    <div *ngIf="activeTab === 'identity'" class="space-y-8">
+      <!-- Informations personnelles -->
+  <div class="bg-white rounded-lg shadow-lg p-8">
+    <div class="flex justify-between items-center mb-6">
+      <h2 class="text-2xl font-bold text-gray-900 flex items-center gap-2">
+        <span>👤</span> Informations personnelles
+      </h2>
+      <button (click)="toggleEditInfo()" class="text-blue-600 font-semibold hover:text-blue-700">
+        {{ isEditingInfo ? 'Annuler' : '✏️ Modifier mes informations' }}
+      </button>
+    </div>
+  
+    <form [formGroup]="infoForm" (ngSubmit)="onSaveInfo()">
+      <div class="grid md:grid-cols-2 gap-6">
+        <div>
+          <label class="text-sm font-semibold text-gray-600">Prénom</label>
+          <input type="text" formControlName="firstName" [readonly]="!isEditingInfo"
+            class="w-full mt-2 px-4 py-3 border border-gray-300 rounded-lg" [class.bg-gray-50]="!isEditingInfo" />
+        </div>
+        <div>
+          <label class="text-sm font-semibold text-gray-600">Nom</label>
+          <input type="text" formControlName="lastName" [readonly]="!isEditingInfo"
+            class="w-full mt-2 px-4 py-3 border border-gray-300 rounded-lg" [class.bg-gray-50]="!isEditingInfo" />
+        </div>
+        <div>
+          <label class="text-sm font-semibold text-gray-600">Pseudonyme</label>
+          <input type="text" formControlName="username" [readonly]="!isEditingInfo"
+            class="w-full mt-2 px-4 py-3 border border-gray-300 rounded-lg" [class.bg-gray-50]="!isEditingInfo" />
+        </div>
+        <div>
+          <label class="text-sm font-semibold text-gray-600">Email</label>
+          <input type="email" formControlName="email" [readonly]="!isEditingInfo"
+            class="w-full mt-2 px-4 py-3 border border-gray-300 rounded-lg" [class.bg-gray-50]="!isEditingInfo" />
+        </div>
+      </div>
+  
+      <div *ngIf="isEditingInfo" class="mt-8 p-6 bg-blue-50 rounded-xl border border-blue-200">
+        <label class="block text-sm font-bold text-blue-900 mb-2">Confirmer les modifications avec votre mot de
+          passe</label>
+        <input type="password" formControlName="currentPasswordConfirm" placeholder="Votre mot de passe actuel"
+          class="w-full px-4 py-3 border-2 border-blue-300 rounded-lg focus:border-blue-500 outline-none" />
+        <button type="submit" [disabled]="infoForm.invalid"
+          class="mt-4 w-full bg-blue-600 text-white py-3 rounded-lg font-bold hover:bg-blue-700 disabled:opacity-50">
+          Valider et enregistrer
+        </button>
+      </div>
+    </form>
+  </div>
+
+      <!-- Statut du compte -->
+      <div class="bg-white rounded-lg shadow-lg p-8">
+        <h2 class="text-2xl font-bold text-gray-900 mb-6 flex items-center gap-2">
+          <span>📋</span> Statut du compte
+        </h2>
+        <div class="space-y-4">
+          <div>
+            <p class="text-gray-600 text-sm">Rôle</p>
+            <p class="text-lg font-semibold text-gray-900">{{ user.role }}</p>
+          </div>
+          <div>
+            <p class="text-gray-600 text-sm">Date d'inscription</p>
+            <p class="text-lg font-semibold text-gray-900">{{ formatDate(user.registrationDate) }}</p>
+          </div>
+          <div class="mt-4 p-4 bg-blue-50 rounded-lg">
+            <p class="text-sm text-blue-900">
+              ℹ️ Vous avez accès à tous les contenus et fonctionnalités en tant que citoyen connecté.
+            </p>
+          </div>
+        </div>
+      </div>
+
+      <!-- Paramètres de sécurité -->
+    <div class="bg-white rounded-lg shadow-lg p-8">
+      <h2 class="text-2xl font-bold text-gray-900 mb-6 flex items-center gap-2">
+        <span>🔒</span> Paramètres de sécurité
+      </h2>
+    
+      <button *ngIf="!isChangingPassword" (click)="toggleChangePassword()"
+        class="w-full flex items-center justify-between p-4 border border-gray-300 rounded-lg hover:bg-gray-50 transition">
+        <span class="font-semibold text-gray-900">Modifier mon mot de passe</span>
+        <span>→</span>
+      </button>
+    
+      <form *ngIf="isChangingPassword" [formGroup]="passwordForm" (ngSubmit)="onUpdatePassword()" class="space-y-4">
+        <div>
+          <label class="text-sm font-semibold text-gray-700">Mot de passe actuel</label>
+          <input type="password" formControlName="currentPassword"
+            class="w-full mt-1 px-4 py-3 border rounded-lg focus:ring-2 focus:ring-blue-500" />
+        </div>
+        <div class="grid md:grid-cols-2 gap-4">
+          <div>
+            <label class="text-sm font-semibold text-gray-700">Nouveau mot de passe</label>
+            <input type="password" formControlName="newPassword"
+              class="w-full mt-1 px-4 py-3 border rounded-lg focus:ring-2 focus:ring-blue-500" />
+          </div>
+          <div>
+            <label class="text-sm font-semibold text-gray-700">Confirmer le nouveau</label>
+            <input type="password" formControlName="confirmNewPassword"
+              class="w-full mt-1 px-4 py-3 border rounded-lg focus:ring-2 focus:ring-blue-500" />
+          </div>
+        </div>
+        <div class="flex gap-3 mt-4">
+          <button type="submit" [disabled]="passwordForm.invalid"
+            class="flex-1 bg-green-600 text-white py-3 rounded-lg font-bold hover:bg-green-700">
+            Mettre à jour
+          </button>
+          <button type="button" (click)="toggleChangePassword()"
+            class="px-6 py-3 border border-gray-300 rounded-lg text-gray-600 hover:bg-gray-50">
+            Annuler
+          </button>
+        </div>
+        <p *ngIf="passwordForm.hasError('mismatch') && passwordForm.get('confirmNewPassword')?.touched"
+          class="text-red-500 text-sm">
+          Les nouveaux mots de passe ne correspondent pas.
+        </p>
+      </form>
+    </div>
+      <!-- Actions RGPD -->
+      <div class="bg-white rounded-lg shadow-lg p-8 border-2 border-orange-200">
+        <h2 class="text-2xl font-bold text-gray-900 mb-6 flex items-center gap-2">
+          <span>⚖️</span> Vos droits RGPD
+        </h2>
+        <div class="space-y-4">
+          <button
+            (click)="downloadData()"
+            class="w-full flex items-center justify-between p-4 bg-green-50 border border-green-300 rounded-lg hover:bg-green-100 transition text-green-700"
+          >
+            <span class="font-semibold">📥 Exporter mes données</span>
+            <span>→</span>
+          </button>
+          <button
+            (click)="deleteAccount()"
+            class="w-full flex items-center justify-between p-4 bg-red-50 border border-red-300 rounded-lg hover:bg-red-100 transition text-red-700"
+          >
+            <span class="font-semibold">🗑️ Supprimer mon compte</span>
+            <span>→</span>
+          </button>
+          <p class="text-xs text-gray-600 mt-4">
+            ⚠️ Attention: Ces actions sont irréversibles. Veuillez les utiliser avec prudence.
+          </p>
+        </div>
+      </div>
+    </div>
+
+    <!-- TAB 2: PROGRESSION -->
+    <div *ngIf="activeTab === 'progress'" class="space-y-8">
+      <!-- Ressources exploitées -->
+      <div class="bg-white rounded-lg shadow-lg p-8">
+        <h2 class="text-2xl font-bold text-gray-900 mb-6 flex items-center gap-2">
+          <span>✅</span> Ressources exploitées ({{ exploitedResources.length }})
+        </h2>
+        <div class="space-y-4">
+          <div *ngFor="let resource of exploitedResources" class="p-4 border border-green-200 rounded-lg bg-green-50">
+            <div class="flex justify-between items-start">
+              <div>
+                <h3 class="font-semibold text-gray-900">{{ resource.title }}</h3>
+                <p class="text-sm text-gray-600 mt-1">{{ resource.category }} • {{ resource.type }}</p>
+                <p class="text-xs text-gray-500 mt-2">Complétée le {{ formatDate(resource.completedDate) }}</p>
+              </div>
+              <button class="text-green-600 font-semibold hover:text-green-700">Voir →</button>
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <!-- Ressources sauvegardées -->
+      <div class="bg-white rounded-lg shadow-lg p-8">
+        <h2 class="text-2xl font-bold text-gray-900 mb-6 flex items-center gap-2">
+          <span>🔖</span> Sauvegardés pour plus tard ({{ savedResources.length }})
+        </h2>
+        <div class="space-y-4">
+          <div *ngFor="let resource of savedResources" class="p-4 border border-yellow-200 rounded-lg bg-yellow-50">
+            <div class="flex justify-between items-start">
+              <div>
+                <h3 class="font-semibold text-gray-900">{{ resource.title }}</h3>
+                <p class="text-sm text-gray-600 mt-1">{{ resource.category }} • {{ resource.type }}</p>
+                <p class="text-xs text-gray-500 mt-2">Sauvegardé le {{ formatDate(resource.savedDate) }}</p>
+              </div>
+              <div class="flex gap-2">
+                <button class="text-blue-600 font-semibold hover:text-blue-700">Lire</button>
+                <button class="text-red-600 font-semibold hover:text-red-700">Retirer</button>
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <!-- Mes favoris -->
+      <div class="bg-white rounded-lg shadow-lg p-8">
+        <h2 class="text-2xl font-bold text-gray-900 mb-6 flex items-center gap-2">
+          <span>❤️</span> Mes favoris ({{ favoriteResources.length }})
+        </h2>
+        <div class="grid md:grid-cols-2 gap-6">
+          <div *ngFor="let resource of favoriteResources" class="p-4 border border-pink-200 rounded-lg bg-pink-50">
+            <div class="flex items-start justify-between">
+              <div>
+                <div class="text-3xl mb-2">{{ resource.icon }}</div>
+                <h3 class="font-semibold text-gray-900">{{ resource.title }}</h3>
+                <p class="text-sm text-gray-600 mt-1">{{ resource.category }}</p>
+              </div>
+              <button class="text-pink-600 hover:text-pink-700">✕</button>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <!-- TAB 3: CONTRIBUTIONS -->
+    <div *ngIf="activeTab === 'contributions'" class="space-y-8">
+      <!-- Bouton créer -->
+      <div class="bg-gradient-to-r from-blue-600 to-purple-600 text-white rounded-lg p-8 text-center">
+        <h2 class="text-2xl font-bold mb-4">Partagez votre expertise !</h2>
+        <p class="mb-6">Créez une nouvelle ressource pour aider la communauté</p>
+        <button
+          (click)="createNewResource()"
+          class="bg-white text-blue-600 px-8 py-3 rounded-lg font-semibold hover:bg-gray-100 transition"
+        >
+          ➕ Créer une nouvelle ressource
+        </button>
+      </div>
+
+      <!-- Mes publications -->
+      <div class="bg-white rounded-lg shadow-lg p-8">
+        <h2 class="text-2xl font-bold text-gray-900 mb-6 flex items-center gap-2">
+          <span>📝</span> Mes publications ({{ publications.length }})
+        </h2>
+        <div class="space-y-4">
+          <div *ngFor="let pub of publications" class="p-4 border border-gray-300 rounded-lg hover:shadow-md transition">
+            <div class="flex justify-between items-start mb-3">
+              <div>
+                <h3 class="font-semibold text-gray-900">{{ pub.title }}</h3>
+                <div class="flex gap-3 items-center mt-2">
+                  <span
+                    [ngClass]="{
+                      'bg-green-100 text-green-700': pub.status === 'published',
+                      'bg-yellow-100 text-yellow-700': pub.status === 'pending',
+                      'bg-gray-100 text-gray-700': pub.status === 'private'
+                    }"
+                    class="text-xs font-semibold px-3 py-1 rounded-full"
+                  >
+                    {{ getStatusBadge(pub.status) }}
+                  </span>
+                  <span class="text-xs text-gray-500">{{ formatDate(pub.createdDate) }}</span>
+                </div>
+              </div>
+              <div class="flex gap-2">
+                <button
+                  (click)="editPublication(pub.id)"
+                  class="text-blue-600 hover:text-blue-700 font-semibold text-sm"
+                >
+                  ✏️ Éditer
+                </button>
+                <button
+                  (click)="deletePublication(pub.id)"
+                  class="text-red-600 hover:text-red-700 font-semibold text-sm"
+                >
+                  🗑️ Supprimer
+                </button>
+              </div>
+            </div>
+            <div class="text-sm text-gray-600">
+              <span>👁️ {{ pub.views }} vues</span>
+              <span class="ml-4">💬 {{ pub.comments }} commentaires</span>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <!-- TAB 4: INTERACTIONS SOCIALES -->
+    <div *ngIf="activeTab === 'social'" class="space-y-8">
+      <!-- Activités en cours -->
+      <div class="bg-white rounded-lg shadow-lg p-8">
+        <h2 class="text-2xl font-bold text-gray-900 mb-6 flex items-center gap-2">
+          <span>🎮</span> Activités en cours
+        </h2>
+        <div class="space-y-4">
+          <div *ngFor="let activity of ongoingActivities" class="p-4 border border-blue-200 rounded-lg bg-blue-50">
+            <div class="flex justify-between items-start mb-3">
+              <div>
+                <h3 class="font-semibold text-gray-900">{{ activity.title }}</h3>
+                <p class="text-sm text-gray-600 mt-1">{{ activity.type }}</p>
+              </div>
+              <button
+                (click)="resumeActivity(activity.id)"
+                class="bg-blue-600 text-white px-4 py-2 rounded-lg font-semibold hover:bg-blue-700 transition text-sm"
+              >
+                Reprendre →
+              </button>
+            </div>
+            <div class="w-full bg-gray-300 rounded-full h-2">
+              <div [style.width.%]="activity.progress" class="bg-blue-600 h-2 rounded-full transition-all"></div>
+            </div>
+            <p class="text-xs text-gray-600 mt-2">{{ activity.progress }}% complété</p>
+          </div>
+        </div>
+      </div>
+
+      <!-- Mes commentaires -->
+      <div class="bg-white rounded-lg shadow-lg p-8">
+        <h2 class="text-2xl font-bold text-gray-900 mb-6 flex items-center gap-2">
+          <span>💬</span> Mes commentaires
+        </h2>
+        <div class="space-y-4">
+          <div *ngFor="let comment of comments" class="p-4 border border-gray-300 rounded-lg">
+            <div class="flex justify-between items-start mb-3">
+              <div>
+                <h3 class="font-semibold text-gray-900">{{ comment.resourceTitle }}</h3>
+                <p class="text-xs text-gray-500 mt-1">{{ formatDate(comment.date) }}</p>
+              </div>
+              <div class="flex gap-2">
+                <button
+                  (click)="editComment(comment.id)"
+                  class="text-blue-600 hover:text-blue-700 font-semibold text-sm"
+                >
+                  ✏️ Éditer
+                </button>
+                <button
+                  (click)="deleteComment(comment.id)"
+                  class="text-red-600 hover:text-red-700 font-semibold text-sm"
+                >
+                  🗑️ Supprimer
+                </button>
+              </div>
+            </div>
+            <p class="text-gray-700 mb-3">{{ comment.content }}</p>
+            <div class="flex gap-1">
+              <ng-container *ngFor="let i of [0,1,2,3,4]">
+                <span *ngIf="i < comment.rating" class="text-yellow-400">⭐</span>
+              </ng-container>
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <!-- Invitations reçues -->
+      <div class="bg-white rounded-lg shadow-lg p-8">
+        <h2 class="text-2xl font-bold text-gray-900 mb-6 flex items-center gap-2">
+          <span>📬</span> Invitations reçues
+        </h2>
+        <div class="space-y-4">
+          <div *ngFor="let invitation of invitations" class="p-4 border-2 border-purple-200 rounded-lg bg-purple-50">
+            <h3 class="font-semibold text-gray-900">{{ invitation.title }}</h3>
+            <p class="text-sm text-gray-600 mt-1">De : {{ invitation.organizer }}</p>
+            <p class="text-xs text-gray-500 mt-2">{{ formatDate(invitation.date) }}</p>
+            <div class="flex gap-3 mt-4">
+              <button
+                (click)="respondToInvitation(invitation.id, true)"
+                class="bg-green-600 text-white px-4 py-2 rounded-lg font-semibold hover:bg-green-700 transition text-sm"
+              >
+                ✅ Accepter
+              </button>
+              <button
+                (click)="respondToInvitation(invitation.id, false)"
+                class="bg-gray-400 text-white px-4 py-2 rounded-lg font-semibold hover:bg-gray-500 transition text-sm"
+              >
+                ❌ Refuser
+              </button>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>
