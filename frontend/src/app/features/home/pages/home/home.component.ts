@@ -11,6 +11,7 @@ import { RouterLink } from '@angular/router';
   styleUrls: ['./home.component.scss']
 })
 export class HomeComponent implements OnInit {
+  currentYear: number = new Date().getFullYear();
   
   // Statistiques
   stats = [

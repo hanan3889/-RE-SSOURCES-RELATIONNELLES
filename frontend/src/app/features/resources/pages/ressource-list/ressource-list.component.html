@@ -1,0 +1,111 @@
+<!-- HERO SECTION -->
+<section class="hero-section relative bg-gradient-to-br from-blue-600 via-purple-600 to-pink-500 text-white overflow-hidden">
+  <div class="absolute inset-0 opacity-10">
+    <div class="absolute top-0 left-0 w-96 h-96 bg-white rounded-full blur-3xl"></div>
+    <div class="absolute bottom-0 right-0 w-96 h-96 bg-white rounded-full blur-3xl"></div>
+  </div>
+
+  <div class="container mx-auto px-4 py-20 md:py-32 relative z-10">
+    <div class="max-w-4xl mx-auto text-center">
+      <h1 class="text-4xl md:text-6xl font-bold mb-6 leading-tight">
+        Explorez nos <span class="text-yellow-300">Ressources</span>
+      </h1>
+      <p class="text-xl md:text-2xl mb-8 text-white/90 max-w-2xl mx-auto">
+        Trouvez les outils et les connaissances pour développer vos compétences relationnelles et émotionnelles.
+      </p>
+    </div>
+  </div>
+  <div class="absolute bottom-0 left-0 right-0">
+    <svg viewBox="0 0 1440 120" fill="none" xmlns="http://www.w3.org/2000/svg" class="w-full">
+      <path d="M0,64L80,69.3C160,75,320,85,480,80C640,75,800,53,960,48C1120,43,1280,53,1360,58.7L1440,64L1440,120L1360,120C1280,120,1120,120,960,120C800,120,640,120,480,120C320,120,160,120,80,120L0,120Z" fill="white"/>
+    </svg>
+  </div>
+</section>
+
+<!-- RESSOURCES LIST SECTION -->
+<section class="ressources-section py-20 bg-white">
+  <div class="container mx-auto px-4">
+    <!-- Search Bar -->
+    <div class="search-bar mb-12 max-w-2xl mx-auto">
+      <div class="relative">
+        <span class="absolute inset-y-0 left-0 flex items-center pl-4 text-gray-500">
+          <svg class="h-6 w-6" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M21 21l-6-6m2-5a7 7 0 11-14 0 7 7 0 0114 0z" />
+          </svg>
+        </span>
+        <input 
+          type="text" 
+          placeholder="Rechercher par mot-clé, titre..." 
+          (input)="onSearch($event)"
+          class="w-full py-4 pl-12 pr-4 text-lg text-gray-900 border-2 border-gray-200 rounded-full focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-transparent transition-all"
+        >
+      </div>
+    </div>
+
+    <!-- Grid -->
+    <div class="grid md:grid-cols-2 lg:grid-cols-3 gap-8 max-w-6xl mx-auto">
+      <div *ngFor="let ressource of filteredRessources$ | async" class="ressource-card bg-white p-8 rounded-2xl shadow-lg hover:shadow-xl transition-all duration-300 transform hover:-translate-y-2">
+        <h3 class="text-xl font-bold text-gray-900 mb-3">{{ ressource.title }}</h3>
+        <p class="text-gray-600">{{ ressource.description }}</p>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- FOOTER -->
+<footer class="footer bg-gray-900 text-white py-12">
+  <div class="container mx-auto px-4">
+    <div class="grid md:grid-cols-4 gap-8 mb-8">
+      <!-- About -->
+      <div>
+        <h3 class="text-xl font-bold mb-4">Ressources Relationnelles</h3>
+        <p class="text-gray-400 mb-4">
+          Votre plateforme de développement personnel et professionnel.
+        </p>
+        <div class="flex gap-4">
+          <a href="#" class="text-gray-400 hover:text-white transition-colors">🔗</a>
+          <a href="#" class="text-gray-400 hover:text-white transition-colors">📧</a>
+          <a href="#" class="text-gray-400 hover:text-white transition-colors">💬</a>
+        </div>
+      </div>
+
+      <!-- Ressources -->
+      <div>
+        <h4 class="font-semibold mb-4">Ressources</h4>
+        <ul class="space-y-2 text-gray-400">
+          <li><a routerLink="/ressources" class="hover:text-white transition-colors">Toutes les ressources</a></li>
+          <li><a routerLink="/categories" class="hover:text-white transition-colors">Catégories</a></li>
+          <li><a href="#" class="hover:text-white transition-colors">Blog</a></li>
+          <li><a href="#" class="hover:text-white transition-colors">Guides</a></li>
+        </ul>
+      </div>
+
+      <!-- Entreprise -->
+      <div>
+        <h4 class="font-semibold mb-4">Entreprise</h4>
+        <ul class="space-y-2 text-gray-400">
+          <li><a href="#" class="hover:text-white transition-colors">À propos</a></li>
+          <li><a href="#" class="hover:text-white transition-colors">Équipe</a></li>
+          <li><a href="#" class="hover:text-white transition-colors">Carrières</a></li>
+          <li><a href="#" class="hover:text-white transition-colors">Contact</a></li>
+        </ul>
+      </div>
+
+      <!-- Légal -->
+      <div>
+        <h4 class="font-semibold mb-4">Légal</h4>
+        <ul class="space-y-2 text-gray-400">
+          <li><a href="#" class="hover:text-white transition-colors">Confidentialité</a></li>
+          <li><a href="#" class="hover:text-white transition-colors">CGU</a></li>
+          <li><a href="#" class="hover:text-white transition-colors">Cookies</a></li>
+          <li><a href="#" class="hover:text-white transition-colors">Mentions légales</a></li>
+        </ul>
+      </div>
+    </div>
+
+    <!-- Bottom Bar -->
+    <div class="border-t border-gray-800 pt-8 text-center text-gray-400">
+      <p>&copy; {{ currentYear }} Ressources Relationnelles. Tous droits réservés.</p>
+    </div>
+  </div>
+</footer>
