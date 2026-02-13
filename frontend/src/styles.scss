@@ -2,9 +2,37 @@
 @tailwind components;
 @tailwind utilities;
 
-/* You can add global styles to this file, and also import other style files */
+/* ============================================ */
+/* Global Styles - Ressources Relationnelles    */
+/* ============================================ */
 
-body {
-  background-color: #f0f2f5;
-  font-family: sans-serif;
+/* Focus visible accessible */
+:focus-visible {
+  outline: 2px solid #000091;
+  outline-offset: 2px;
+  border-radius: 2px;
+}
+
+/* Scrollbar custom */
+::-webkit-scrollbar {
+  width: 8px;
+}
+
+::-webkit-scrollbar-track {
+  background: #f1f5f9;
+}
+
+::-webkit-scrollbar-thumb {
+  background: #cbd5e1;
+  border-radius: 4px;
+
+  &:hover {
+    background: #94a3b8;
+  }
+}
+
+/* Selection */
+::selection {
+  background-color: rgba(0, 0, 145, 0.12);
+  color: #000091;
 }
