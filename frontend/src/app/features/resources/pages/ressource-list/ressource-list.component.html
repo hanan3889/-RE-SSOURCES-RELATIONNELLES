@@ -44,10 +44,10 @@
 
     <!-- Grid -->
     <div class="grid md:grid-cols-2 lg:grid-cols-3 gap-8 max-w-6xl mx-auto">
-      <div *ngFor="let ressource of filteredRessources$ | async" class="ressource-card bg-white p-8 rounded-2xl shadow-lg hover:shadow-xl transition-all duration-300 transform hover:-translate-y-2">
+      <a *ngFor="let ressource of filteredRessources$ | async" [routerLink]="['/ressources', ressource.id]" class="ressource-card bg-white p-8 rounded-2xl shadow-lg hover:shadow-xl transition-all duration-300 transform hover:-translate-y-2 block">
         <h3 class="text-xl font-bold text-gray-900 mb-3">{{ ressource.title }}</h3>
         <p class="text-gray-600">{{ ressource.description }}</p>
-      </div>
+      </a>
     </div>
   </div>
 </section>

@@ -1,0 +1,5 @@
+<div *ngIf="ressource$ | async as ressource" class="ressource-detail-container">
+  <h1>{{ ressource.title }}</h1>
+  <p>{{ ressource.description }}</p>
+  <a routerLink="/ressources" class="back-button">Retour à la liste</a>
+</div>

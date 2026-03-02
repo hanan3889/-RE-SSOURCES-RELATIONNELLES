@@ -6,11 +6,12 @@ import { InputTextModule } from 'primeng/inputtext';
 import { Ressource, RessourceService } from '../../services/ressource.service';
 import { Observable, Subject } from 'rxjs';
 import { debounceTime, distinctUntilChanged, map, startWith, switchMap } from 'rxjs';
+import { RouterModule } from '@angular/router';
 
 @Component({
   selector: 'app-ressource-list',
   standalone: true,
-  imports: [CommonModule, FormsModule, CardModule, InputTextModule],
+  imports: [CommonModule, FormsModule, CardModule, InputTextModule, RouterModule],
   templateUrl: './ressource-list.component.html',
   styleUrl: './ressource-list.component.scss'
 })

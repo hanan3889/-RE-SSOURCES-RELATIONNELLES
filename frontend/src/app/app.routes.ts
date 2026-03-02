@@ -30,7 +30,7 @@ export const routes: Routes = [
   // Route Resources
   {
     path: 'ressources',
-    loadComponent: () => import('./features/resources/pages/ressource-list/ressource-list.component').then(m => m.RessourceListComponent),
+    loadChildren: () => import('./features/resources/ressources.routes').then(m => m.RESSOURCES_ROUTES),
     title: 'Ressources - Ressources Relationnelles'
   },
 
