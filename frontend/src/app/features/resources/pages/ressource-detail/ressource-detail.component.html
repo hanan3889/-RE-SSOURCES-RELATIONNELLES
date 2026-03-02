@@ -1,0 +1,56 @@
+<div class="bg-gray-50 min-h-screen">
+  <!-- Header -->
+  <header class="bg-white shadow-sm sticky top-0 z-20">
+    <div class="container mx-auto px-4">
+      <a routerLink="/ressources" class="inline-flex items-center gap-2 py-4 text-gray-600 hover:text-blue-600 transition-colors">
+        <svg xmlns="http://www.w3.org/2000/svg" class="h-5 w-5" viewBox="0 0 20 20" fill="currentColor">
+          <path fill-rule="evenodd" d="M12.707 5.293a1 1 0 010 1.414L9.414 10l3.293 3.293a1 1 0 01-1.414 1.414l-4-4a1 1 0 010-1.414l4-4a1 1 0 011.414 0z" clip-rule="evenodd" />
+        </svg>
+        <span>Retour à la liste</span>
+      </a>
+    </div>
+  </header>
+
+  <!-- Main Content -->
+  <main class="py-12">
+    <div class="container mx-auto px-4">
+      <div *ngIf="ressource$ | async as ressource; else loadingOrError" class="max-w-4xl mx-auto">
+        
+        <!-- Ressource Header -->
+        <div class="ressource-header mb-8">
+          <span class="text-blue-600 font-semibold text-sm uppercase tracking-wider">{{ ressource.category }}</span>
+          <h1 class="text-4xl md:text-5xl font-bold text-gray-900 mt-2 mb-4 leading-tight">{{ ressource.title }}</h1>
+          <div class="flex items-center text-gray-500 text-sm">
+            <span>Par {{ ressource.author }}</span>
+            <span class="mx-2">|</span>
+            <span>{{ ressource.createdAt | date: 'longDate' }}</span>
+            <span class="mx-2">|</span>
+            <span>Visibilité: {{ ressource.visibilite }}</span>
+            <span class="mx-2">|</span>
+            <span>Statut: {{ ressource.statut }}</span>
+          </div>
+        </div>
+
+        <!-- Ressource Content -->
+        <article class="prose lg:prose-xl max-w-none bg-white p-8 md:p-12 rounded-2xl shadow-lg">
+          
+          
+
+          <!-- Text Content -->
+          <p class="lead text-lg text-gray-600">{{ ressource.description }}</p>
+          <div [innerHTML]="ressource.content | safeHtml"></div>
+
+        </article>
+
+      </div>
+    </div>
+  </main>
+</div>
+
+<!-- Loading/Error Template -->
+<ng-template #loadingOrError>
+  <div class="text-center py-20">
+    <p class="text-gray-500">Chargement de la ressource...</p>
+    <!-- You could add a spinner here -->
+  </div>
+</ng-template>

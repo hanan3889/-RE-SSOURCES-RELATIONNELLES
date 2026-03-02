@@ -27,6 +27,13 @@ export const routes: Routes = [
     loadChildren: () => import('./features/profile/profile.routes').then(m => m.PROFILE_ROUTES)
   },
   
+  // Route Resources
+  {
+    path: 'ressources',
+    loadChildren: () => import('./features/resources/ressources.routes').then(m => m.RESSOURCES_ROUTES),
+    title: 'Ressources - Ressources Relationnelles'
+  },
+
   // Route par défaut (404)
   {
     path: '**',

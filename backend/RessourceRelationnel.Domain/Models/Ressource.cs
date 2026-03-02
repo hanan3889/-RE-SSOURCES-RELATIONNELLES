@@ -6,6 +6,8 @@ public class Ressource
     public string Titre { get; set; } = string.Empty;
     public string Description { get; set; } = string.Empty;
     public string Format { get; set; } = string.Empty;
+    public Visibilite Visibilite { get; set; }
+    public Statut Statut { get; set; }
 
     public long IdUtilisateur { get; set; }
     public Utilisateur? Utilisateur { get; set; }

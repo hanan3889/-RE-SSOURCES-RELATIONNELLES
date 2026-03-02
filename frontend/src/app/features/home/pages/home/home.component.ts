@@ -11,6 +11,7 @@ import { RouterLink } from '@angular/router';
   styleUrls: ['./home.component.scss']
 })
 export class HomeComponent implements OnInit {
+  currentYear: number = new Date().getFullYear();
   
   // Statistiques
   stats = [
@@ -61,42 +62,42 @@ export class HomeComponent implements OnInit {
       description: 'Améliorer ses compétences relationnelles',
       icon: '💬',
       resourceCount: 85,
-      color: 'bg-[#000091]'
+      color: 'bg-blue-600'
     },
     {
       name: 'Leadership',
       description: 'Développer ses capacités de leader',
       icon: '👑',
       resourceCount: 62,
-      color: 'bg-[#000091]'
+      color: 'bg-green-600'
     },
     {
       name: 'Gestion des Émotions',
       description: 'Comprendre et maîtriser ses émotions',
       icon: '🧘',
       resourceCount: 78,
-      color: 'bg-[#000091]'
+      color: 'bg-purple-600'
     },
     {
       name: 'Résolution de Conflits',
       description: 'Gérer les situations difficiles',
       icon: '🤝',
       resourceCount: 54,
-      color: 'bg-[#000091]'
+      color: 'bg-red-600'
     },
     {
       name: 'Intelligence Émotionnelle',
       description: 'Développer son QE',
       icon: '🧠',
       resourceCount: 91,
-      color: 'bg-[#000091]'
+      color: 'bg-yellow-600'
     },
     {
-      name: 'Travail d\'Équipe',
+      name: "Travail d'Équipe",
       description: 'Collaborer efficacement',
       icon: '👥',
       resourceCount: 67,
-      color: 'bg-[#000091]'
+      color: 'bg-indigo-600'
     }
   ];
 
