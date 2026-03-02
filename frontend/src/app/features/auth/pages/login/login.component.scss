@@ -1,138 +1,35 @@
-// src/app/features/auth/pages/login/login.component.scss
-
-// ============================================
-// Variables
-// ============================================
-$primary-color: #000091;
-$accent-color: #E1000F;
-$text-dark: #161616;
-$text-light: #666666;
-
-// ============================================
-// Animations
-// ============================================
-@keyframes fadeIn {
-  from {
-    opacity: 0;
-    transform: translateY(20px);
-  }
-  to {
-    opacity: 1;
-    transform: translateY(0);
-  }
-}
-
-@keyframes slideUp {
-  from {
-    opacity: 0;
-    transform: translateY(30px);
-  }
-  to {
-    opacity: 1;
-    transform: translateY(0);
-  }
-}
-
-// ============================================
-// Page Layout
-// ============================================
-:host {
-  display: block;
-}
-
-// ============================================
-// Card Animation
-// ============================================
-.bg-white {
-  animation: slideUp 0.6s cubic-bezier(0.16, 1, 0.3, 1);
-}
-
-// ============================================
-// Form Inputs
-// ============================================
-input[type="email"],
+/* Styles pour l'input password */
 input[type="password"],
 input[type="text"] {
-  font-family: 'Inter', system-ui, -apple-system, sans-serif;
-  
   &::placeholder {
     color: #9ca3af;
   }
-
-  &:focus {
-    box-shadow: 0 0 0 3px rgba($primary-color, 0.1);
-  }
 }
 
-// ============================================
-// Submit Button
-// ============================================
-button[type="submit"] {
-  position: relative;
-  overflow: hidden;
-
-  &::after {
-    content: '';
-    position: absolute;
-    inset: 0;
-    background: linear-gradient(135deg, transparent, rgba(255, 255, 255, 0.1), transparent);
-    transform: translateX(-100%);
-    transition: transform 0.5s ease;
-  }
-
-  &:hover:not(:disabled)::after {
-    transform: translateX(100%);
-  }
-
-  &:active:not(:disabled) {
-    transform: scale(0.98);
-  }
-}
-
-// ============================================
-// Checkbox
-// ============================================
-input[type="checkbox"] {
-  &:checked {
-    background-color: $primary-color;
-    border-color: $primary-color;
-  }
-}
-
-// ============================================
-// Links
-// ============================================
-a {
-  text-decoration: none;
+/* Assurer que le texte des inputs est visible */
+input {
+  color: #1f2937 !important;
   
-  &:focus-visible {
-    outline: 2px solid $primary-color;
-    outline-offset: 2px;
-    border-radius: 2px;
+  &::selection {
+    background-color: #3b82f6;
+    color: white;
   }
 }
 
-// ============================================
-// Error Messages Animation
-// ============================================
-.text-\[\#E1000F\] {
-  animation: fadeIn 0.3s ease;
+/* Style spécifique pour le champ password */
+input[type="password"] {
+  color: #1f2937 !important;
+  caret-color: #3b82f6;
+  
+  /* Affiche les dots en blanc/gris visible */
+  &::-webkit-outer-spin-button,
+  &::-webkit-inner-spin-button {
+    -webkit-appearance: none;
+    margin: 0;
+  }
 }
 
-.bg-red-50 {
-  animation: fadeIn 0.3s ease;
-}
-
-// ============================================
-// Responsive
-// ============================================
-@media (max-width: 640px) {
-  section {
-    padding-top: 2rem;
-    padding-bottom: 2rem;
-  }
-
-  .bg-white {
-    border-radius: 0.5rem;
-  }
+/* Pour Firefox */
+input[type="password"]::placeholder {
+  color: #d1d5db;
 }

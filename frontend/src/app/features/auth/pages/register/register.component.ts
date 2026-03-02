@@ -1,171 +1,79 @@
-import { Component } from '@angular/core';
+import { Component, OnInit } from '@angular/core';
 import { CommonModule } from '@angular/common';
-import { FormsModule } from '@angular/forms';
-import { RouterLink, Router } from '@angular/router';
+import { FormBuilder, FormGroup, Validators, ReactiveFormsModule, AbstractControl, ValidationErrors } from '@angular/forms';
+import { RouterModule } from '@angular/router';
+
+// Validateur personnalisé pour vérifier que les mots de passe correspondent
+function passwordMatchValidator(control: AbstractControl): ValidationErrors | null {
+  const password = control.get('password');
+  const confirmPassword = control.get('confirmPassword');
+
+  if (!password || !confirmPassword) {
+    return null;
+  }
+
+  return password.value === confirmPassword.value ? null : { passwordMismatch: true };
+}
 
 @Component({
   selector: 'app-register',
   standalone: true,
-  imports: [CommonModule, FormsModule, RouterLink],
+  imports: [CommonModule, ReactiveFormsModule, RouterModule],
   templateUrl: './register.component.html',
-  styleUrls: ['./register.component.scss']
+  styleUrl: './register.component.scss',
 })
-export class RegisterComponent {
-
-  currentStep = 1;
-
-  registerData = {
-    nom: '',
-    prenom: '',
-    email: '',
-    password: '',
-    acceptTerms: false
-  };
-
-  confirmPassword = '';
+export class RegisterComponent implements OnInit {
+  registerForm!: FormGroup;
   showPassword = false;
-  showConfirmPassword = false;
-  isLoading = false;
+  isSubmitting = false;
   errorMessage = '';
 
-  // Password strength
-  passwordStrength = 0;
-  passwordStrengthLabel = '';
-  passwordStrengthColor = 'bg-gray-200';
-  passwordStrengthTextColor = 'text-gray-custom';
+  constructor(private fb: FormBuilder) {}
 
-  // Touch states pour validation
-  nomTouched = false;
-  prenomTouched = false;
-  emailTouched = false;
-  passwordTouched = false;
-  confirmPasswordTouched = false;
-  termsTouched = false;
-
-  constructor(private router: Router) {}
-
-  /**
-   * Vérifie si l'email est valide
-   */
-  isEmailValid(): boolean {
-    if (!this.registerData.email) return false;
-    const emailRegex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
-    return emailRegex.test(this.registerData.email);
+  ngOnInit(): void {
+    this.registerForm = this.fb.group(
+      {
+        email: ['', [Validators.required, Validators.email]],
+        password: ['', [Validators.required, Validators.minLength(8)]],
+        confirmPassword: ['', [Validators.required]],
+        acceptTerms: [false, [Validators.requiredTrue]]
+      },
+      { validators: passwordMatchValidator }
+    );
   }
 
-  /**
-   * Vérifie si le mot de passe est valide (min 8 caractères)
-   */
-  isPasswordValid(): boolean {
-    return this.registerData.password.length >= 8;
+  togglePasswordVisibility(): void {
+    this.showPassword = !this.showPassword;
   }
 
-  /**
-   * Vérifie si les mots de passe correspondent
-   */
-  doPasswordsMatch(): boolean {
-    return this.registerData.password === this.confirmPassword && this.confirmPassword.length > 0;
-  }
-
-  /**
-   * Vérifie si l'étape 1 est valide
-   */
-  isStep1Valid(): boolean {
-    return !!this.registerData.nom && !!this.registerData.prenom && this.isEmailValid();
-  }
-
-  /**
-   * Vérifie si l'étape 2 est valide
-   */
-  isStep2Valid(): boolean {
-    return this.isPasswordValid() && this.doPasswordsMatch() && this.registerData.acceptTerms;
-  }
-
-  /**
-   * Passer à l'étape 2
-   */
-  goToStep2(): void {
-    this.nomTouched = true;
-    this.prenomTouched = true;
-    this.emailTouched = true;
-
-    if (this.isStep1Valid()) {
-      this.currentStep = 2;
+  isFieldInvalid(fieldName: string): boolean {
+    const field = this.registerForm.get(fieldName);
+    
+    if (fieldName === 'confirmPassword') {
+      return !!(field && field.invalid && (field.dirty || field.touched)) || 
+             this.registerForm.hasError('passwordMismatch');
     }
+    
+    return !!(field && field.invalid && (field.dirty || field.touched));
   }
 
-  /**
-   * Met à jour l'indicateur de force du mot de passe
-   */
-  updatePasswordStrength(): void {
-    const password = this.registerData.password;
-    let strength = 0;
-
-    if (password.length >= 8) strength++;
-    if (password.length >= 12) strength++;
-    if (/[A-Z]/.test(password) && /[a-z]/.test(password)) strength++;
-    if (/[0-9]/.test(password)) strength++;
-    if (/[^A-Za-z0-9]/.test(password)) strength++;
-
-    // Normaliser sur 4
-    this.passwordStrength = Math.min(4, strength);
-
-    switch (this.passwordStrength) {
-      case 0:
-      case 1:
-        this.passwordStrengthLabel = 'Faible';
-        this.passwordStrengthColor = 'bg-[#E1000F]';
-        this.passwordStrengthTextColor = 'text-[#E1000F]';
-        break;
-      case 2:
-        this.passwordStrengthLabel = 'Moyen';
-        this.passwordStrengthColor = 'bg-orange-400';
-        this.passwordStrengthTextColor = 'text-orange-500';
-        break;
-      case 3:
-        this.passwordStrengthLabel = 'Fort';
-        this.passwordStrengthColor = 'bg-green-500';
-        this.passwordStrengthTextColor = 'text-green-600';
-        break;
-      case 4:
-        this.passwordStrengthLabel = 'Très fort';
-        this.passwordStrengthColor = 'bg-green-600';
-        this.passwordStrengthTextColor = 'text-green-700';
-        break;
-    }
-  }
-
-  /**
-   * Soumission du formulaire
-   */
   onSubmit(): void {
-    this.passwordTouched = true;
-    this.confirmPasswordTouched = true;
-    this.termsTouched = true;
-
-    if (!this.isStep2Valid()) {
-      if (!this.registerData.acceptTerms) {
-        this.errorMessage = 'Veuillez accepter les conditions d\'utilisation.';
-      } else if (!this.doPasswordsMatch()) {
-        this.errorMessage = 'Les mots de passe ne correspondent pas.';
-      } else {
-        this.errorMessage = 'Veuillez remplir tous les champs correctement.';
-      }
-      return;
+    if (this.registerForm.valid) {
+      this.isSubmitting = true;
+      this.errorMessage = '';
+      
+      const { email, password } = this.registerForm.value;
+      
+      // Simul d'inscription API
+      console.log('Inscription avec:', { email, password });
+      
+      // TODO: Appeler le service d'authentification
+      // this.authService.register(email, password).subscribe(...)
+      
+      setTimeout(() => {
+        this.isSubmitting = false;
+        // this.router.navigate(['/auth/login']);
+      }, 1500);
     }
-
-    this.errorMessage = '';
-    this.isLoading = true;
-
-    // TODO: Appeler le service d'authentification quand le backend sera prêt
-    // this.authService.register(this.registerData).subscribe(...)
-
-    // Simulation d'un délai pour l'UX
-    setTimeout(() => {
-      this.isLoading = false;
-      // Pour l'instant, on redirige simplement vers le login
-      // this.router.navigate(['/auth/login']);
-      console.log('Register data:', this.registerData);
-    }, 1500);
   }
 }

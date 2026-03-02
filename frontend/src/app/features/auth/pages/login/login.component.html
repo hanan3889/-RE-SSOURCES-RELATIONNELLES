@@ -1,191 +1,121 @@
-<!-- ============================================ -->
-<!-- BANDEAU RÉPUBLIQUE FRANÇAISE -->
-<!-- ============================================ -->
-<header class="bg-white border-b border-gray-200">
-  <div class="container mx-auto px-4 py-3 flex items-center gap-4">
-    <a routerLink="/home" class="flex items-center gap-4 no-underline">
-      <div class="flex flex-col leading-none">
-        <span class="text-[13px] font-bold text-marianne-title tracking-tight">RÉPUBLIQUE</span>
-        <span class="text-[13px] font-bold text-marianne-title tracking-tight">FRANÇAISE</span>
-      </div>
-      <div class="w-px h-10 bg-gray-300"></div>
-      <div class="flex flex-col leading-tight">
-        <span class="text-[13px] font-semibold text-marianne-title">Ministère</span>
-        <span class="text-[13px] text-gray-custom">de la Culture</span>
-      </div>
-    </a>
+<div class="min-h-screen bg-gradient-to-br from-blue-600 via-purple-600 to-pink-500 flex items-center justify-center py-12 px-4">
+  <!-- Background Pattern -->
+  <div class="absolute inset-0 opacity-10">
+    <div class="absolute top-0 left-0 w-96 h-96 bg-white rounded-full blur-3xl"></div>
+    <div class="absolute bottom-0 right-0 w-96 h-96 bg-white rounded-full blur-3xl"></div>
   </div>
-</header>
 
-<!-- ============================================ -->
-<!-- LOGIN SECTION -->
-<!-- ============================================ -->
-<section class="min-h-[calc(100vh-60px)] bg-[#f6f6f6] flex items-center justify-center py-12 px-4">
-  <div class="w-full max-w-md">
-
-    <!-- Back to home -->
-    <a routerLink="/home" class="inline-flex items-center gap-2 text-sm text-gray-custom hover:text-[#000091] transition-colors mb-8 group">
-      <span class="transition-transform group-hover:-translate-x-1">←</span>
-      <span>Retour à l'accueil</span>
-    </a>
-
+  <div class="w-full max-w-md relative z-10">
     <!-- Card -->
-    <div class="bg-white rounded-lg shadow-soft border border-gray-200/60 overflow-hidden">
-
-      <!-- Card Header -->
-      <div class="bg-[#000091] px-8 py-6 text-white">
-        <h1 class="text-2xl font-bold tracking-tight">Connexion</h1>
-        <p class="text-white/70 text-sm mt-1">Accédez à votre espace (Re)ssources Relationnelles</p>
+    <div class="bg-white rounded-2xl shadow-2xl p-8">
+      <!-- Header -->
+      <div class="text-center mb-8">
+        <h1 class="text-3xl font-bold text-gray-900 mb-2">Connexion</h1>
+        <p class="text-gray-600">Accédez à votre compte Ressources Relationnelles</p>
       </div>
 
-      <!-- Card Body -->
-      <div class="p-8">
-        <form (ngSubmit)="onSubmit()" class="space-y-5">
-
-          <!-- Email -->
-          <div>
-            <label for="email" class="block text-sm font-semibold text-marianne-title mb-1.5">
-              Adresse email <span class="text-[#E1000F]">*</span>
-            </label>
-            <input 
-              id="email"
-              type="email" 
-              [(ngModel)]="loginData.email"
-              name="email"
-              required
-              placeholder="votre@email.fr"
-              class="w-full px-4 py-3 border border-gray-300 rounded text-sm text-marianne-title placeholder-gray-400 transition-all duration-200 focus:outline-none focus:border-[#000091] focus:ring-2 focus:ring-[#000091]/20"
-              [class.border-red-500]="emailTouched && !isEmailValid()"
-              (blur)="emailTouched = true"
-            >
-            @if (emailTouched && !isEmailValid()) {
-              <p class="text-[#E1000F] text-xs mt-1.5 flex items-center gap-1">
-                <span>⚠</span> Veuillez saisir une adresse email valide
-              </p>
-            }
-          </div>
-
-          <!-- Password -->
-          <div>
-            <div class="flex items-center justify-between mb-1.5">
-              <label for="password" class="block text-sm font-semibold text-marianne-title">
-                Mot de passe <span class="text-[#E1000F]">*</span>
-              </label>
-              <a href="#" class="text-xs text-[#000091] hover:text-[#1212ff] font-medium transition-colors">
-                Mot de passe oublié ?
-              </a>
-            </div>
-            <div class="relative">
-              <input 
-                id="password"
-                [type]="showPassword ? 'text' : 'password'" 
-                [(ngModel)]="loginData.password"
-                name="password"
-                required
-                placeholder="Votre mot de passe"
-                class="w-full px-4 py-3 pr-12 border border-gray-300 rounded text-sm text-marianne-title placeholder-gray-400 transition-all duration-200 focus:outline-none focus:border-[#000091] focus:ring-2 focus:ring-[#000091]/20"
-                [class.border-red-500]="passwordTouched && !loginData.password"
-                (blur)="passwordTouched = true"
-              >
-              <button 
-                type="button"
-                (click)="showPassword = !showPassword"
-                class="absolute right-3 top-1/2 -translate-y-1/2 text-gray-400 hover:text-gray-600 transition-colors p-1"
-                [attr.aria-label]="showPassword ? 'Masquer le mot de passe' : 'Afficher le mot de passe'"
-              >
-                @if (showPassword) {
-                  <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M13.875 18.825A10.05 10.05 0 0112 19c-4.478 0-8.268-2.943-9.543-7a9.97 9.97 0 011.563-3.029m5.858.908a3 3 0 114.243 4.243M9.878 9.878l4.242 4.242M9.88 9.88l-3.29-3.29m7.532 7.532l3.29 3.29M3 3l3.59 3.59m0 0A9.953 9.953 0 0112 5c4.478 0 8.268 2.943 9.543 7a10.025 10.025 0 01-4.132 5.411m0 0L21 21"/></svg>
-                } @else {
-                  <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M15 12a3 3 0 11-6 0 3 3 0 016 0z"/><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M2.458 12C3.732 7.943 7.523 5 12 5c4.478 0 8.268 2.943 9.542 7-1.274 4.057-5.064 7-9.542 7-4.477 0-8.268-2.943-9.542-7z"/></svg>
-                }
-              </button>
-            </div>
-            @if (passwordTouched && !loginData.password) {
-              <p class="text-[#E1000F] text-xs mt-1.5 flex items-center gap-1">
-                <span>⚠</span> Le mot de passe est requis
-              </p>
-            }
-          </div>
-
-          <!-- Remember Me -->
-          <div class="flex items-center gap-2">
-            <input 
-              id="rememberMe"
-              type="checkbox"
-              [(ngModel)]="loginData.rememberMe"
-              name="rememberMe"
-              class="w-4 h-4 text-[#000091] border-gray-300 rounded focus:ring-[#000091] focus:ring-2 cursor-pointer accent-[#000091]"
-            >
-            <label for="rememberMe" class="text-sm text-gray-custom cursor-pointer select-none">
-              Se souvenir de moi
-            </label>
-          </div>
-
-          <!-- Error message -->
-          @if (errorMessage) {
-            <div class="bg-red-50 border border-red-200 rounded p-3 flex items-start gap-2">
-              <span class="text-[#E1000F] text-sm mt-0.5">⚠</span>
-              <p class="text-[#E1000F] text-sm">{{ errorMessage }}</p>
-            </div>
-          }
-
-          <!-- Submit Button -->
-          <button 
-            type="submit"
-            [disabled]="isLoading"
-            class="w-full bg-[#000091] text-white py-3.5 rounded font-semibold text-base hover:bg-[#1212ff] transition-all duration-200 shadow-soft flex items-center justify-center gap-2 disabled:opacity-60 disabled:cursor-not-allowed"
-          >
-            @if (isLoading) {
-              <svg class="animate-spin w-5 h-5" fill="none" viewBox="0 0 24 24"><circle class="opacity-25" cx="12" cy="12" r="10" stroke="currentColor" stroke-width="4"/><path class="opacity-75" fill="currentColor" d="M4 12a8 8 0 018-8V0C5.373 0 0 5.373 0 12h4zm2 5.291A7.962 7.962 0 014 12H0c0 3.042 1.135 5.824 3 7.938l3-2.647z"/></svg>
-              <span>Connexion en cours...</span>
-            } @else {
-              <span>Se connecter</span>
-              <span>→</span>
-            }
-          </button>
-        </form>
-
-        <!-- Divider -->
-        <div class="relative my-6">
-          <div class="absolute inset-0 flex items-center">
-            <div class="w-full border-t border-gray-200"></div>
-          </div>
-          <div class="relative flex justify-center text-xs">
-            <span class="bg-white px-3 text-gray-custom">ou</span>
-          </div>
-        </div>
-
-        <!-- Register link -->
-        <div class="text-center">
-          <p class="text-sm text-gray-custom">
-            Pas encore de compte ?
+      <!-- Form -->
+      <form [formGroup]="loginForm" (ngSubmit)="onSubmit()">
+        <!-- Email Field -->
+        <div class="mb-6">
+          <label for="email" class="block text-sm font-semibold text-gray-700 mb-2">
+            Adresse email
+          </label>
+          <input
+            id="email"
+            type="email"
+            formControlName="email"
+            placeholder="vous@example.com"
+            class="w-full px-4 py-3 border-2 border-gray-300 rounded-lg focus:outline-none focus:border-blue-500 transition-colors"
+            [class.border-red-500]="isFieldInvalid('email')"
+          />
+          <p *ngIf="isFieldInvalid('email')" class="text-red-500 text-sm mt-1">
+            Veuillez entrer une adresse email valide
           </p>
-          <a 
-            routerLink="/auth/register" 
-            class="inline-flex items-center gap-2 mt-2 text-[#000091] hover:text-[#1212ff] font-semibold text-sm transition-colors"
+        </div>
+
+        <!-- Password Field -->
+        <div class="mb-6">
+          <label for="password" class="block text-sm font-semibold text-gray-700 mb-2">
+            Mot de passe
+          </label>
+          <input
+            id="password"
+            [type]="showPassword ? 'text' : 'password'"
+            formControlName="password"
+            placeholder="••••••••"
+            class="w-full px-4 py-3 border-2 border-gray-300 rounded-lg focus:outline-none focus:border-blue-500 transition-colors"
+            [class.border-red-500]="isFieldInvalid('password')"
+          />
+          <button
+            type="button"
+            (click)="togglePasswordVisibility()"
+            class="text-sm text-blue-600 hover:text-blue-700 mt-2"
           >
-            <span>Créer un compte gratuitement</span>
-            <span>→</span>
-          </a>
+            {{ showPassword ? 'Masquer' : 'Afficher' }}
+          </button>
+          <p *ngIf="isFieldInvalid('password')" class="text-red-500 text-sm mt-1">
+            Le mot de passe est requis
+          </p>
+        </div>
+
+        <!-- Remember Me -->
+        <div class="flex items-center mb-6">
+          <input
+            id="remember"
+            type="checkbox"
+            formControlName="rememberMe"
+            class="w-4 h-4 rounded border-gray-300 text-blue-600 focus:ring-blue-500"
+          />
+          <label for="remember" class="ml-2 text-sm text-gray-700">
+            Rester connecté
+          </label>
+        </div>
+
+        <!-- Submit Button -->
+        <button
+          type="submit"
+          [disabled]="loginForm.invalid || isSubmitting"
+          class="w-full bg-gradient-to-r from-blue-600 to-purple-600 text-white py-3 rounded-lg font-semibold hover:shadow-lg transform hover:scale-105 transition-all disabled:opacity-50 disabled:cursor-not-allowed"
+        >
+          {{ isSubmitting ? 'Connexion...' : 'Se connecter' }}
+        </button>
+
+        <!-- Error Message -->
+        <p *ngIf="errorMessage" class="text-red-500 text-sm text-center mt-4">
+          {{ errorMessage }}
+        </p>
+      </form>
+
+      <!-- Divider -->
+      <div class="relative my-6">
+        <div class="absolute inset-0 flex items-center">
+          <div class="w-full border-t border-gray-300"></div>
+        </div>
+        <div class="relative flex justify-center text-sm">
+          <span class="px-2 bg-white text-gray-500">ou</span>
         </div>
       </div>
-    </div>
 
-    <!-- Trust indicators -->
-    <div class="mt-6 flex flex-wrap justify-center gap-4 text-xs text-gray-custom">
-      <div class="flex items-center gap-1.5">
-        <svg class="w-3.5 h-3.5" fill="currentColor" viewBox="0 0 20 20"><path fill-rule="evenodd" d="M5 9V7a5 5 0 0110 0v2a2 2 0 012 2v5a2 2 0 01-2 2H5a2 2 0 01-2-2v-5a2 2 0 012-2zm8-2v2H7V7a3 3 0 016 0z" clip-rule="evenodd"/></svg>
-        <span>Connexion sécurisée</span>
-      </div>
-      <div class="flex items-center gap-1.5">
-        <svg class="w-3.5 h-3.5" fill="currentColor" viewBox="0 0 20 20"><path fill-rule="evenodd" d="M16.707 5.293a1 1 0 010 1.414l-8 8a1 1 0 01-1.414 0l-4-4a1 1 0 011.414-1.414L8 12.586l7.293-7.293a1 1 0 011.414 0z" clip-rule="evenodd"/></svg>
-        <span>Données protégées</span>
-      </div>
-      <div class="flex items-center gap-1.5">
-        <svg class="w-3.5 h-3.5" fill="currentColor" viewBox="0 0 20 20"><path fill-rule="evenodd" d="M16.707 5.293a1 1 0 010 1.414l-8 8a1 1 0 01-1.414 0l-4-4a1 1 0 011.414-1.414L8 12.586l7.293-7.293a1 1 0 011.414 0z" clip-rule="evenodd"/></svg>
-        <span>Service public gratuit</span>
+      <!-- Footer -->
+      <div class="text-center space-y-3">
+        <p class="text-gray-600">
+          Pas encore de compte ?
+          <a routerLink="/auth/register" class="text-blue-600 font-semibold hover:text-blue-700">
+            S'inscrire
+          </a>
+        </p>
+        <a href="#" class="text-sm text-blue-600 hover:text-blue-700">
+          Mot de passe oublié ?
+        </a>
       </div>
     </div>
 
+    <!-- Back to Home -->
+    <div class="text-center mt-6">
+      <a routerLink="/home" class="text-white hover:text-gray-100 transition-colors">
+        ← Retour à l'accueil
+      </a>
+    </div>
   </div>
-</section>
+</div>

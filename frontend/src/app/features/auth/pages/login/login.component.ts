@@ -1,73 +1,57 @@
-import { Component } from '@angular/core';
+import { Component, OnInit } from '@angular/core';
 import { CommonModule } from '@angular/common';
-import { FormsModule } from '@angular/forms';
-import { RouterLink, Router } from '@angular/router';
+import { FormBuilder, FormGroup, Validators, ReactiveFormsModule } from '@angular/forms';
+import { RouterModule } from '@angular/router';
 
 @Component({
   selector: 'app-login',
   standalone: true,
-  imports: [CommonModule, FormsModule, RouterLink],
+  imports: [CommonModule, ReactiveFormsModule, RouterModule],
   templateUrl: './login.component.html',
-  styleUrls: ['./login.component.scss']
+  styleUrl: './login.component.scss',
 })
-export class LoginComponent {
-  
-  loginData = {
-    email: '',
-    password: '',
-    rememberMe: false
-  };
-
+export class LoginComponent implements OnInit {
+  loginForm!: FormGroup;
   showPassword = false;
-  isLoading = false;
+  isSubmitting = false;
   errorMessage = '';
 
-  // Touch state pour la validation
-  emailTouched = false;
-  passwordTouched = false;
+  constructor(private fb: FormBuilder) {}
 
-  constructor(private router: Router) {}
-
-  /**
-   * Vérifie si l'email est valide
-   */
-  isEmailValid(): boolean {
-    if (!this.loginData.email) return false;
-    const emailRegex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
-    return emailRegex.test(this.loginData.email);
+  ngOnInit(): void {
+    this.loginForm = this.fb.group({
+      email: ['', [Validators.required, Validators.email]],
+      password: ['', [Validators.required, Validators.minLength(8)]],
+      rememberMe: [false]
+    });
   }
 
-  /**
-   * Vérifie si le formulaire est valide
-   */
-  isFormValid(): boolean {
-    return this.isEmailValid() && !!this.loginData.password;
+  togglePasswordVisibility(): void {
+    this.showPassword = !this.showPassword;
   }
 
-  /**
-   * Soumission du formulaire
-   */
+  isFieldInvalid(fieldName: string): boolean {
+    const field = this.loginForm.get(fieldName);
+    return !!(field && field.invalid && (field.dirty || field.touched));
+  }
+
   onSubmit(): void {
-    this.emailTouched = true;
-    this.passwordTouched = true;
-
-    if (!this.isFormValid()) {
-      this.errorMessage = 'Veuillez remplir tous les champs correctement.';
-      return;
+    if (this.loginForm.valid) {
+      this.isSubmitting = true;
+      this.errorMessage = '';
+      
+      const { email, password } = this.loginForm.value;
+      
+      // Simul de connexion API
+      console.log('Connexion avec:', { email, password });
+      
+      // TODO: Appeler le service d'authentification
+      // this.authService.login(email, password).subscribe(...)
+      
+      setTimeout(() => {
+        this.isSubmitting = false;
+        // this.router.navigate(['/home']);
+      }, 1500);
     }
-
-    this.errorMessage = '';
-    this.isLoading = true;
-
-    // TODO: Appeler le service d'authentification quand le backend sera prêt
-    // this.authService.login(this.loginData).subscribe(...)
-    
-    // Simulation d'un délai pour l'UX
-    setTimeout(() => {
-      this.isLoading = false;
-      // Pour l'instant, on redirige simplement vers l'accueil
-      // this.router.navigate(['/home']);
-      console.log('Login data:', this.loginData);
-    }, 1500);
   }
 }
