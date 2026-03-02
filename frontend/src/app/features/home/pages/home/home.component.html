@@ -49,14 +49,14 @@
       <!-- CTA Buttons -->
       <div class="flex flex-col sm:flex-row gap-3">
         <a 
-          routerLink="/auth/register" 
+          [routerLink]="['/auth/register']" 
           class="btn-primary bg-white text-[#000091] hover:bg-gray-100 px-6 py-3.5 rounded font-semibold text-base shadow-lg transition-all duration-200 inline-flex items-center gap-2">
           <span>Créer un compte</span>
           <span>→</span>
         </a>
         
         <a 
-          routerLink="/ressources"
+          [routerLink]="['/ressources']"
           class="btn-secondary bg-white/10 backdrop-blur-sm text-white hover:bg-white/20 px-8 py-4 rounded-full font-semibold text-lg border-2 border-white/30 transition-all duration-300 inline-flex items-center gap-2">
           <span>Découvrez toutes nos ressources</span>
         </a>
@@ -173,7 +173,7 @@
     <!-- View All Button -->
     <div class="text-center mt-12">
       <a 
-        routerLink="/ressources" 
+        [routerLink]="['/ressources']" 
         class="inline-flex items-center gap-2 bg-blue-600 text-white px-8 py-4 rounded-full font-semibold hover:bg-blue-700 transition-all duration-300 shadow-lg hover:shadow-xl">
         <span>Voir toutes les ressources</span>
         <span>→</span>
@@ -249,14 +249,14 @@
       
       <div class="flex flex-col sm:flex-row gap-3 justify-center">
         <a 
-          routerLink="/auth/register" 
+          [routerLink]="['/auth/register']" 
           class="bg-white text-[#000091] hover:bg-gray-100 px-6 py-3.5 rounded font-semibold text-base transition-all duration-200 inline-flex items-center gap-2 justify-center">
           <span>Créer un compte</span>
           <span>→</span>
         </a>
         
         <a 
-          routerLink="/auth/login" 
+          [routerLink]="['/auth/login']" 
           class="bg-transparent text-white hover:bg-white/10 px-6 py-3.5 rounded font-medium text-base border border-white/30 transition-all duration-200 inline-flex items-center gap-2 justify-center">
           <span>Se connecter</span>
         </a>
@@ -293,8 +293,8 @@
       <div>
         <h4 class="font-semibold mb-4">Ressources</h4>
         <ul class="space-y-2 text-gray-400">
-          <li><a routerLink="/ressources" class="hover:text-white transition-colors">Toutes les ressources</a></li>
-          <li><a routerLink="/categories" class="hover:text-white transition-colors">Catégories</a></li>
+          <li><a [routerLink]="['/ressources']" class="hover:text-white transition-colors">Toutes les ressources</a></li>
+          <li><a [routerLink]="['/categories']" class="hover:text-white transition-colors">Catégories</a></li>
           <li><a href="#" class="hover:text-white transition-colors">Guides pratiques</a></li>
         </ul>
       </div>

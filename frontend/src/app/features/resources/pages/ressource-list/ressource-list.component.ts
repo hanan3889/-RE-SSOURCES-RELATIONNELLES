@@ -2,7 +2,7 @@ import { Component, OnInit } from '@angular/core';
 import { CommonModule } from '@angular/common';
 import { FormsModule } from '@angular/forms';
 import { RouterModule } from '@angular/router';
-import { Observable, Subject, BehaviorSubject, combineLatest } from 'rxjs';
+import { Observable, Subject, combineLatest } from 'rxjs';
 import { debounceTime, distinctUntilChanged, map, startWith } from 'rxjs/operators';
 
 import { Ressource, RessourceService } from '../../services/ressource.service';
@@ -35,24 +35,47 @@ export class RessourceListComponent implements OnInit {
 
     this.filteredRessources$ = combineLatest([this.allRessources$, search$]).pipe(
       map(([ressources, term]) => {
-        // Always filter for articles first
-        let articles = ressources.filter(ressource => ressource.type === 'article');
-
         // Filter by search term
         if (!term) {
-          return articles;
+          return ressources;
         }
-        return articles.filter(ressource =>
+        return ressources.filter(ressource =>
           ressource.title.toLowerCase().includes(term.toLowerCase()) ||
           ressource.description.toLowerCase().includes(term.toLowerCase()) ||
           ressource.author.toLowerCase().includes(term.toLowerCase())
         );
       })
     );
+
+    this.setupScrollAnimations();
   }
 
   onSearch(event: Event): void {
     const term = (event.target as HTMLInputElement).value;
     this.searchTerm$.next(term);
+  }
+
+  /**
+   * Configuration des animations au scroll
+   */
+  private setupScrollAnimations(): void {
+    if (typeof window !== 'undefined') {
+      const observer = new IntersectionObserver(
+        (entries) => {
+          entries.forEach(entry => {
+            if (entry.isIntersecting) {
+              entry.target.classList.add('animate-fade-in');
+            }
+          });
+        },
+        { threshold: 0.1 }
+      );
+
+      // Observer tous les éléments avec la classe 'scroll-animation'
+      setTimeout(() => {
+        const elements = document.querySelectorAll('.scroll-animation');
+        elements.forEach(el => observer.observe(el));
+      }, 500);
+    }
   }
 }

@@ -93,7 +93,7 @@ export class HomeComponent implements OnInit {
       color: 'bg-yellow-600'
     },
     {
-      name: 'Travail d'Équipe',
+      name: "Travail d'Équipe",
       description: 'Collaborer efficacement',
       icon: '👥',
       resourceCount: 67,
