@@ -1,4 +1,5 @@
 import { Routes } from '@angular/router';
+import { AuthGuard } from './core/guards/auth.guard'; // Import the AuthGuard
 
 export const routes: Routes = [
   // Redirection racine vers home
@@ -7,31 +8,39 @@ export const routes: Routes = [
     redirectTo: 'home',
     pathMatch: 'full'
   },
-  
+
   // Route Home
   {
     path: 'home',
     loadComponent: () => import('./features/home/pages/home/home.component').then(m => m.HomeComponent),
     title: 'Accueil - Ressources Relationnelles'
   },
-  
+
   // Routes Auth
   {
     path: 'auth',
     loadChildren: () => import('./features/auth/auth.routes').then(m => m.AUTH_ROUTES)
   },
-  
+
   // Route Profil
   {
     path: 'profile',
     loadChildren: () => import('./features/profile/profile.routes').then(m => m.PROFILE_ROUTES)
   },
-  
+
   // Route Resources
   {
     path: 'ressources',
     loadChildren: () => import('./features/resources/ressources.routes').then(m => m.RESSOURCES_ROUTES),
     title: 'Ressources - Ressources Relationnelles'
+  },
+
+  // Dashboard Route (Protected)
+  {
+    path: 'dashboard',
+    loadChildren: () => import('./features/dashboard/dashboard.module').then(m => m.DashboardModule),
+    canActivate: [AuthGuard], // Apply the AuthGuard here
+    title: 'Tableau de bord - Ressources Relationnelles'
   },
 
   // Route par défaut (404)
