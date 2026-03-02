@@ -16,7 +16,7 @@ export class LoginComponent implements OnInit {
   isSubmitting = false;
   errorMessage = '';
 
-  constructor(private fb: FormBuilder) {}
+  constructor(private fb: FormBuilder, private router: Router) {}
 
   ngOnInit(): void {
     this.loginForm = this.fb.group({
@@ -50,7 +50,9 @@ export class LoginComponent implements OnInit {
       
       setTimeout(() => {
         this.isSubmitting = false;
-        // this.router.navigate(['/home']);
+        // Simulate successful login by setting a token
+        localStorage.setItem('authToken', 'fake-token');
+        this.router.navigate(['/dashboard']);
       }, 1500);
     }
   }
