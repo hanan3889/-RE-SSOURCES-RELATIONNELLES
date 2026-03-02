@@ -1,23 +1,23 @@
 import { Component, OnInit } from '@angular/core';
 import { CommonModule } from '@angular/common';
 import { FormsModule } from '@angular/forms';
-import { CardModule } from 'primeng/card';
-import { InputTextModule } from 'primeng/inputtext';
-import { Ressource, RessourceService } from '../../services/ressource.service';
-import { Observable, Subject } from 'rxjs';
-import { debounceTime, distinctUntilChanged, map, startWith, switchMap } from 'rxjs';
 import { RouterModule } from '@angular/router';
+import { Observable, Subject, BehaviorSubject, combineLatest } from 'rxjs';
+import { debounceTime, distinctUntilChanged, map, startWith } from 'rxjs/operators';
+
+import { Ressource, RessourceService } from '../../services/ressource.service';
 
 @Component({
   selector: 'app-ressource-list',
   standalone: true,
-  imports: [CommonModule, FormsModule, CardModule, InputTextModule, RouterModule],
+  imports: [CommonModule, FormsModule, RouterModule],
   templateUrl: './ressource-list.component.html',
-  styleUrl: './ressource-list.component.scss'
+  styleUrls: ['./ressource-list.component.scss']
 })
 export class RessourceListComponent implements OnInit {
   currentYear: number = new Date().getFullYear();
-  ressources$!: Observable<Ressource[]>;
+  
+  private allRessources$!: Observable<Ressource[]>;
   filteredRessources$!: Observable<Ressource[]>;
   
   private searchTerm$ = new Subject<string>();
@@ -25,31 +25,34 @@ export class RessourceListComponent implements OnInit {
   constructor(private ressourceService: RessourceService) { }
 
   ngOnInit(): void {
-    this.ressources$ = this.ressourceService.getRessources();
+    this.allRessources$ = this.ressourceService.getRessources();
 
-    this.filteredRessources$ = this.searchTerm$.pipe(
+    const search$ = this.searchTerm$.pipe(
       startWith(''),
       debounceTime(300),
-      distinctUntilChanged(),
-      switchMap(term => this.filterRessources(term))
+      distinctUntilChanged()
+    );
+
+    this.filteredRessources$ = combineLatest([this.allRessources$, search$]).pipe(
+      map(([ressources, term]) => {
+        // Always filter for articles first
+        let articles = ressources.filter(ressource => ressource.type === 'article');
+
+        // Filter by search term
+        if (!term) {
+          return articles;
+        }
+        return articles.filter(ressource =>
+          ressource.title.toLowerCase().includes(term.toLowerCase()) ||
+          ressource.description.toLowerCase().includes(term.toLowerCase()) ||
+          ressource.author.toLowerCase().includes(term.toLowerCase())
+        );
+      })
     );
   }
 
   onSearch(event: Event): void {
     const term = (event.target as HTMLInputElement).value;
     this.searchTerm$.next(term);
-  }
-
-  private filterRessources(term: string): Observable<Ressource[]> {
-    return this.ressources$.pipe(
-      map(ressources => {
-        if (!term) {
-          return ressources;
-        }
-        return ressources.filter(ressource =>
-          ressource.title.toLowerCase().includes(term.toLowerCase())
-        );
-      })
-    );
   }
 }

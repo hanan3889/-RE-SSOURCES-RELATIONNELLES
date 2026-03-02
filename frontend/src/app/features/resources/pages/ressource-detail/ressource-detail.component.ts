@@ -4,11 +4,12 @@ import { ActivatedRoute, RouterModule } from '@angular/router';
 import { Ressource, RessourceService } from '../../services/ressource.service';
 import { Observable } from 'rxjs';
 import { switchMap } from 'rxjs/operators';
+import { SafeHtmlPipe } from '../../../../core/pipes/safe-html.pipe';
 
 @Component({
   selector: 'app-ressource-detail',
   standalone: true,
-  imports: [CommonModule, RouterModule],
+  imports: [CommonModule, RouterModule, SafeHtmlPipe],
   templateUrl: './ressource-detail.component.html',
   styleUrls: ['./ressource-detail.component.scss']
 })

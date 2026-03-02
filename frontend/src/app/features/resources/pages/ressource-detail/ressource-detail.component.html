@@ -1,5 +1,72 @@
-<div *ngIf="ressource$ | async as ressource" class="ressource-detail-container">
-  <h1>{{ ressource.title }}</h1>
-  <p>{{ ressource.description }}</p>
-  <a routerLink="/ressources" class="back-button">Retour à la liste</a>
+<div class="bg-gray-50 min-h-screen">
+  <!-- Header -->
+  <header class="bg-white shadow-sm sticky top-0 z-20">
+    <div class="container mx-auto px-4">
+      <a routerLink="/ressources" class="inline-flex items-center gap-2 py-4 text-gray-600 hover:text-blue-600 transition-colors">
+        <svg xmlns="http://www.w3.org/2000/svg" class="h-5 w-5" viewBox="0 0 20 20" fill="currentColor">
+          <path fill-rule="evenodd" d="M12.707 5.293a1 1 0 010 1.414L9.414 10l3.293 3.293a1 1 0 01-1.414 1.414l-4-4a1 1 0 010-1.414l4-4a1 1 0 011.414 0z" clip-rule="evenodd" />
+        </svg>
+        <span>Retour à la liste</span>
+      </a>
+    </div>
+  </header>
+
+  <!-- Main Content -->
+  <main class="py-12">
+    <div class="container mx-auto px-4">
+      <div *ngIf="ressource$ | async as ressource; else loadingOrError" class="max-w-4xl mx-auto">
+        
+        <!-- Ressource Header -->
+        <div class="ressource-header mb-8">
+          <span class="text-blue-600 font-semibold text-sm uppercase tracking-wider">{{ ressource.category }}</span>
+          <h1 class="text-4xl md:text-5xl font-bold text-gray-900 mt-2 mb-4 leading-tight">{{ ressource.title }}</h1>
+          <div class="flex items-center text-gray-500 text-sm">
+            <span>Par {{ ressource.author }}</span>
+            <span class="mx-2">|</span>
+            <span>{{ ressource.createdAt | date: 'longDate' }}</span>
+            <span *ngIf="ressource.duration" class="mx-2">|</span>
+            <span *ngIf="ressource.duration" class="flex items-center gap-1">
+              <svg xmlns="http://www.w3.org/2000/svg" class="h-4 w-4" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 8v4l3 3m6-3a9 9 0 11-18 0 9 9 0 0118 0z" />
+              </svg>
+              {{ ressource.duration }} min
+            </span>
+          </div>
+        </div>
+
+        <!-- Ressource Content -->
+        <article class="prose lg:prose-xl max-w-none bg-white p-8 md:p-12 rounded-2xl shadow-lg">
+          
+          <!-- Media Placeholder -->
+          <div *ngIf="ressource.type === 'video' || ressource.type === 'podcast'" class="media-placeholder aspect-video bg-gray-800 rounded-lg flex items-center justify-center text-white mb-8">
+            <div class="text-center">
+              <svg *ngIf="ressource.type === 'video'" xmlns="http://www.w3.org/2000/svg" class="h-16 w-16 mx-auto mb-2" viewBox="0 0 20 20" fill="currentColor">
+                <path d="M2 6a2 2 0 012-2h12a2 2 0 012 2v8a2 2 0 01-2 2H4a2 2 0 01-2-2V6zm14.553 1.106l-4.19 2.428V7.466l4.19 2.428a.5.5 0 010 .868z" />
+              </svg>
+              <svg *ngIf="ressource.type === 'podcast'" xmlns="http://www.w3.org/2000/svg" class="h-16 w-16 mx-auto mb-2" viewBox="0 0 20 20" fill="currentColor">
+                <path d="M3 12a3 3 0 013-3h8a3 3 0 013 3v1a3 3 0 01-3 3H6a3 3 0 01-3-3v-1zm1-3a1 1 0 00-1 1v1a1 1 0 001 1h12a1 1 0 001-1v-1a1 1 0 00-1-1H4z" />
+                <path d="M10 3a1 1 0 011 1v4a1 1 0 11-2 0V4a1 1 0 011-1z" />
+              </svg>
+              <p class="font-semibold">{{ ressource.type === 'video' ? 'Vidéo' : 'Podcast' }}</p>
+              <p class="text-sm text-gray-400">Le contenu multimédia sera affiché ici.</p>
+            </div>
+          </div>
+
+          <!-- Text Content -->
+          <p class="lead text-lg text-gray-600">{{ ressource.description }}</p>
+          <div [innerHTML]="ressource.content | safeHtml"></div>
+
+        </article>
+
+      </div>
+    </div>
+  </main>
 </div>
+
+<!-- Loading/Error Template -->
+<ng-template #loadingOrError>
+  <div class="text-center py-20">
+    <p class="text-gray-500">Chargement de la ressource...</p>
+    <!-- You could add a spinner here -->
+  </div>
+</ng-template>
