@@ -62,42 +62,42 @@ export class HomeComponent implements OnInit {
       description: 'Améliorer ses compétences relationnelles',
       icon: '💬',
       resourceCount: 85,
-      color: 'bg-blue-500'
+      color: 'bg-[#000091]'
     },
     {
       name: 'Leadership',
       description: 'Développer ses capacités de leader',
       icon: '👑',
       resourceCount: 62,
-      color: 'bg-purple-500'
+      color: 'bg-[#000091]'
     },
     {
       name: 'Gestion des Émotions',
       description: 'Comprendre et maîtriser ses émotions',
       icon: '🧘',
       resourceCount: 78,
-      color: 'bg-green-500'
+      color: 'bg-[#000091]'
     },
     {
       name: 'Résolution de Conflits',
       description: 'Gérer les situations difficiles',
       icon: '🤝',
       resourceCount: 54,
-      color: 'bg-orange-500'
+      color: 'bg-[#000091]'
     },
     {
       name: 'Intelligence Émotionnelle',
       description: 'Développer son QE',
       icon: '🧠',
       resourceCount: 91,
-      color: 'bg-pink-500'
+      color: 'bg-[#000091]'
     },
     {
       name: 'Travail d\'Équipe',
       description: 'Collaborer efficacement',
       icon: '👥',
       resourceCount: 67,
-      color: 'bg-cyan-500'
+      color: 'bg-[#000091]'
     }
   ];
 
