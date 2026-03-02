@@ -1,3 +1,5 @@
+version: "3.9"
+
 services:
 
   # ----------------------------
@@ -67,6 +69,30 @@ services:
     profiles: ["dev", "prod"]
 
   # ----------------------------
+  # MIGRATIONS (EF Core) - applique les migrations avant l'API
+  # ----------------------------
+
+  migrations:
+    image: mcr.microsoft.com/dotnet/sdk:8.0
+    container_name: rr-migrations
+    working_dir: /workspace
+    volumes:
+      - ./backend:/workspace
+    environment:
+      ASPNETCORE_ENVIRONMENT: Development
+      ConnectionStrings__Default: "Server=db;Port=3306;Database=${MYSQL_DATABASE:-rr};User=${MYSQL_USER:-rr_user};Password=${MYSQL_PASSWORD:-rr_pass};"
+    depends_on:
+      db:
+        condition: service_healthy
+    command: >
+      sh -c "
+      dotnet tool install --global dotnet-ef --version 8.* || true;
+      dotnet restore RessourceRelationnel.sln;
+      /root/.dotnet/tools/dotnet-ef database update --project RessourceRelationnel.Infrastructure --startup-project RessourceRelationnel.Api;
+      "
+    profiles: ["dev", "prod"]
+
+  # ----------------------------
   # API (.NET 8)
   # ----------------------------
 
@@ -77,14 +103,13 @@ services:
     container_name: rr-api
     environment:
       ASPNETCORE_URLS: http://0.0.0.0:8080
-      # Pour Swagger en dev uniquement (si vous activez Swagger en Development dans Program.cs)
       ASPNETCORE_ENVIRONMENT: Development
       ConnectionStrings__Default: "Server=db;Port=3306;Database=${MYSQL_DATABASE:-rr};User=${MYSQL_USER:-rr_user};Password=${MYSQL_PASSWORD:-rr_pass};"
     ports:
       - "8080:8080"
     depends_on:
-      db:
-        condition: service_healthy
+      migrations:
+        condition: service_completed_successfully
     profiles: ["dev", "prod"]
 
   # ----------------------------
