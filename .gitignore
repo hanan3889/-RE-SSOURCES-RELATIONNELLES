@@ -37,3 +37,11 @@
 # System Files
 .DS_Store
 Thumbs.db
+
+# Visual Studio
+.vs/
+backend/.vs/
+
+# .NET build artifacts
+backend/**/bin/
+backend/**/obj/
