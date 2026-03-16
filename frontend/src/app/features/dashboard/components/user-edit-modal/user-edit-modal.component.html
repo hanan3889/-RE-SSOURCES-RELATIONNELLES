@@ -1,0 +1,99 @@
+<div *ngIf="isOpen" class="modal-overlay">
+  <div class="modal-content">
+    <h2 class="text-2xl font-bold mb-4">Modifier l'utilisateur</h2>
+    <form [formGroup]="userForm" (ngSubmit)="onSubmit()">
+      <div class="grid grid-cols-1 md:grid-cols-2 gap-4">
+        <!-- Email (disabled) -->
+        <div>
+          <label for="email" class="block text-sm font-medium text-gray-700">Email</label>
+          <input id="email" type="email" formControlName="email" class="mt-1 block w-full rounded-md border-gray-300 shadow-sm focus:border-indigo-300 focus:ring focus:ring-indigo-200 focus:ring-opacity-50 bg-gray-100" readonly>
+        </div>
+
+        <!-- Role -->
+        <div>
+          <label for="role" class="block text-sm font-medium text-gray-700">Rôle</label>
+          <select id="role" formControlName="role" class="mt-1 block w-full rounded-md border-gray-300 shadow-sm focus:border-indigo-300 focus:ring focus:ring-indigo-200 focus:ring-opacity-50">
+            <option *ngFor="let role of roles" [value]="role">{{ role }}</option>
+          </select>
+        </div>
+
+        <!-- Nom -->
+        <div>
+          <label for="nom" class="block text-sm font-medium text-gray-700">Nom</label>
+          <input id="nom" type="text" formControlName="nom" class="mt-1 block w-full rounded-md border-gray-300 shadow-sm focus:border-indigo-300 focus:ring focus:ring-indigo-200 focus:ring-opacity-50">
+        </div>
+
+        <!-- Prénom -->
+        <div>
+          <label for="prenom" class="block text-sm font-medium text-gray-700">Prénom</label>
+          <input id="prenom" type="text" formControlName="prenom" class="mt-1 block w-full rounded-md border-gray-300 shadow-sm focus:border-indigo-300 focus:ring focus:ring-indigo-200 focus:ring-opacity-50">
+        </div>
+
+        <!-- Bio -->
+        <div class="md:col-span-2">
+          <label for="bio" class="block text-sm font-medium text-gray-700">Bio</label>
+          <textarea id="bio" formControlName="bio" rows="3" class="mt-1 block w-full rounded-md border-gray-300 shadow-sm focus:border-indigo-300 focus:ring focus:ring-indigo-200 focus:ring-opacity-50"></textarea>
+        </div>
+
+        <!-- Telephone -->
+        <div>
+          <label for="telephone" class="block text-sm font-medium text-gray-700">Téléphone</label>
+          <input id="telephone" type="text" formControlName="telephone" class="mt-1 block w-full rounded-md border-gray-300 shadow-sm focus:border-indigo-300 focus:ring focus:ring-indigo-200 focus:ring-opacity-50">
+        </div>
+
+        <!-- Date de Naissance -->
+        <div>
+          <label for="dateNaissance" class="block text-sm font-medium text-gray-700">Date de Naissance</label>
+          <input id="dateNaissance" type="date" formControlName="dateNaissance" class="mt-1 block w-full rounded-md border-gray-300 shadow-sm focus:border-indigo-300 focus:ring focus:ring-indigo-200 focus:ring-opacity-50">
+        </div>
+
+        <!-- Adresse -->
+        <div>
+          <label for="adresse" class="block text-sm font-medium text-gray-700">Adresse</label>
+          <input id="adresse" type="text" formControlName="adresse" class="mt-1 block w-full rounded-md border-gray-300 shadow-sm focus:border-indigo-300 focus:ring focus:ring-indigo-200 focus:ring-opacity-50">
+        </div>
+
+        <!-- Ville -->
+        <div>
+          <label for="ville" class="block text-sm font-medium text-gray-700">Ville</label>
+          <input id="ville" type="text" formControlName="ville" class="mt-1 block w-full rounded-md border-gray-300 shadow-sm focus:border-indigo-300 focus:ring focus:ring-indigo-200 focus:ring-opacity-50">
+        </div>
+
+        <!-- Code Postal -->
+        <div>
+          <label for="codePostal" class="block text-sm font-medium text-gray-700">Code Postal</label>
+          <input id="codePostal" type="text" formControlName="codePostal" class="mt-1 block w-full rounded-md border-gray-300 shadow-sm focus:border-indigo-300 focus:ring focus:ring-indigo-200 focus:ring-opacity-50">
+        </div>
+
+        <!-- Pays -->
+        <div>
+          <label for="pays" class="block text-sm font-medium text-gray-700">Pays</label>
+          <input id="pays" type="text" formControlName="pays" class="mt-1 block w-full rounded-md border-gray-300 shadow-sm focus:border-indigo-300 focus:ring focus:ring-indigo-200 focus:ring-opacity-50">
+        </div>
+
+        <!-- Photo URL -->
+        <div class="md:col-span-2">
+          <label for="photoUrl" class="block text-sm font-medium text-gray-700">URL Photo</label>
+          <input id="photoUrl" type="text" formControlName="photoUrl" class="mt-1 block w-full rounded-md border-gray-300 shadow-sm focus:border-indigo-300 focus:ring focus:ring-indigo-200 focus:ring-opacity-50">
+        </div>
+
+        <!-- Is Active -->
+        <div class="flex items-center mt-2">
+          <input id="isActive" type="checkbox" formControlName="isActive" class="h-4 w-4 text-indigo-600 border-gray-300 rounded focus:ring-indigo-500">
+          <label for="isActive" class="ml-2 block text-sm text-gray-900">Actif</label>
+        </div>
+
+        <!-- Is Email Verified -->
+        <div class="flex items-center mt-2">
+          <input id="isEmailVerified" type="checkbox" formControlName="isEmailVerified" class="h-4 w-4 text-indigo-600 border-gray-300 rounded focus:ring-indigo-500">
+          <label for="isEmailVerified" class="ml-2 block text-sm text-gray-900">Email Vérifié</label>
+        </div>
+      </div>
+
+      <div class="mt-6 flex justify-end space-x-3">
+        <button type="button" (click)="onClose()" class="btn-secondary px-4 py-2 rounded-md text-sm font-medium text-gray-700 border border-gray-300 hover:bg-gray-50 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-indigo-500">Annuler</button>
+        <button type="submit" [disabled]="!userForm.valid" class="btn-primary px-4 py-2 rounded-md text-sm font-medium text-white bg-marianne-blue hover:bg-marianne-blue-hover focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-indigo-500">Enregistrer</button>
+      </div>
+    </form>
+  </div>
+</div>
