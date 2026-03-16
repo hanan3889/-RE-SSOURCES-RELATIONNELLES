@@ -1,4 +1,4 @@
-﻿namespace RessourceRelationnel.Domain.Models;
+namespace RessourceRelationnel.Domain.Models;
 
 public class Ressource
 {
@@ -7,7 +7,9 @@ public class Ressource
     public string Description { get; set; } = string.Empty;
     public string Format { get; set; } = string.Empty;
     public Visibilite Visibilite { get; set; }
-    public Statut Statut { get; set; }
+    public Statut Statut { get; set; } = Statut.EnValidation;
+    public DateTime DateCreation { get; set; } = DateTime.UtcNow;
+    public string? MotifsRefus { get; set; }
 
     public long IdUtilisateur { get; set; }
     public Utilisateur? Utilisateur { get; set; }
