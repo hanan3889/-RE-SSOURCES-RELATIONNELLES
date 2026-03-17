@@ -1,118 +1,76 @@
-# -RE-SSOURCES-RELATIONNELLES - GitFlow
+# (Re)sources Relationnelles
+
+Plateforme web de partage et de gestion de ressources pour le bien-être relationnel.
 
 
-### Règles Absolues
-
-### ❌ Ne JAMAIS faire :
-
-```bash
-# ❌ Push direct sur main ou develop
-git checkout main
-git push origin main
-
-# ❌ Merge sans PR
-git checkout develop
-git merge feat/ma-branche
-git push origin develop
-
-# ❌ Créer une branche depuis main
-git checkout main
-git checkout -b feat/nouvelle-fonctionnalite
-```
 ---
 
-## Procédure Complète
+## Stack technique
 
-### Créer une Nouvelle Branche de Fonctionnalité
-
-**Toujours partir de `develop` à jour :**
-
-```bash
-# Se placer sur develop
-git checkout develop
-
-# Récupérer les dernières modifications
-git pull origin develop
-
-# Créer la branche de fonctionnalité
-git checkout -b feat/nom-de-ma-fonctionnalite
-```
-
-### 2. Développer et Commiter
-
-```bash
-# Ajouter les fichiers modifiés
-git add .
-
-# Commiter avec un message clair
-git commit -m "feat: ajout du dashboard utilisateur avec historique diagnostics"
-
-# Pousser la branche sur GitHub
-git push origin feat/dashboard-utilisateur
-```
-
-### 3. Créer une Pull Request vers `develop`
-
-1. **Aller sur GitHub** → onglet "Pull Requests"
-2. **Cliquer sur "New Pull Request"**
-3. **Sélectionner :**
-   - Base : `develop`
-   - Compare : `feat/votre-branche`
-4. **Remplir le template de PR :**
-
-### 4. Après le Merge dans `develop`
-
-```bash
-# Revenir sur develop
-git checkout develop
-
-# Récupérer les modifications
-git pull origin develop
-
-# Supprimer la branche locale 
-git branch -d feat/dashboard-utilisateur
-
-# Supprimer la branche distante
-git push origin --delete feat/dashboard-utilisateur
-```
-
-### 5. Mise en Production (`develop` → `main`)
-
-1. **Créer une PR de `develop` vers `main`**
-2. **Titre de la PR :** `Release v1.0.0 - 
-3. **Description :**
-4. **Créer un tag de version**
-
-```bash
-git checkout main
-git pull origin main
-git tag -a v1.0.0 -m "Release v1.0.0: Dashboard et diagnostic"
-git push origin v1.0.0
-```
+| Couche | Technologie |
+|---|---|
+| Frontend | Angular 19 (standalone components) |
+| Backend | .NET 8 — ASP.NET Core Web API |
+| Base de données | MySQL 8.0 |
+| Authentification | JWT (BCrypt pour les mots de passe) |
+| Conteneurisation | Docker + Docker Compose |
+| Style | Tailwind CSS + Bootstrap 5 + PrimeNG |
 
 ---
-# RessourceRelationnel - Stack Docker
 
 ## Prérequis
-- Docker Desktop (Linux containers)
-- Ports utilisés :
-  - API: 8080
-  - Front dev: 4200
-  - Front prod (nginx): 8081
-  - MySQL host: 3307 (conteneur: 3306)
 
-## 1 Initialiser (UNE SEULE FOIS)
-Génère automatiquement le projet Angular et la solution .NET si absents.
+- [Docker Desktop](https://www.docker.com/products/docker-desktop/) (mode Linux containers)
+- Ports disponibles sur la machine :
 
-```powershell
-docker compose --profile init up
+| Port | Service |
+|---|---|
+| `4200` | Frontend Angular (mode dev) |
+| `8080` | API .NET |
+| `8081` | Frontend nginx (mode prod) |
+| `3307` | MySQL (accès local) |
+
+---
+
+## Démarrage rapide
+
+### Mode développement
+
+Lance tous les services :
+
+```bash
+docker compose --profile dev up --build
+```
+
+| URL | Description |
+|---|---|
+| `http://localhost:4200` | Application Angular |
+| `http://localhost:8080/swagger` | Documentation API interactive |
+
+### Mode prod (nginx)
+
+```bash
+docker compose --profile prod up --build
+```
+
+| URL | Description |
+|---|---|
+| `http://localhost:8081` | Application (build optimisé) |
+| `http://localhost:8080/swagger` | Documentation API |
+
+### Arrêter les services
+
+```bash
+# Arrêter sans supprimer les données
+docker compose --profile dev down
+
+# Arrêter ET supprimer la base de données 
+docker compose --profile dev down -v
+```
+
+---
 
 
-------
-Lancer docker compose --profile dev up --build pour lancer le conteneur
 
 
------
-## Suppromer les anciennes depéndancs 
-Remove-Item -Recurse -Force node_modules
-Remove-Item package-lock.json
+

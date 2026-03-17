@@ -37,7 +37,11 @@ builder.Services.AddSwaggerGen(c =>
 // Base de données
 var cs = builder.Configuration.GetConnectionString("Default");
 builder.Services.AddDbContext<RRDbContext>(opt =>
-    opt.UseMySql(cs, new MySqlServerVersion(new Version(8, 0, 0))));
+    opt.UseMySql(cs, new MySqlServerVersion(new Version(8, 0, 0)),
+        mySqlOpt => mySqlOpt.EnableRetryOnFailure(
+            maxRetryCount: 10,
+            maxRetryDelay: TimeSpan.FromSeconds(5),
+            errorNumbersToAdd: null)));
 
 // JWT
 var jwtKey = builder.Configuration["Jwt:Key"]!;
@@ -62,7 +66,11 @@ builder.Services.AddScoped<JwtService>();
 // CORS — autorise le frontend Angular
 builder.Services.AddCors(opt =>
     opt.AddPolicy("Angular", policy =>
-        policy.WithOrigins("http://localhost:4200", "http://localhost:80", "http://frontend")
+        policy.WithOrigins(
+                "http://localhost:4200",   // dev Angular
+                "http://localhost:8081",   // prod nginx
+                "http://localhost:80",
+                "http://frontend")
               .AllowAnyHeader()
               .AllowAnyMethod()
               .AllowCredentials()));
