@@ -4,6 +4,7 @@ import { User } from 'src/app/core/models/user.model';
 import { UserEditModalComponent } from '../../components/user-edit-modal/user-edit-modal.component'; // Import the new modal component
 import { CommonModule } from '@angular/common'; // Needed for ngIf, ngFor
 import { ReactiveFormsModule } from '@angular/forms'; // Needed for the modal's form
+import { AuthService } from 'src/app/core/services/auth.service';
 
 @Component({
   selector: 'app-dashboard',
@@ -17,7 +18,7 @@ export class DashboardComponent implements OnInit {
   selectedUser: User | null = null;
   isEditModalOpen: boolean = false; // Control modal visibility
 
-  constructor(private userService: UserService) { }
+  constructor(private userService: UserService, private authService: AuthService) { }
 
   ngOnInit(): void {
     this.loadUsers();
@@ -69,6 +70,10 @@ export class DashboardComponent implements OnInit {
         }
       });
     }
+  }
+
+  logout(): void {
+    this.authService.logout();
   }
 
   onDeleteUser(user: User): void {

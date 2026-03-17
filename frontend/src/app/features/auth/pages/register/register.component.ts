@@ -67,7 +67,8 @@ export class RegisterComponent implements OnInit {
 
     this.authService.register({ nom, prenom, email, password }).subscribe({
       next: () => {
-        this.router.navigate(['/dashboard']);
+        const destination = this.authService.isAdmin() ? '/dashboard' : '/mon-espace';
+        this.router.navigate([destination]);
       },
       error: (err) => {
         this.isSubmitting = false;

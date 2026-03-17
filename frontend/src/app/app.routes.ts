@@ -35,11 +35,20 @@ export const routes: Routes = [
     title: 'Ressources - Ressources Relationnelles'
   },
 
+  // Route Mon Espace (citoyen connecté)
+  {
+    path: 'mon-espace',
+    loadChildren: () => import('./features/mon-espace/mon-espace.routes').then(m => m.MON_ESPACE_ROUTES),
+    canActivate: [AuthGuard],
+    title: 'Mon espace - Ressources Relationnelles'
+  },
+
   // Dashboard Route (Protected)
   {
     path: 'dashboard',
     loadChildren: () => import('./features/dashboard/dashboard.module').then(m => m.DashboardModule),
-    canActivate: [AuthGuard], // Apply the AuthGuard here
+    canActivate: [AuthGuard],
+    data: { role: 'admin' },
     title: 'Tableau de bord - Ressources Relationnelles'
   },
 
