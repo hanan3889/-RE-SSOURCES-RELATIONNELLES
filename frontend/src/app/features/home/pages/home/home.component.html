@@ -139,19 +139,15 @@
     @if (loadingCategories) {
       <div class="text-center py-12 text-gray-custom">Chargement des catégories...</div>
     } @else {
-      <div class="grid md:grid-cols-2 lg:grid-cols-3 gap-6 max-w-6xl mx-auto">
+      <div class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-4 max-w-6xl mx-auto">
         @for (category of categories; track category.idCategorie) {
           <a [routerLink]="['/ressources']" [queryParams]="{ categorie: category.idCategorie }"
-            class="category-card group rounded-xl overflow-hidden border border-gray-200 bg-white hover:shadow-lg transition-all duration-300 transform hover:-translate-y-1 scroll-animation flex items-center gap-5 p-6">
-            <div class="w-12 h-12 rounded-lg bg-[#e8edff] flex items-center justify-center flex-shrink-0">
-              <span class="text-[#000091] font-bold text-lg">{{ category.nomCategorie[0] }}</span>
+            class="group flex flex-col items-center justify-center text-center gap-3 p-6 rounded-xl border border-gray-200 bg-white hover:border-[#000091] hover:shadow-md transition-all duration-200 min-h-[120px]">
+            <div class="w-10 h-10 rounded-lg bg-[#e8edff] flex items-center justify-center flex-shrink-0">
+              <span class="text-[#000091] font-bold text-base leading-none">{{ category.nomCategorie[0] }}</span>
             </div>
-            <div class="flex-1 min-w-0">
-              <h3 class="text-base font-bold text-marianne-title group-hover:text-[#000091] transition-colors">{{ category.nomCategorie }}</h3>
-              <span class="text-sm text-[#000091] font-medium inline-flex items-center gap-1 mt-1">
-                Explorer <span>→</span>
-              </span>
-            </div>
+            <p class="text-sm font-bold text-gray-900 group-hover:text-[#000091] transition-colors leading-snug">{{ category.nomCategorie }}</p>
+            <p class="text-xs text-[#000091] font-medium">Explorer →</p>
           </a>
         }
       </div>
