@@ -22,6 +22,25 @@ public static class DataSeeder
             await db.SaveChangesAsync();
         }
 
+        // --- Compte admin ---
+        const string adminEmail = "admin@ressourcesrelationnelles.fr";
+        if (!await db.Utilisateurs.AnyAsync(u => u.Email == adminEmail))
+        {
+            db.Utilisateurs.Add(new Utilisateur
+            {
+                Nom = "Admin",
+                Prenom = "Principal",
+                Email = adminEmail,
+                Password = BCrypt.Net.BCrypt.HashPassword("Admin@2026"),
+                IdRole = 4, // super_administrateur
+                IsActive = true,
+                IsEmailVerified = true,
+                CreatedAt = new DateTime(2026, 1, 1, 0, 0, 0, DateTimeKind.Utc),
+                UpdatedAt = new DateTime(2026, 1, 1, 0, 0, 0, DateTimeKind.Utc)
+            });
+            await db.SaveChangesAsync();
+        }
+
         // --- Ressources (uniquement si aucune n'existe) ---
         if (!await db.Ressources.AnyAsync())
         {
