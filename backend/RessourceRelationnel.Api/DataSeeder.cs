@@ -12,40 +12,54 @@ public static class DataSeeder
         if (!await db.Categories.AnyAsync())
         {
             db.Categories.AddRange(
-                new Categorie { IdCategorie = 1, NomCategorie = "Communication" },
-                new Categorie { IdCategorie = 2, NomCategorie = "Gestion des émotions" },
-                new Categorie { IdCategorie = 3, NomCategorie = "Leadership" },
-                new Categorie { IdCategorie = 4, NomCategorie = "Résolution de conflits" },
-                new Categorie { IdCategorie = 5, NomCategorie = "Intelligence émotionnelle" },
-                new Categorie { IdCategorie = 6, NomCategorie = "Travail d'équipe" }
+                new Categorie { NomCategorie = "Communication" },
+                new Categorie { NomCategorie = "Gestion des émotions" },
+                new Categorie { NomCategorie = "Leadership" },
+                new Categorie { NomCategorie = "Résolution de conflits" },
+                new Categorie { NomCategorie = "Intelligence émotionnelle" },
+                new Categorie { NomCategorie = "Travail d'équipe" }
             );
             await db.SaveChangesAsync();
         }
 
-        // --- Utilisateur système (auteur des ressources seed) ---
-        const string systemEmail = "system@ressources-relationnelles.fr";
-        if (!await db.Utilisateurs.AnyAsync(u => u.Email == systemEmail))
-        {
-            db.Utilisateurs.Add(new Utilisateur
-            {
-                IdUtilisateur = 1,
-                Nom = "Système",
-                Prenom = "RR",
-                Email = systemEmail,
-                Password = BCrypt.Net.BCrypt.HashPassword("SystemPass@2026!"),
-                IdRole = 4, // super_administrateur
-                IsActive = true,
-                IsEmailVerified = true,
-                CreatedAt = new DateTime(2026, 1, 1, 0, 0, 0, DateTimeKind.Utc),
-                UpdatedAt = new DateTime(2026, 1, 1, 0, 0, 0, DateTimeKind.Utc)
-            });
-            await db.SaveChangesAsync();
-        }
-
-        // --- Ressources ---
+        // --- Ressources (uniquement si aucune n'existe) ---
         if (!await db.Ressources.AnyAsync())
         {
-            var now = new DateTime(2026, 1, 1, 0, 0, 0, DateTimeKind.Utc);
+            // Récupérer les catégories depuis la BDD
+            var cats = await db.Categories.ToDictionaryAsync(c => c.NomCategorie, c => c.IdCategorie);
+
+            // Utilisateur système — créé s'il n'existe pas
+            const string systemEmail = "system@ressources-relationnelles.fr";
+            var systemUser = await db.Utilisateurs.FirstOrDefaultAsync(u => u.Email == systemEmail);
+            if (systemUser == null)
+            {
+                systemUser = new Utilisateur
+                {
+                    Nom = "Système",
+                    Prenom = "RR",
+                    Email = systemEmail,
+                    Password = BCrypt.Net.BCrypt.HashPassword("SystemPass@2026!"),
+                    IdRole = 4, // super_administrateur
+                    IsActive = true,
+                    IsEmailVerified = true,
+                    CreatedAt = new DateTime(2026, 1, 1, 0, 0, 0, DateTimeKind.Utc),
+                    UpdatedAt = new DateTime(2026, 1, 1, 0, 0, 0, DateTimeKind.Utc)
+                };
+                db.Utilisateurs.Add(systemUser);
+                await db.SaveChangesAsync();
+            }
+
+            long authorId = systemUser.IdUtilisateur;
+
+            long comm = cats.GetValueOrDefault("Communication");
+            long emot = cats.GetValueOrDefault("Gestion des émotions");
+            long lead = cats.GetValueOrDefault("Leadership");
+            long conf = cats.GetValueOrDefault("Résolution de conflits");
+            long intel = cats.GetValueOrDefault("Intelligence émotionnelle");
+            long team = cats.GetValueOrDefault("Travail d'équipe");
+
+            var now = DateTime.UtcNow;
+
             db.Ressources.AddRange(
                 new Ressource
                 {
@@ -54,8 +68,8 @@ public static class DataSeeder
                     Format = "Article",
                     Visibilite = Visibilite.Publique,
                     Statut = Statut.Publiee,
-                    IdUtilisateur = 1,
-                    IdCategorie = 1,
+                    IdUtilisateur = authorId,
+                    IdCategorie = comm,
                     DateCreation = now.AddDays(-30)
                 },
                 new Ressource
@@ -65,8 +79,8 @@ public static class DataSeeder
                     Format = "PDF",
                     Visibilite = Visibilite.Publique,
                     Statut = Statut.Publiee,
-                    IdUtilisateur = 1,
-                    IdCategorie = 2,
+                    IdUtilisateur = authorId,
+                    IdCategorie = emot,
                     DateCreation = now.AddDays(-25)
                 },
                 new Ressource
@@ -76,8 +90,8 @@ public static class DataSeeder
                     Format = "Vidéo",
                     Visibilite = Visibilite.Publique,
                     Statut = Statut.Publiee,
-                    IdUtilisateur = 1,
-                    IdCategorie = 3,
+                    IdUtilisateur = authorId,
+                    IdCategorie = lead,
                     DateCreation = now.AddDays(-20)
                 },
                 new Ressource
@@ -87,8 +101,8 @@ public static class DataSeeder
                     Format = "Article",
                     Visibilite = Visibilite.Publique,
                     Statut = Statut.Publiee,
-                    IdUtilisateur = 1,
-                    IdCategorie = 4,
+                    IdUtilisateur = authorId,
+                    IdCategorie = conf,
                     DateCreation = now.AddDays(-18)
                 },
                 new Ressource
@@ -98,8 +112,8 @@ public static class DataSeeder
                     Format = "PDF",
                     Visibilite = Visibilite.Publique,
                     Statut = Statut.Publiee,
-                    IdUtilisateur = 1,
-                    IdCategorie = 5,
+                    IdUtilisateur = authorId,
+                    IdCategorie = intel,
                     DateCreation = now.AddDays(-15)
                 },
                 new Ressource
@@ -109,8 +123,8 @@ public static class DataSeeder
                     Format = "Vidéo",
                     Visibilite = Visibilite.Publique,
                     Statut = Statut.Publiee,
-                    IdUtilisateur = 1,
-                    IdCategorie = 6,
+                    IdUtilisateur = authorId,
+                    IdCategorie = team,
                     DateCreation = now.AddDays(-12)
                 },
                 new Ressource
@@ -120,8 +134,8 @@ public static class DataSeeder
                     Format = "Article",
                     Visibilite = Visibilite.Publique,
                     Statut = Statut.Publiee,
-                    IdUtilisateur = 1,
-                    IdCategorie = 1,
+                    IdUtilisateur = authorId,
+                    IdCategorie = comm,
                     DateCreation = now.AddDays(-10)
                 },
                 new Ressource
@@ -131,8 +145,8 @@ public static class DataSeeder
                     Format = "Audio",
                     Visibilite = Visibilite.Publique,
                     Statut = Statut.Publiee,
-                    IdUtilisateur = 1,
-                    IdCategorie = 2,
+                    IdUtilisateur = authorId,
+                    IdCategorie = emot,
                     DateCreation = now.AddDays(-8)
                 },
                 new Ressource
@@ -142,8 +156,8 @@ public static class DataSeeder
                     Format = "PDF",
                     Visibilite = Visibilite.Publique,
                     Statut = Statut.Publiee,
-                    IdUtilisateur = 1,
-                    IdCategorie = 6,
+                    IdUtilisateur = authorId,
+                    IdCategorie = team,
                     DateCreation = now.AddDays(-5)
                 },
                 new Ressource
@@ -153,8 +167,8 @@ public static class DataSeeder
                     Format = "Vidéo",
                     Visibilite = Visibilite.Publique,
                     Statut = Statut.Publiee,
-                    IdUtilisateur = 1,
-                    IdCategorie = 1,
+                    IdUtilisateur = authorId,
+                    IdCategorie = comm,
                     DateCreation = now.AddDays(-3)
                 }
             );
