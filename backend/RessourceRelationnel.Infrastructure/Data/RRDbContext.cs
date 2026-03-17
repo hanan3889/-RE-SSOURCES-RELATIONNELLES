@@ -15,6 +15,7 @@ public class RRDbContext : DbContext
     public DbSet<Statistique> Statistiques => Set<Statistique>();
     public DbSet<Message> Messages => Set<Message>();
     public DbSet<Favori> Favoris => Set<Favori>();
+    public DbSet<Commentaire> Commentaires => Set<Commentaire>();
 
     protected override void OnModelCreating(ModelBuilder modelBuilder)
     {
@@ -177,6 +178,32 @@ public class RRDbContext : DbContext
             .HasOne(f => f.Ressource)
             .WithMany(r => r.Favoris)
             .HasForeignKey(f => f.IdRessource)
+            .OnDelete(DeleteBehavior.Cascade);
+
+        // COMMENTAIRE
+        modelBuilder.Entity<Commentaire>()
+            .ToTable("commentaire")
+            .HasKey(c => c.IdCommentaire);
+
+        modelBuilder.Entity<Commentaire>()
+            .Property(c => c.Contenu).HasColumnName("contenu").HasMaxLength(2000).IsRequired();
+        modelBuilder.Entity<Commentaire>()
+            .Property(c => c.DateCreation).HasColumnName("date_creation");
+        modelBuilder.Entity<Commentaire>()
+            .Property(c => c.IdUtilisateur).HasColumnName("id_utilisateur").IsRequired();
+        modelBuilder.Entity<Commentaire>()
+            .Property(c => c.IdRessource).HasColumnName("id_ressource").IsRequired();
+
+        modelBuilder.Entity<Commentaire>()
+            .HasOne(c => c.Utilisateur)
+            .WithMany(u => u.Commentaires)
+            .HasForeignKey(c => c.IdUtilisateur)
+            .OnDelete(DeleteBehavior.Cascade);
+
+        modelBuilder.Entity<Commentaire>()
+            .HasOne(c => c.Ressource)
+            .WithMany(r => r.Commentaires)
+            .HasForeignKey(c => c.IdRessource)
             .OnDelete(DeleteBehavior.Cascade);
 
         // MESSAGE

@@ -18,4 +18,5 @@ public class Ressource
     public Categorie? Categorie { get; set; }
 
     public ICollection<Favori> Favoris { get; set; } = new List<Favori>();
+    public ICollection<Commentaire> Commentaires { get; set; } = new List<Commentaire>();
 }
