@@ -48,7 +48,7 @@ export class AuthService {
   logout(): void {
     localStorage.removeItem(environment.jwtTokenName);
     localStorage.removeItem('currentUser');
-    this.router.navigate(['/auth/login']);
+    this.router.navigate(['/home']);
   }
 
   getToken(): string | null {
