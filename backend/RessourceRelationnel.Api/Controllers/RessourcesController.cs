@@ -155,6 +155,22 @@ public class RessourcesController : ControllerBase
         return NoContent();
     }
 
+    // GET /api/ressources/mes-ressources — Ressources du citoyen connecté
+    [HttpGet("mes-ressources")]
+    [Authorize]
+    public async Task<IActionResult> MesRessources()
+    {
+        var userId = long.Parse(User.FindFirstValue(ClaimTypes.NameIdentifier)!);
+        var ressources = await _context.Ressources
+            .Include(r => r.Utilisateur)
+            .Include(r => r.Categorie)
+            .Where(r => r.IdUtilisateur == userId)
+            .OrderByDescending(r => r.DateCreation)
+            .Select(r => ToDto(r))
+            .ToListAsync();
+        return Ok(ressources);
+    }
+
     // GET /api/admin/ressources — Toutes les ressources (Admin/Modérateur)
     [HttpGet("/api/admin/ressources")]
     [Authorize(Roles = "administrateur,super_administrateur,moderateur")]
