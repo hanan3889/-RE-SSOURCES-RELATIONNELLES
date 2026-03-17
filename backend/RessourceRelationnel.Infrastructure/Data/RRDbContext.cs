@@ -14,6 +14,7 @@ public class RRDbContext : DbContext
     public DbSet<Progression> Progressions => Set<Progression>();
     public DbSet<Statistique> Statistiques => Set<Statistique>();
     public DbSet<Message> Messages => Set<Message>();
+    public DbSet<Favori> Favoris => Set<Favori>();
 
     protected override void OnModelCreating(ModelBuilder modelBuilder)
     {
@@ -157,6 +158,26 @@ public class RRDbContext : DbContext
             .HasOne(s => s.Utilisateur)
             .WithMany(u => u.Statistiques)
             .HasForeignKey(s => s.IdUtilisateur);
+
+        // FAVORI
+        modelBuilder.Entity<Favori>()
+            .ToTable("favori")
+            .HasKey(f => new { f.IdUtilisateur, f.IdRessource });
+
+        modelBuilder.Entity<Favori>()
+            .Property(f => f.DateAjout).HasColumnName("date_ajout");
+
+        modelBuilder.Entity<Favori>()
+            .HasOne(f => f.Utilisateur)
+            .WithMany(u => u.Favoris)
+            .HasForeignKey(f => f.IdUtilisateur)
+            .OnDelete(DeleteBehavior.Cascade);
+
+        modelBuilder.Entity<Favori>()
+            .HasOne(f => f.Ressource)
+            .WithMany(r => r.Favoris)
+            .HasForeignKey(f => f.IdRessource)
+            .OnDelete(DeleteBehavior.Cascade);
 
         // MESSAGE
         modelBuilder.Entity<Message>()

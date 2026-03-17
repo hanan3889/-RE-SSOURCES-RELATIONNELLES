@@ -31,6 +31,7 @@ public class Utilisateur
     public Role? Role { get; set; }
 
     public ICollection<Ressource> Ressources { get; set; } = new List<Ressource>();
+    public ICollection<Favori> Favoris { get; set; } = new List<Favori>();
     public ICollection<Message> Messages { get; set; } = new List<Message>();
     public ICollection<Progression> Progressions { get; set; } = new List<Progression>();
     public ICollection<Statistique> Statistiques { get; set; } = new List<Statistique>();
