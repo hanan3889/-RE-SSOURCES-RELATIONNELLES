@@ -6,7 +6,7 @@
         <div class="text-7xl">{{ user.avatar }}</div>
         <div>
           <h1 class="text-4xl font-bold">{{ user.firstName }} {{ user.lastName }}</h1>
-          <p class="text-blue-100">{{ '@' }}{{ user.username }} • {{ user.role }}</p>
+          <p class="text-blue-100">{{ user.role }}</p>
           <p class="text-sm text-blue-100 mt-2">Inscrit depuis {{ formatDate(user.registrationDate) }}</p>
         </div>
       </div>
@@ -110,11 +110,6 @@
         <div>
           <label class="text-sm font-semibold text-gray-600">Nom</label>
           <input type="text" formControlName="lastName" [readonly]="!isEditingInfo"
-            class="w-full mt-2 px-4 py-3 border border-gray-300 rounded-lg" [class.bg-gray-50]="!isEditingInfo" />
-        </div>
-        <div>
-          <label class="text-sm font-semibold text-gray-600">Pseudonyme</label>
-          <input type="text" formControlName="username" [readonly]="!isEditingInfo"
             class="w-full mt-2 px-4 py-3 border border-gray-300 rounded-lg" [class.bg-gray-50]="!isEditingInfo" />
         </div>
         <div>
