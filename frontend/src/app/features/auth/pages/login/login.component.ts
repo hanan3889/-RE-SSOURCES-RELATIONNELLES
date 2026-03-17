@@ -25,7 +25,8 @@ export class LoginComponent implements OnInit {
 
   ngOnInit(): void {
     if (this.authService.isLoggedIn()) {
-      this.router.navigate(['/dashboard']);
+      const dest = this.authService.isAdmin() ? '/dashboard' : '/mon-espace';
+      this.router.navigate([dest]);
     }
 
     this.loginForm = this.fb.group({
@@ -54,7 +55,8 @@ export class LoginComponent implements OnInit {
 
     this.authService.login({ email, password }).subscribe({
       next: () => {
-        this.router.navigate(['/dashboard']);
+        const dest = this.authService.isAdmin() ? '/dashboard' : '/mon-espace';
+        this.router.navigate([dest]);
       },
       error: (err) => {
         this.isSubmitting = false;
