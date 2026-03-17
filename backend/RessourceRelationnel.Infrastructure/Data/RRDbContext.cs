@@ -52,22 +52,6 @@ public class RRDbContext : DbContext
         modelBuilder.Entity<Utilisateur>()
             .Property(u => u.Password).HasColumnName("password").HasMaxLength(255).IsRequired();
         modelBuilder.Entity<Utilisateur>()
-            .Property(u => u.Bio).HasColumnName("bio").HasMaxLength(1000);
-        modelBuilder.Entity<Utilisateur>()
-            .Property(u => u.Telephone).HasColumnName("telephone").HasMaxLength(50);
-        modelBuilder.Entity<Utilisateur>()
-            .Property(u => u.DateNaissance).HasColumnName("date_naissance");
-        modelBuilder.Entity<Utilisateur>()
-            .Property(u => u.Adresse).HasColumnName("adresse").HasMaxLength(255);
-        modelBuilder.Entity<Utilisateur>()
-            .Property(u => u.Ville).HasColumnName("ville").HasMaxLength(100);
-        modelBuilder.Entity<Utilisateur>()
-            .Property(u => u.CodePostal).HasColumnName("code_postal").HasMaxLength(20);
-        modelBuilder.Entity<Utilisateur>()
-            .Property(u => u.Pays).HasColumnName("pays").HasMaxLength(100);
-        modelBuilder.Entity<Utilisateur>()
-            .Property(u => u.PhotoUrl).HasColumnName("photo_url").HasMaxLength(500);
-        modelBuilder.Entity<Utilisateur>()
             .Property(u => u.IsActive).HasColumnName("is_active").HasDefaultValue(true);
         modelBuilder.Entity<Utilisateur>()
             .Property(u => u.IsEmailVerified).HasColumnName("is_email_verified").HasDefaultValue(false);
@@ -113,8 +97,6 @@ public class RRDbContext : DbContext
             .Property(r => r.Statut).HasColumnName("statut").IsRequired();
         modelBuilder.Entity<Ressource>()
             .Property(r => r.DateCreation).HasColumnName("date_creation");
-        modelBuilder.Entity<Ressource>()
-            .Property(r => r.MotifsRefus).HasColumnName("motifs_refus").HasMaxLength(1000);
         modelBuilder.Entity<Ressource>()
             .Property(r => r.IdUtilisateur).HasColumnName("id_utilisateur").IsRequired();
         modelBuilder.Entity<Ressource>()

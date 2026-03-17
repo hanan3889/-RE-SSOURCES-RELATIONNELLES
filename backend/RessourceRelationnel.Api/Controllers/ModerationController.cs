@@ -56,7 +56,6 @@ public class ModerationController : ControllerBase
         if (ressource == null) return NotFound();
 
         ressource.Statut = Statut.Publiee;
-        ressource.MotifsRefus = null;
         await _context.SaveChangesAsync();
 
         return NoContent();
@@ -64,20 +63,14 @@ public class ModerationController : ControllerBase
 
     // PATCH /api/moderateur/ressources/{id}/refuser
     [HttpPatch("ressources/{id:long}/refuser")]
-    public async Task<IActionResult> Refuser(long id, [FromBody] RefuserDto dto)
+    public async Task<IActionResult> Refuser(long id)
     {
         var ressource = await _context.Ressources.FindAsync(id);
         if (ressource == null) return NotFound();
 
         ressource.Statut = Statut.Rejetee;
-        ressource.MotifsRefus = dto.Motif;
         await _context.SaveChangesAsync();
 
         return NoContent();
     }
-}
-
-public class RefuserDto
-{
-    public string Motif { get; set; } = string.Empty;
 }

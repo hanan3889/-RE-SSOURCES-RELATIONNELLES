@@ -8,16 +8,6 @@ public class Utilisateur
     public string Email { get; set; } = string.Empty;
     public string Password { get; set; } = string.Empty;
 
-    // Profil
-    public string? Bio { get; set; }
-    public string? Telephone { get; set; }
-    public DateTime? DateNaissance { get; set; }
-    public string? Adresse { get; set; }
-    public string? Ville { get; set; }
-    public string? CodePostal { get; set; }
-    public string? Pays { get; set; }
-    public string? PhotoUrl { get; set; }
-
     // Statut
     public bool IsActive { get; set; } = true;
     public bool IsEmailVerified { get; set; } = false;

@@ -2,6 +2,7 @@
 using System;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Infrastructure;
+using Microsoft.EntityFrameworkCore.Migrations;
 using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 using RessourceRelationnel.Infrastructure.Data;
 
@@ -10,9 +11,11 @@ using RessourceRelationnel.Infrastructure.Data;
 namespace RessourceRelationnel.Infrastructure.Data.Migrations
 {
     [DbContext(typeof(RRDbContext))]
-    partial class RRDbContextModelSnapshot : ModelSnapshot
+    [Migration("20260317141026_RemoveTelephone")]
+    partial class RemoveTelephone
     {
-        protected override void BuildModel(ModelBuilder modelBuilder)
+        /// <inheritdoc />
+        protected override void BuildTargetModel(ModelBuilder modelBuilder)
         {
 #pragma warning disable 612, 618
             modelBuilder
@@ -167,6 +170,11 @@ namespace RessourceRelationnel.Infrastructure.Data.Migrations
                     b.Property<long>("IdUtilisateur")
                         .HasColumnType("bigint")
                         .HasColumnName("id_utilisateur");
+
+                    b.Property<string>("MotifsRefus")
+                        .HasMaxLength(1000)
+                        .HasColumnType("varchar(1000)")
+                        .HasColumnName("motifs_refus");
 
                     b.Property<int>("Statut")
                         .HasColumnType("int")

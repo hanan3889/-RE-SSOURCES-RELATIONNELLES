@@ -2,6 +2,7 @@
 using System;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Infrastructure;
+using Microsoft.EntityFrameworkCore.Migrations;
 using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 using RessourceRelationnel.Infrastructure.Data;
 
@@ -10,9 +11,11 @@ using RessourceRelationnel.Infrastructure.Data;
 namespace RessourceRelationnel.Infrastructure.Data.Migrations
 {
     [DbContext(typeof(RRDbContext))]
-    partial class RRDbContextModelSnapshot : ModelSnapshot
+    [Migration("20260317140724_RemoveUtilisateurProfilColumns")]
+    partial class RemoveUtilisateurProfilColumns
     {
-        protected override void BuildModel(ModelBuilder modelBuilder)
+        /// <inheritdoc />
+        protected override void BuildTargetModel(ModelBuilder modelBuilder)
         {
 #pragma warning disable 612, 618
             modelBuilder
@@ -168,6 +171,11 @@ namespace RessourceRelationnel.Infrastructure.Data.Migrations
                         .HasColumnType("bigint")
                         .HasColumnName("id_utilisateur");
 
+                    b.Property<string>("MotifsRefus")
+                        .HasMaxLength(1000)
+                        .HasColumnType("varchar(1000)")
+                        .HasColumnName("motifs_refus");
+
                     b.Property<int>("Statut")
                         .HasColumnType("int")
                         .HasColumnName("statut");
@@ -306,6 +314,11 @@ namespace RessourceRelationnel.Infrastructure.Data.Migrations
                         .HasMaxLength(255)
                         .HasColumnType("varchar(255)")
                         .HasColumnName("prenom");
+
+                    b.Property<string>("Telephone")
+                        .HasMaxLength(50)
+                        .HasColumnType("varchar(50)")
+                        .HasColumnName("telephone");
 
                     b.Property<DateTime>("UpdatedAt")
                         .HasColumnType("datetime(6)")

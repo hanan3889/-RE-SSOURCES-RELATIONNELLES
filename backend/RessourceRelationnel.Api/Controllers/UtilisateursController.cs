@@ -68,14 +68,6 @@ public class UtilisateursController : ControllerBase
 
         if (dto.Nom != null) user.Nom = dto.Nom;
         if (dto.Prenom != null) user.Prenom = dto.Prenom;
-        if (dto.Bio != null) user.Bio = dto.Bio;
-        if (dto.Telephone != null) user.Telephone = dto.Telephone;
-        if (dto.DateNaissance.HasValue) user.DateNaissance = dto.DateNaissance;
-        if (dto.Adresse != null) user.Adresse = dto.Adresse;
-        if (dto.Ville != null) user.Ville = dto.Ville;
-        if (dto.CodePostal != null) user.CodePostal = dto.CodePostal;
-        if (dto.Pays != null) user.Pays = dto.Pays;
-        if (dto.PhotoUrl != null) user.PhotoUrl = dto.PhotoUrl;
 
         // Seul admin/super-admin peut changer le rôle et le statut
         if (currentRole == "administrateur" || currentRole == "super_administrateur")
@@ -169,14 +161,6 @@ public class UtilisateursController : ControllerBase
         Nom = u.Nom,
         Prenom = u.Prenom,
         Email = u.Email,
-        Bio = u.Bio,
-        Telephone = u.Telephone,
-        DateNaissance = u.DateNaissance,
-        Adresse = u.Adresse,
-        Ville = u.Ville,
-        CodePostal = u.CodePostal,
-        Pays = u.Pays,
-        PhotoUrl = u.PhotoUrl,
         IsActive = u.IsActive,
         IsEmailVerified = u.IsEmailVerified,
         CreatedAt = u.CreatedAt,

@@ -2,6 +2,7 @@ import { Component, OnInit } from '@angular/core';
 import { CommonModule } from '@angular/common';
 import { FormBuilder, FormGroup, Validators, ReactiveFormsModule } from '@angular/forms';
 import { RouterModule, Router } from '@angular/router';
+import { AuthService } from 'src/app/core/services/auth.service';
 
 @Component({
   selector: 'app-login',
@@ -16,9 +17,17 @@ export class LoginComponent implements OnInit {
   isSubmitting = false;
   errorMessage = '';
 
-  constructor(private fb: FormBuilder, private router: Router) {}
+  constructor(
+    private fb: FormBuilder,
+    private router: Router,
+    private authService: AuthService
+  ) {}
 
   ngOnInit(): void {
+    if (this.authService.isLoggedIn()) {
+      this.router.navigate(['/dashboard']);
+    }
+
     this.loginForm = this.fb.group({
       email: ['', [Validators.required, Validators.email]],
       password: ['', [Validators.required, Validators.minLength(8)]],
@@ -36,24 +45,21 @@ export class LoginComponent implements OnInit {
   }
 
   onSubmit(): void {
-    if (this.loginForm.valid) {
-      this.isSubmitting = true;
-      this.errorMessage = '';
-      
-      const { email, password } = this.loginForm.value;
-      
-      // Simul de connexion API
-      console.log('Connexion avec:', { email, password });
-      
-      // TODO: Appeler le service d'authentification
-      // this.authService.login(email, password).subscribe(...)
-      
-      setTimeout(() => {
-        this.isSubmitting = false;
-        // Simulate successful login by setting a token
-        localStorage.setItem('authToken', 'fake-token');
+    if (this.loginForm.invalid) return;
+
+    this.isSubmitting = true;
+    this.errorMessage = '';
+
+    const { email, password } = this.loginForm.value;
+
+    this.authService.login({ email, password }).subscribe({
+      next: () => {
         this.router.navigate(['/dashboard']);
-      }, 1500);
-    }
+      },
+      error: (err) => {
+        this.isSubmitting = false;
+        this.errorMessage = err.error?.message ?? 'Erreur de connexion.';
+      }
+    });
   }
 }

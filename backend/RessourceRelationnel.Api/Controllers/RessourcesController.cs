@@ -181,7 +181,6 @@ public class RessourcesController : ControllerBase
         Visibilite = r.Visibilite.ToString(),
         Statut = r.Statut.ToString(),
         DateCreation = r.DateCreation,
-        MotifsRefus = r.MotifsRefus,
         IdUtilisateur = r.IdUtilisateur,
         NomAuteur = r.Utilisateur?.Nom ?? "",
         PrenomAuteur = r.Utilisateur?.Prenom ?? "",

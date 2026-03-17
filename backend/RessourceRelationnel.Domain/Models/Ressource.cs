@@ -9,7 +9,6 @@ public class Ressource
     public Visibilite Visibilite { get; set; }
     public Statut Statut { get; set; } = Statut.EnValidation;
     public DateTime DateCreation { get; set; } = DateTime.UtcNow;
-    public string? MotifsRefus { get; set; }
 
     public long IdUtilisateur { get; set; }
     public Utilisateur? Utilisateur { get; set; }

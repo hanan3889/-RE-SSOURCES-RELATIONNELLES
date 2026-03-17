@@ -9,7 +9,6 @@ public class RessourceDto
     public string Visibilite { get; set; } = string.Empty;
     public string Statut { get; set; } = string.Empty;
     public DateTime DateCreation { get; set; }
-    public string? MotifsRefus { get; set; }
     public long IdUtilisateur { get; set; }
     public string NomAuteur { get; set; } = string.Empty;
     public string PrenomAuteur { get; set; } = string.Empty;
