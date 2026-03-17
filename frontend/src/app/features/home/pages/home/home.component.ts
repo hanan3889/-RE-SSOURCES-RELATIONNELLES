@@ -19,40 +19,40 @@ export class HomeComponent implements OnInit {
   
   // Statistiques
   stats = [
-    { label: 'Ressources disponibles', value: '500+', icon: '📚' },
-    { label: 'Utilisateurs actifs', value: '2,500+', icon: '👥' },
-    { label: 'Catégories', value: '15+', icon: '🏷️' },
-    { label: 'Taux de satisfaction', value: '98%', icon: '⭐' }
+    { label: 'Ressources disponibles', value: '500+', icon: '' },
+    { label: 'Utilisateurs actifs', value: '2,500+', icon: '' },
+    { label: 'Catégories', value: '15+', icon: '' },
+    { label: 'Taux de satisfaction', value: '98%', icon: '' }
   ];
 
   // Fonctionnalités principales
   features = [
     {
-      icon: '🎯',
+      icon: '',
       title: 'Ressources Personnalisées',
       description: 'Accédez à des contenus adaptés à vos besoins en développement personnel et professionnel.',
       color: 'blue'
     },
     {
-      icon: '📊',
+      icon: '',
       title: 'Suivi de Progression',
       description: 'Suivez votre évolution et mesurez vos progrès avec des tableaux de bord intuitifs.',
       color: 'green'
     },
     {
-      icon: '👨‍🏫',
+      icon: '',
       title: 'Contenu Certifié',
       description: 'Toutes nos ressources sont validées par des experts en relations humaines.',
       color: 'purple'
     },
     {
-      icon: '💬',
+      icon: '',
       title: 'Communauté Active',
       description: 'Échangez avec d\'autres utilisateurs et partagez vos expériences.',
       color: 'orange'
     },
     {
-      icon: '📱',
+      icon: '',
       title: 'Accessible Partout',
       description: 'Accédez à vos ressources depuis n\'importe quel appareil, à tout moment.',
       color: 'cyan'
@@ -64,42 +64,42 @@ export class HomeComponent implements OnInit {
     {
       name: 'Communication',
       description: 'Améliorer ses compétences relationnelles',
-      icon: '💬',
+      icon: '',
       resourceCount: 85,
       color: 'bg-blue-600'
     },
     {
       name: 'Leadership',
       description: 'Développer ses capacités de leader',
-      icon: '👑',
+      icon: '',
       resourceCount: 62,
       color: 'bg-green-600'
     },
     {
       name: 'Gestion des Émotions',
       description: 'Comprendre et maîtriser ses émotions',
-      icon: '🧘',
+      icon: '',
       resourceCount: 78,
       color: 'bg-purple-600'
     },
     {
       name: 'Résolution de Conflits',
       description: 'Gérer les situations difficiles',
-      icon: '🤝',
+      icon: '',
       resourceCount: 54,
       color: 'bg-red-600'
     },
     {
       name: 'Intelligence Émotionnelle',
       description: 'Développer son QE',
-      icon: '🧠',
+      icon: '',
       resourceCount: 91,
       color: 'bg-yellow-600'
     },
     {
       name: "Travail d'Équipe",
       description: 'Collaborer efficacement',
-      icon: '👥',
+      icon: '',
       resourceCount: 67,
       color: 'bg-indigo-600'
     }
@@ -110,27 +110,27 @@ export class HomeComponent implements OnInit {
     {
       name: 'Sophie Martin',
       role: 'Manager RH',
-      avatar: '👩‍💼',
+      avatar: 'SM',
       content: 'Cette plateforme m\'a vraiment aidée à améliorer mes relations professionnelles. Les ressources sont claires et pratiques.',
       rating: 5
     },
     {
       name: 'Thomas Dubois',
       role: 'Coach professionnel',
-      avatar: '👨‍🏫',
+      avatar: 'TD',
       content: 'Je recommande vivement ! Les contenus sont de qualité et le suivi de progression est très motivant.',
       rating: 5
     },
     {
       name: 'Marie Lefebvre',
       role: 'Entrepreneur',
-      avatar: '👩‍💻',
+      avatar: 'ML',
       content: 'Grâce à ces ressources, j\'ai pu transformer ma manière de communiquer avec mon équipe. Résultats visibles en quelques semaines.',
       rating: 5
     }
   ];
 
-  // Plans (si tu veux ajouter une section pricing plus tard)
+  // Plans 
   plans = [
     {
       name: 'Gratuit',

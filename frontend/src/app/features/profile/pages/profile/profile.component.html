@@ -3,7 +3,7 @@
   <div class="bg-gradient-to-r from-blue-600 to-purple-600 text-white py-12">
     <div class="container mx-auto px-4">
       <div class="flex items-center gap-6">
-        <div class="text-7xl">{{ user.avatar }}</div>
+        <div class="text-2xl font-bold w-20 h-20 flex items-center justify-center bg-white/20 rounded-full">{{ user.firstName?.charAt(0) }}{{ user.lastName?.charAt(0) }}</div>
         <div>
           <h1 class="text-4xl font-bold">{{ user.firstName }} {{ user.lastName }}</h1>
           <p class="text-blue-100">{{ user.role }}</p>
@@ -52,7 +52,7 @@
           [class.border-blue-600]="activeTab === 'identity'"
           [class.text-blue-600]="activeTab === 'identity'"
         >
-          👤 Identité & Compte
+          Identité & Compte
         </button>
         <button
           (click)="selectTab('progress')"
@@ -61,7 +61,7 @@
           [class.border-blue-600]="activeTab === 'progress'"
           [class.text-blue-600]="activeTab === 'progress'"
         >
-          📊 Progression
+          Progression
         </button>
         <button
           (click)="selectTab('contributions')"
@@ -70,7 +70,7 @@
           [class.border-blue-600]="activeTab === 'contributions'"
           [class.text-blue-600]="activeTab === 'contributions'"
         >
-          ✍️ Contributions
+          Contributions
         </button>
         <button
           (click)="selectTab('social')"
@@ -79,7 +79,7 @@
           [class.border-blue-600]="activeTab === 'social'"
           [class.text-blue-600]="activeTab === 'social'"
         >
-          💬 Interactions
+          Interactions
         </button>
       </div>
     </div>

@@ -2,7 +2,7 @@
   <!-- Header de bienvenue -->
   <div class="welcome-header">
     <div class="welcome-content">
-      <h1>Bonjour, {{ currentUser?.prenom }} {{ currentUser?.nom }} 👋</h1>
+      <h1>Bonjour, {{ currentUser?.prenom }} {{ currentUser?.nom }}</h1>
       <p>Bienvenue dans votre espace personnel</p>
     </div>
     <div class="header-actions">
@@ -18,28 +18,24 @@
   <!-- Stats -->
   <div class="stats-grid">
     <div class="stat-card">
-      <span class="stat-icon">⭐</span>
       <div class="stat-info">
         <span class="stat-value">{{ stats.nbFavoris }}</span>
         <span class="stat-label">Favoris</span>
       </div>
     </div>
     <div class="stat-card">
-      <span class="stat-icon">📚</span>
       <div class="stat-info">
         <span class="stat-value">{{ stats.nbMesRessources }}</span>
         <span class="stat-label">Mes ressources</span>
       </div>
     </div>
     <div class="stat-card">
-      <span class="stat-icon">✅</span>
       <div class="stat-info">
         <span class="stat-value">{{ stats.nbPubliees }}</span>
         <span class="stat-label">Publiées</span>
       </div>
     </div>
     <div class="stat-card">
-      <span class="stat-icon">⏳</span>
       <div class="stat-info">
         <span class="stat-value">{{ stats.nbEnAttente }}</span>
         <span class="stat-label">En attente</span>
@@ -50,15 +46,12 @@
   <!-- Actions rapides -->
   <div class="quick-actions">
     <a routerLink="/ressources" class="action-card">
-      <span class="action-icon">🔍</span>
       <span>Explorer les ressources</span>
     </a>
     <a routerLink="/ressources/creer" class="action-card">
-      <span class="action-icon">➕</span>
       <span>Créer une ressource</span>
     </a>
     <a routerLink="/profile" class="action-card">
-      <span class="action-icon">👤</span>
       <span>Mon profil</span>
     </a>
   </div>
@@ -70,13 +63,13 @@
         class="tab-btn"
         [class.active]="activeTab === 'favoris'"
         (click)="setTab('favoris')">
-        ⭐ Mes favoris ({{ stats.nbFavoris }})
+        Mes favoris ({{ stats.nbFavoris }})
       </button>
       <button
         class="tab-btn"
         [class.active]="activeTab === 'mes-ressources'"
         (click)="setTab('mes-ressources')">
-        📚 Mes ressources ({{ stats.nbMesRessources }})
+        Mes ressources ({{ stats.nbMesRessources }})
       </button>
     </div>
 
@@ -87,7 +80,6 @@
           <p class="loading-text">Chargement...</p>
         } @else if (favoris.length === 0) {
           <div class="empty-state">
-            <span>⭐</span>
             <p>Vous n'avez pas encore de favoris.</p>
             <a routerLink="/ressources" class="btn btn-outline">Parcourir les ressources</a>
           </div>
@@ -122,7 +114,6 @@
           <p class="loading-text">Chargement...</p>
         } @else if (mesRessources.length === 0) {
           <div class="empty-state">
-            <span>📚</span>
             <p>Vous n'avez pas encore créé de ressource.</p>
             <a routerLink="/ressources/creer" class="btn btn-outline">Créer ma première ressource</a>
           </div>
