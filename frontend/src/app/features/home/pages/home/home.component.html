@@ -2,15 +2,25 @@
 <!-- BANDEAU RÉPUBLIQUE FRANÇAISE -->
 <!-- ============================================ -->
 <header class="bg-white border-b border-gray-200">
-  <div class="container mx-auto px-4 py-3 flex items-center gap-4">
-    <div class="flex flex-col leading-none">
-      <span class="text-[13px] font-bold text-marianne-title tracking-tight">RÉPUBLIQUE</span>
-      <span class="text-[13px] font-bold text-marianne-title tracking-tight">FRANÇAISE</span>
+  <div class="container mx-auto px-4 py-3 flex items-center justify-between gap-4">
+    <div class="flex items-center gap-4">
+      <div class="flex flex-col leading-none">
+        <span class="text-[13px] font-bold text-marianne-title tracking-tight">RÉPUBLIQUE</span>
+        <span class="text-[13px] font-bold text-marianne-title tracking-tight">FRANÇAISE</span>
+      </div>
+      <div class="w-px h-10 bg-gray-300"></div>
+      <div class="flex flex-col leading-tight">
+        <span class="text-[13px] font-semibold text-marianne-title">Ministère</span>
+        <span class="text-[13px] text-gray-custom">de la Culture</span>
+      </div>
     </div>
-    <div class="w-px h-10 bg-gray-300"></div>
-    <div class="flex flex-col leading-tight">
-      <span class="text-[13px] font-semibold text-marianne-title">Ministère</span>
-      <span class="text-[13px] text-gray-custom">de la Culture</span>
+    <div class="flex items-center gap-3">
+      <a routerLink="/auth/login" class="text-sm font-semibold text-[#000091] border border-[#000091] px-4 py-1.5 rounded hover:bg-[#000091] hover:text-white transition-colors">
+        Se connecter
+      </a>
+      <a routerLink="/auth/register" class="text-sm font-semibold text-white bg-[#000091] px-4 py-1.5 rounded hover:bg-blue-800 transition-colors">
+        S'inscrire
+      </a>
     </div>
   </div>
 </header>
@@ -82,22 +92,6 @@
 </section>
 
 <!-- ============================================ -->
-<!-- STATS SECTION -->
-<!-- ============================================ -->
-<section class="stats-section py-16 bg-white border-b border-gray-100">
-  <div class="container mx-auto px-4">
-    <div class="grid grid-cols-2 md:grid-cols-4 gap-6 max-w-5xl mx-auto">
-      @for (stat of stats; track stat.value) {
-        <div class="text-center scroll-animation p-6">
-          <div class="text-3xl md:text-4xl font-extrabold text-[#000091] mb-1 tracking-tight">{{ stat.value }}</div>
-          <div class="text-gray-custom text-sm font-medium">{{ stat.label }}</div>
-        </div>
-      }
-    </div>
-  </div>
-</section>
-
-<!-- ============================================ -->
 <!-- FEATURES SECTION -->
 <!-- ============================================ -->
 <section id="features" class="features-section py-16 md:py-20 bg-[#f6f6f6]">
@@ -142,27 +136,26 @@
     </div>
 
     <!-- Categories Grid -->
-    <div class="grid md:grid-cols-2 lg:grid-cols-3 gap-6 max-w-6xl mx-auto">
-      @for (category of categories; track category.name) {
-        <div class="category-card group cursor-pointer rounded-2xl overflow-hidden shadow-lg hover:shadow-2xl transition-all duration-300 transform hover:-translate-y-2 scroll-animation">
-          <!-- Card Header -->
-          <div [class]="category.color + ' p-6 text-white relative overflow-hidden'">
-            <div class="relative z-10">
-              <h3 class="text-xl font-bold mb-1">{{ category.name }}</h3>
-              <p class="text-sm text-white/90">{{ category.resourceCount }} ressources</p>
+    @if (loadingCategories) {
+      <div class="text-center py-12 text-gray-custom">Chargement des catégories...</div>
+    } @else {
+      <div class="grid md:grid-cols-2 lg:grid-cols-3 gap-6 max-w-6xl mx-auto">
+        @for (category of categories; track category.idCategorie) {
+          <a [routerLink]="['/ressources']" [queryParams]="{ categorie: category.idCategorie }"
+            class="category-card group rounded-xl overflow-hidden border border-gray-200 bg-white hover:shadow-lg transition-all duration-300 transform hover:-translate-y-1 scroll-animation flex items-center gap-5 p-6">
+            <div class="w-12 h-12 rounded-lg bg-[#e8edff] flex items-center justify-center flex-shrink-0">
+              <span class="text-[#000091] font-bold text-lg">{{ category.nomCategorie[0] }}</span>
             </div>
-          </div>
-          <!-- Card Body -->
-          <div class="bg-white p-6">
-            <p class="text-gray-600">{{ category.description }}</p>
-            <button class="mt-4 text-[#000091] font-semibold hover:text-[#1212ff] inline-flex items-center gap-2 group-hover:gap-3 transition-all text-sm">
-              <span>Explorer</span>
-              <span>→</span>
-            </button>
-          </div>
-        </div>
-      }
-    </div>
+            <div class="flex-1 min-w-0">
+              <h3 class="text-base font-bold text-marianne-title group-hover:text-[#000091] transition-colors">{{ category.nomCategorie }}</h3>
+              <span class="text-sm text-[#000091] font-medium inline-flex items-center gap-1 mt-1">
+                Explorer <span>→</span>
+              </span>
+            </div>
+          </a>
+        }
+      </div>
+    }
 
     <!-- View All Button -->
     <div class="text-center mt-12">
@@ -226,53 +219,6 @@
         </a>
       </div>
     }
-  </div>
-</section>
-
-<!-- ============================================ -->
-<!-- TESTIMONIALS SECTION -->
-<!-- ============================================ -->
-<section class="testimonials-section py-16 md:py-20 bg-[#f6f6f6]">
-  <div class="container mx-auto px-4">
-    <!-- Section Header -->
-    <div class="text-center mb-14 scroll-animation">
-      <span class="text-sm font-semibold text-[#000091] uppercase tracking-wider">Témoignages</span>
-      <h2 class="text-2xl md:text-3xl font-bold text-marianne-title mt-2 mb-4">
-        Ce que disent nos utilisateurs
-      </h2>
-      <p class="text-base text-gray-custom max-w-2xl mx-auto">
-        Ils utilisent la plateforme au quotidien
-      </p>
-    </div>
-
-    <!-- Testimonials Grid -->
-    <div class="grid grid-cols-1 md:grid-cols-3 gap-6 max-w-6xl mx-auto items-start">
-      @for (testimonial of testimonials; track testimonial.name) {
-        <div class="testimonial-card bg-white rounded-lg shadow-soft scroll-animation border border-gray-200/60 flex flex-col h-full">
-          <!-- Card Content -->
-          <div class="p-7 pb-5 flex-1">
-            <!-- Stars -->
-            <div class="flex gap-1 mb-4">
-              @for (star of getStars(testimonial.rating); track $index) {
-                <svg class="w-4.5 h-4.5 text-amber-400" fill="currentColor" viewBox="0 0 20 20"><path d="M9.049 2.927c.3-.921 1.603-.921 1.902 0l1.07 3.292a1 1 0 00.95.69h3.462c.969 0 1.371 1.24.588 1.81l-2.8 2.034a1 1 0 00-.364 1.118l1.07 3.292c.3.921-.755 1.688-1.54 1.118l-2.8-2.034a1 1 0 00-1.175 0l-2.8 2.034c-.784.57-1.838-.197-1.539-1.118l1.07-3.292a1 1 0 00-.364-1.118L2.98 8.72c-.783-.57-.38-1.81.588-1.81h3.461a1 1 0 00.951-.69l1.07-3.292z"/></svg>
-              }
-            </div>
-            <!-- Content -->
-            <p class="text-gray-mention text-sm leading-relaxed">« {{ testimonial.content }} »</p>
-          </div>
-          <!-- Author -->
-          <div class="px-7 pb-7 pt-0">
-            <div class="flex items-center gap-4 pt-4 border-t border-gray-100">
-              <div class="text-sm font-bold w-12 h-12 flex-shrink-0 flex items-center justify-center bg-gray-200 rounded-full text-gray-700">{{ testimonial.avatar }}</div>
-              <div class="min-w-0 flex-1">
-                <div class="font-bold text-gray-900 text-base">{{ testimonial.name }}</div>
-                <div class="text-sm text-gray-600">{{ testimonial.role }}</div>
-              </div>
-            </div>
-          </div>
-        </div>
-      }
-    </div>
   </div>
 </section>
 

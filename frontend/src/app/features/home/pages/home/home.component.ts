@@ -17,14 +17,6 @@ export class HomeComponent implements OnInit {
   dernieresRessources: any[] = [];
   loadingRessources = true;
   
-  // Statistiques
-  stats = [
-    { label: 'Ressources disponibles', value: '500+', icon: '' },
-    { label: 'Utilisateurs actifs', value: '2,500+', icon: '' },
-    { label: 'Catégories', value: '15+', icon: '' },
-    { label: 'Taux de satisfaction', value: '98%', icon: '' }
-  ];
-
   // Fonctionnalités principales
   features = [
     {
@@ -59,123 +51,8 @@ export class HomeComponent implements OnInit {
     }
   ];
 
-  // Catégories populaires
-  categories = [
-    {
-      name: 'Communication',
-      description: 'Améliorer ses compétences relationnelles',
-      icon: '',
-      resourceCount: 85,
-      color: 'bg-blue-600'
-    },
-    {
-      name: 'Leadership',
-      description: 'Développer ses capacités de leader',
-      icon: '',
-      resourceCount: 62,
-      color: 'bg-green-600'
-    },
-    {
-      name: 'Gestion des Émotions',
-      description: 'Comprendre et maîtriser ses émotions',
-      icon: '',
-      resourceCount: 78,
-      color: 'bg-purple-600'
-    },
-    {
-      name: 'Résolution de Conflits',
-      description: 'Gérer les situations difficiles',
-      icon: '',
-      resourceCount: 54,
-      color: 'bg-red-600'
-    },
-    {
-      name: 'Intelligence Émotionnelle',
-      description: 'Développer son QE',
-      icon: '',
-      resourceCount: 91,
-      color: 'bg-yellow-600'
-    },
-    {
-      name: "Travail d'Équipe",
-      description: 'Collaborer efficacement',
-      icon: '',
-      resourceCount: 67,
-      color: 'bg-indigo-600'
-    }
-  ];
-
-  // Témoignages
-  testimonials = [
-    {
-      name: 'Sophie Martin',
-      role: 'Manager RH',
-      avatar: 'SM',
-      content: 'Cette plateforme m\'a vraiment aidée à améliorer mes relations professionnelles. Les ressources sont claires et pratiques.',
-      rating: 5
-    },
-    {
-      name: 'Thomas Dubois',
-      role: 'Coach professionnel',
-      avatar: 'TD',
-      content: 'Je recommande vivement ! Les contenus sont de qualité et le suivi de progression est très motivant.',
-      rating: 5
-    },
-    {
-      name: 'Marie Lefebvre',
-      role: 'Entrepreneur',
-      avatar: 'ML',
-      content: 'Grâce à ces ressources, j\'ai pu transformer ma manière de communiquer avec mon équipe. Résultats visibles en quelques semaines.',
-      rating: 5
-    }
-  ];
-
-  // Plans 
-  plans = [
-    {
-      name: 'Gratuit',
-      price: '0',
-      period: 'mois',
-      features: [
-        'Accès à 50 ressources',
-        'Suivi basique de progression',
-        'Accès communauté',
-        'Support par email'
-      ],
-      highlighted: false,
-      cta: 'Commencer gratuitement'
-    },
-    {
-      name: 'Premium',
-      price: '9.99',
-      period: 'mois',
-      features: [
-        'Accès illimité aux ressources',
-        'Suivi avancé de progression',
-        'Accès prioritaire aux nouveautés',
-        'Certificats de complétion',
-        'Support prioritaire',
-        'Contenu exclusif'
-      ],
-      highlighted: true,
-      cta: 'Essayer 30 jours gratuits'
-    },
-    {
-      name: 'Entreprise',
-      price: 'Sur mesure',
-      period: '',
-      features: [
-        'Tout du plan Premium',
-        'Espace dédié entreprise',
-        'Gestion d\'équipe',
-        'Rapports personnalisés',
-        'Formation sur site',
-        'Account manager dédié'
-      ],
-      highlighted: false,
-      cta: 'Nous contacter'
-    }
-  ];
+  categories: any[] = [];
+  loadingCategories = true;
 
   constructor(private http: HttpClient) {}
 
@@ -187,6 +64,13 @@ export class HomeComponent implements OnInit {
         this.loadingRessources = false;
       },
       error: () => { this.loadingRessources = false; }
+    });
+    this.http.get<any[]>(`${environment.apiUrl}/admin/categories`).subscribe({
+      next: (data) => {
+        this.categories = data;
+        this.loadingCategories = false;
+      },
+      error: () => { this.loadingCategories = false; }
     });
   }
 
@@ -224,10 +108,4 @@ export class HomeComponent implements OnInit {
     }
   }
 
-  /**
-   * Génère un tableau d'étoiles pour le rating
-   */
-  getStars(rating: number): number[] {
-    return Array(rating).fill(0);
-  }
 }

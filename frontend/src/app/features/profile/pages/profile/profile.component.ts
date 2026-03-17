@@ -23,7 +23,7 @@ export class ProfileComponent implements OnInit {
     firstName: '',
     lastName: '',
     email: '',
-    avatar: '👤',
+    avatar: '',
     role: '',
     registrationDate: new Date()
   };

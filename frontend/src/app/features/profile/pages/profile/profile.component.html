@@ -93,10 +93,10 @@
   <div class="bg-white rounded-lg shadow-lg p-8">
     <div class="flex justify-between items-center mb-6">
       <h2 class="text-2xl font-bold text-gray-900 flex items-center gap-2">
-        <span>👤</span> Informations personnelles
+        Informations personnelles
       </h2>
       <button (click)="toggleEditInfo()" class="text-blue-600 font-semibold hover:text-blue-700">
-        {{ isEditingInfo ? 'Annuler' : '✏️ Modifier mes informations' }}
+        {{ isEditingInfo ? 'Annuler' : 'Modifier mes informations' }}
       </button>
     </div>
   
@@ -135,7 +135,7 @@
       <!-- Statut du compte -->
       <div class="bg-white rounded-lg shadow-lg p-8">
         <h2 class="text-2xl font-bold text-gray-900 mb-6 flex items-center gap-2">
-          <span>📋</span> Statut du compte
+          Statut du compte
         </h2>
         <div class="space-y-4">
           <div>
@@ -148,7 +148,7 @@
           </div>
           <div class="mt-4 p-4 bg-blue-50 rounded-lg">
             <p class="text-sm text-blue-900">
-              ℹ️ Vous avez accès à tous les contenus et fonctionnalités en tant que citoyen connecté.
+              Vous avez accès à tous les contenus et fonctionnalités en tant que citoyen connecté.
             </p>
           </div>
         </div>
@@ -157,7 +157,7 @@
       <!-- Paramètres de sécurité -->
     <div class="bg-white rounded-lg shadow-lg p-8">
       <h2 class="text-2xl font-bold text-gray-900 mb-6 flex items-center gap-2">
-        <span>🔒</span> Paramètres de sécurité
+        Paramètres de sécurité
       </h2>
     
       <button *ngIf="!isChangingPassword" (click)="toggleChangePassword()"
@@ -203,25 +203,25 @@
       <!-- Actions RGPD -->
       <div class="bg-white rounded-lg shadow-lg p-8 border-2 border-orange-200">
         <h2 class="text-2xl font-bold text-gray-900 mb-6 flex items-center gap-2">
-          <span>⚖️</span> Vos droits RGPD
+          Vos droits RGPD
         </h2>
         <div class="space-y-4">
           <button
             (click)="downloadData()"
             class="w-full flex items-center justify-between p-4 bg-green-50 border border-green-300 rounded-lg hover:bg-green-100 transition text-green-700"
           >
-            <span class="font-semibold">📥 Exporter mes données</span>
+            <span class="font-semibold">Exporter mes données</span>
             <span>→</span>
           </button>
           <button
             (click)="deleteAccount()"
             class="w-full flex items-center justify-between p-4 bg-red-50 border border-red-300 rounded-lg hover:bg-red-100 transition text-red-700"
           >
-            <span class="font-semibold">🗑️ Supprimer mon compte</span>
+            <span class="font-semibold">Supprimer mon compte</span>
             <span>→</span>
           </button>
           <p class="text-xs text-gray-600 mt-4">
-            ⚠️ Attention: Ces actions sont irréversibles. Veuillez les utiliser avec prudence.
+            Attention : Ces actions sont irréversibles. Veuillez les utiliser avec prudence.
           </p>
         </div>
       </div>
@@ -232,7 +232,7 @@
       <!-- Ressources exploitées -->
       <div class="bg-white rounded-lg shadow-lg p-8">
         <h2 class="text-2xl font-bold text-gray-900 mb-6 flex items-center gap-2">
-          <span>✅</span> Ressources exploitées ({{ exploitedResources.length }})
+          Ressources exploitées ({{ exploitedResources.length }})
         </h2>
         <div class="space-y-4">
           <div *ngFor="let resource of exploitedResources" class="p-4 border border-green-200 rounded-lg bg-green-50">
@@ -251,7 +251,7 @@
       <!-- Ressources sauvegardées -->
       <div class="bg-white rounded-lg shadow-lg p-8">
         <h2 class="text-2xl font-bold text-gray-900 mb-6 flex items-center gap-2">
-          <span>🔖</span> Sauvegardés pour plus tard ({{ savedResources.length }})
+          Sauvegardés pour plus tard ({{ savedResources.length }})
         </h2>
         <div class="space-y-4">
           <div *ngFor="let resource of savedResources" class="p-4 border border-yellow-200 rounded-lg bg-yellow-50">
@@ -273,17 +273,16 @@
       <!-- Mes favoris -->
       <div class="bg-white rounded-lg shadow-lg p-8">
         <h2 class="text-2xl font-bold text-gray-900 mb-6 flex items-center gap-2">
-          <span>❤️</span> Mes favoris ({{ favoriteResources.length }})
+          Mes favoris ({{ favoriteResources.length }})
         </h2>
         <div class="grid md:grid-cols-2 gap-6">
           <div *ngFor="let resource of favoriteResources" class="p-4 border border-pink-200 rounded-lg bg-pink-50">
             <div class="flex items-start justify-between">
               <div>
-                <div class="text-3xl mb-2">{{ resource.icon }}</div>
                 <h3 class="font-semibold text-gray-900">{{ resource.title }}</h3>
                 <p class="text-sm text-gray-600 mt-1">{{ resource.category }}</p>
               </div>
-              <button class="text-pink-600 hover:text-pink-700">✕</button>
+              <button class="text-pink-600 hover:text-pink-700">Retirer</button>
             </div>
           </div>
         </div>
@@ -300,14 +299,14 @@
           (click)="createNewResource()"
           class="bg-white text-blue-600 px-8 py-3 rounded-lg font-semibold hover:bg-gray-100 transition"
         >
-          ➕ Créer une nouvelle ressource
+          Créer une nouvelle ressource
         </button>
       </div>
 
       <!-- Mes publications -->
       <div class="bg-white rounded-lg shadow-lg p-8">
         <h2 class="text-2xl font-bold text-gray-900 mb-6 flex items-center gap-2">
-          <span>📝</span> Mes publications ({{ publications.length }})
+          Mes publications ({{ publications.length }})
         </h2>
         <div class="space-y-4">
           <div *ngFor="let pub of publications" class="p-4 border border-gray-300 rounded-lg hover:shadow-md transition">
@@ -333,19 +332,19 @@
                   (click)="editPublication(pub.id)"
                   class="text-blue-600 hover:text-blue-700 font-semibold text-sm"
                 >
-                  ✏️ Éditer
+                  Éditer
                 </button>
                 <button
                   (click)="deletePublication(pub.id)"
                   class="text-red-600 hover:text-red-700 font-semibold text-sm"
                 >
-                  🗑️ Supprimer
+                  Supprimer
                 </button>
               </div>
             </div>
             <div class="text-sm text-gray-600">
-              <span>👁️ {{ pub.views }} vues</span>
-              <span class="ml-4">💬 {{ pub.comments }} commentaires</span>
+              <span>{{ pub.views }} vues</span>
+              <span class="ml-4">{{ pub.comments }} commentaires</span>
             </div>
           </div>
         </div>
@@ -357,7 +356,7 @@
       <!-- Activités en cours -->
       <div class="bg-white rounded-lg shadow-lg p-8">
         <h2 class="text-2xl font-bold text-gray-900 mb-6 flex items-center gap-2">
-          <span>🎮</span> Activités en cours
+          Activités en cours
         </h2>
         <div class="space-y-4">
           <div *ngFor="let activity of ongoingActivities" class="p-4 border border-blue-200 rounded-lg bg-blue-50">
@@ -384,7 +383,7 @@
       <!-- Mes commentaires -->
       <div class="bg-white rounded-lg shadow-lg p-8">
         <h2 class="text-2xl font-bold text-gray-900 mb-6 flex items-center gap-2">
-          <span>💬</span> Mes commentaires
+          Mes commentaires
         </h2>
         <div class="space-y-4">
           <div *ngFor="let comment of comments" class="p-4 border border-gray-300 rounded-lg">
@@ -398,20 +397,20 @@
                   (click)="editComment(comment.id)"
                   class="text-blue-600 hover:text-blue-700 font-semibold text-sm"
                 >
-                  ✏️ Éditer
+                  Éditer
                 </button>
                 <button
                   (click)="deleteComment(comment.id)"
                   class="text-red-600 hover:text-red-700 font-semibold text-sm"
                 >
-                  🗑️ Supprimer
+                  Supprimer
                 </button>
               </div>
             </div>
             <p class="text-gray-700 mb-3">{{ comment.content }}</p>
             <div class="flex gap-1">
               <ng-container *ngFor="let i of [0,1,2,3,4]">
-                <span *ngIf="i < comment.rating" class="text-yellow-400">⭐</span>
+                <span *ngIf="i < comment.rating" class="text-yellow-400 font-bold text-base">*</span>
               </ng-container>
             </div>
           </div>
@@ -421,7 +420,7 @@
       <!-- Invitations reçues -->
       <div class="bg-white rounded-lg shadow-lg p-8">
         <h2 class="text-2xl font-bold text-gray-900 mb-6 flex items-center gap-2">
-          <span>📬</span> Invitations reçues
+          Invitations reçues
         </h2>
         <div class="space-y-4">
           <div *ngFor="let invitation of invitations" class="p-4 border-2 border-purple-200 rounded-lg bg-purple-50">
@@ -433,13 +432,13 @@
                 (click)="respondToInvitation(invitation.id, true)"
                 class="bg-green-600 text-white px-4 py-2 rounded-lg font-semibold hover:bg-green-700 transition text-sm"
               >
-                ✅ Accepter
+                Accepter
               </button>
               <button
                 (click)="respondToInvitation(invitation.id, false)"
                 class="bg-gray-400 text-white px-4 py-2 rounded-lg font-semibold hover:bg-gray-500 transition text-sm"
               >
-                ❌ Refuser
+                Refuser
               </button>
             </div>
           </div>
