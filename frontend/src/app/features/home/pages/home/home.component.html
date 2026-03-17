@@ -183,6 +183,59 @@
 </section>
 
 <!-- ============================================ -->
+<!-- DERNIÈRES RESSOURCES SECTION -->
+<!-- ============================================ -->
+<section class="py-16 md:py-20 bg-white">
+  <div class="container mx-auto px-4">
+    <div class="text-center mb-12">
+      <span class="text-sm font-semibold text-[#000091] uppercase tracking-wider">Catalogue</span>
+      <h2 class="text-2xl md:text-3xl font-bold text-marianne-title mt-2 mb-4">
+        Dernières ressources publiées
+      </h2>
+      <p class="text-base text-gray-custom max-w-2xl mx-auto">
+        Découvrez les ressources récemment ajoutées par notre communauté
+      </p>
+    </div>
+
+    @if (loadingRessources) {
+      <div class="text-center py-12 text-gray-custom">Chargement des ressources...</div>
+    } @else if (dernieresRessources.length === 0) {
+      <div class="text-center py-12 text-gray-custom">Aucune ressource disponible pour le moment.</div>
+    } @else {
+      <div class="grid md:grid-cols-2 lg:grid-cols-3 gap-6 max-w-6xl mx-auto">
+        @for (ressource of dernieresRessources; track ressource.idRessource) {
+          <div class="bg-white border border-gray-200 rounded-xl p-6 hover:shadow-lg transition-shadow duration-300">
+            <div class="flex items-center justify-between mb-4">
+              <span class="text-xs font-semibold bg-[#e8edff] text-[#000091] px-3 py-1 rounded-full">
+                {{ ressource.format }}
+              </span>
+              <span class="text-xs text-gray-400">{{ ressource.nomCategorie }}</span>
+            </div>
+            <h3 class="text-base font-bold text-marianne-title mb-3 leading-snug">{{ ressource.titre }}</h3>
+            <p class="text-sm text-gray-custom mb-5 line-clamp-2">{{ ressource.description }}</p>
+            <div class="flex items-center justify-between">
+              <span class="text-xs text-gray-400">{{ ressource.prenomAuteur }} {{ ressource.nomAuteur }}</span>
+              <a [routerLink]="['/ressources', ressource.idRessource]"
+                class="text-sm font-semibold text-[#000091] hover:text-[#1212ff] inline-flex items-center gap-1">
+                Voir <span>→</span>
+              </a>
+            </div>
+          </div>
+        }
+      </div>
+
+      <div class="text-center mt-10">
+        <a [routerLink]="['/ressources']"
+          class="inline-flex items-center gap-2 bg-[#000091] text-white px-8 py-4 rounded-full font-semibold hover:bg-[#1212ff] transition-all duration-300 shadow-lg">
+          <span>Voir toutes les ressources</span>
+          <span>→</span>
+        </a>
+      </div>
+    }
+  </div>
+</section>
+
+<!-- ============================================ -->
 <!-- TESTIMONIALS SECTION -->
 <!-- ============================================ -->
 <section class="testimonials-section py-16 md:py-20 bg-[#f6f6f6]">

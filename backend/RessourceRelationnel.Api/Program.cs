@@ -67,8 +67,8 @@ builder.Services.AddScoped<JwtService>();
 builder.Services.AddCors(opt =>
     opt.AddPolicy("Angular", policy =>
         policy.WithOrigins(
-                "http://localhost:4200",   // dev Angular
-                "http://localhost:8081",   // prod nginx
+                "http://localhost:4200",   
+                "http://localhost:8081",  
                 "http://localhost:80",
                 "http://frontend")
               .AllowAnyHeader()
@@ -77,11 +77,12 @@ builder.Services.AddCors(opt =>
 
 var app = builder.Build();
 
-// Migrations automatiques au démarrage
+// Migrations automatiques + seed au démarrage
 using (var scope = app.Services.CreateScope())
 {
     var db = scope.ServiceProvider.GetRequiredService<RRDbContext>();
     db.Database.Migrate();
+    await DataSeeder.SeedAsync(db);
 }
 
 if (app.Environment.IsDevelopment())

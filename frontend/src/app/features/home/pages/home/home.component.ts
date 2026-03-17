@@ -2,6 +2,8 @@
 import { Component, OnInit } from '@angular/core';
 import { CommonModule } from '@angular/common';
 import { RouterLink } from '@angular/router';
+import { HttpClient } from '@angular/common/http';
+import { environment } from 'src/environments/environment';
 
 @Component({
   selector: 'app-home',
@@ -12,6 +14,8 @@ import { RouterLink } from '@angular/router';
 })
 export class HomeComponent implements OnInit {
   currentYear: number = new Date().getFullYear();
+  dernieresRessources: any[] = [];
+  loadingRessources = true;
   
   // Statistiques
   stats = [
@@ -173,11 +177,17 @@ export class HomeComponent implements OnInit {
     }
   ];
 
-  constructor() {}
+  constructor(private http: HttpClient) {}
 
   ngOnInit(): void {
-    // Animation au scroll (optionnel)
     this.setupScrollAnimations();
+    this.http.get<any[]>(`${environment.apiUrl}/ressources`).subscribe({
+      next: (data) => {
+        this.dernieresRessources = data.slice(0, 6);
+        this.loadingRessources = false;
+      },
+      error: () => { this.loadingRessources = false; }
+    });
   }
 
   /**
