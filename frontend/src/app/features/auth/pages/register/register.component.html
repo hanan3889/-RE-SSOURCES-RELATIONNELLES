@@ -25,7 +25,7 @@
               type="text"
               formControlName="nom"
               placeholder="Dupont"
-              class="w-full px-4 py-3 border-2 border-gray-300 rounded-lg focus:outline-none focus:border-blue-500 transition-colors"
+              class="w-full px-4 py-3 bg-white text-gray-900 border-2 border-gray-300 rounded-lg focus:outline-none focus:border-blue-500 transition-colors"
               [class.border-red-500]="isFieldInvalid('nom')"
             />
             <p *ngIf="isFieldInvalid('nom')" class="text-red-500 text-sm mt-1">Requis</p>
@@ -37,7 +37,7 @@
               type="text"
               formControlName="prenom"
               placeholder="Marie"
-              class="w-full px-4 py-3 border-2 border-gray-300 rounded-lg focus:outline-none focus:border-blue-500 transition-colors"
+              class="w-full px-4 py-3 bg-white text-gray-900 border-2 border-gray-300 rounded-lg focus:outline-none focus:border-blue-500 transition-colors"
               [class.border-red-500]="isFieldInvalid('prenom')"
             />
             <p *ngIf="isFieldInvalid('prenom')" class="text-red-500 text-sm mt-1">Requis</p>
@@ -54,7 +54,7 @@
             type="email"
             formControlName="email"
             placeholder="vous@example.com"
-            class="w-full px-4 py-3 border-2 border-gray-300 rounded-lg focus:outline-none focus:border-blue-500 transition-colors"
+            class="w-full px-4 py-3 bg-white text-gray-900 border-2 border-gray-300 rounded-lg focus:outline-none focus:border-blue-500 transition-colors"
             [class.border-red-500]="isFieldInvalid('email')"
           />
           <p *ngIf="isFieldInvalid('email')" class="text-red-500 text-sm mt-1">
@@ -72,7 +72,7 @@
             [type]="showPassword ? 'text' : 'password'"
             formControlName="password"
             placeholder="Minimum 8 caractères"
-            class="w-full px-4 py-3 border-2 border-gray-300 rounded-lg focus:outline-none focus:border-blue-500 transition-colors"
+            class="w-full px-4 py-3 bg-white text-gray-900 border-2 border-gray-300 rounded-lg focus:outline-none focus:border-blue-500 transition-colors"
             [class.border-red-500]="isFieldInvalid('password')"
           />
           <button
@@ -97,7 +97,7 @@
             [type]="showPassword ? 'text' : 'password'"
             formControlName="confirmPassword"
             placeholder="Re-entrez votre mot de passe"
-            class="w-full px-4 py-3 border-2 border-gray-300 rounded-lg focus:outline-none focus:border-blue-500 transition-colors"
+            class="w-full px-4 py-3 bg-white text-gray-900 border-2 border-gray-300 rounded-lg focus:outline-none focus:border-blue-500 transition-colors"
             [class.border-red-500]="isFieldInvalid('confirmPassword')"
           />
           <p *ngIf="isFieldInvalid('confirmPassword')" class="text-red-500 text-sm mt-1">
