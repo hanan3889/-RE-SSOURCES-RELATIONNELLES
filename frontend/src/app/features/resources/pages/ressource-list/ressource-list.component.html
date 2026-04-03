@@ -46,40 +46,42 @@
       
     </div>
 
-    <!-- Grid -->
-    <div class="grid md:grid-cols-2 lg:grid-cols-3 gap-5 max-w-6xl mx-auto">
-      <div *ngFor="let ressource of filteredRessources$ | async" 
-           [routerLink]="['/ressources', ressource.id]" 
-           class="feature-card bg-white p-7 rounded-lg shadow-soft hover:shadow-soft-lg transition-all duration-300 transform hover:-translate-y-1 scroll-animation border border-gray-200/60 cursor-pointer flex flex-col items-stretch">
-        
-        <div class="flex-grow">
-            <div class="resource-meta mb-3">
-              <div class="resource-chips">
-                <span class="resource-chip chip-category">{{ ressource.category }}</span>
-                <span class="resource-chip chip-visibility">{{ ressource.visibilite }}</span>
-                <span class="resource-chip chip-status">{{ ressource.statut }}</span>
+    <ng-container *ngIf="filteredRessources$ | async as ressources">
+      <!-- Grid -->
+      <div class="grid md:grid-cols-2 lg:grid-cols-3 gap-5 max-w-6xl mx-auto">
+        <div *ngFor="let ressource of ressources" 
+            [routerLink]="['/ressources', ressource.id]" 
+            class="feature-card bg-white p-7 rounded-lg shadow-soft hover:shadow-soft-lg transition-all duration-300 transform hover:-translate-y-1 scroll-animation border border-gray-200/60 cursor-pointer flex flex-col items-stretch">
+          
+          <div class="flex-grow">
+              <div class="resource-meta mb-3">
+                <div class="resource-chips">
+                  <span class="resource-chip chip-category">{{ ressource.category }}</span>
+                  <span class="resource-chip chip-visibility">{{ ressource.visibilite }}</span>
+                  <span class="resource-chip chip-status">{{ ressource.statut }}</span>
+                </div>
+                <span class="resource-type">
+                    <svg xmlns="http://www.w3.org/2000/svg" class="h-4 w-4" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 12h6m-6 4h6m2 5H7a2 2 0 01-2-2V5a2 2 0 012-2h5.586a1 1 0 01.707.293l5.414 5.414a1 1 0 01.293.707V19a2 2 0 01-2 2z" /></svg>
+                    <span class="capitalize text-gray-500">Article</span>
+                </span>
               </div>
-              <span class="resource-type">
-                  <svg xmlns="http://www.w3.org/2000/svg" class="h-4 w-4" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 12h6m-6 4h6m2 5H7a2 2 0 01-2-2V5a2 2 0 012-2h5.586a1 1 0 01.707.293l5.414 5.414a1 1 0 01.293.707V19a2 2 0 01-2 2z" /></svg>
-                  <span class="capitalize text-gray-500">Article</span>
-              </span>
-            </div>
-            <h3 class="text-base font-bold text-marianne-title mb-2">{{ ressource.title }}</h3>
-            <p class="text-gray-custom text-sm leading-relaxed mb-4">{{ ressource.description }}</p>
-        </div>
+              <h3 class="text-base font-bold text-marianne-title mb-2">{{ ressource.title }}</h3>
+              <p class="text-gray-custom text-sm leading-relaxed mb-4">{{ ressource.description }}</p>
+          </div>
 
-        <div class="mt-auto pt-4 border-t border-gray-100">
-            <div class="flex items-center justify-between text-sm">
-                <p class="text-gray-500">Par {{ ressource.author }}</p>
-                <span class="text-gray-500">{{ ressource.createdAt | date: 'dd/MM/yyyy' }}</span>
-            </div>
+          <div class="mt-auto pt-4 border-t border-gray-100">
+              <div class="flex items-center justify-between text-sm">
+                  <p class="text-gray-500">Par {{ ressource.author }}</p>
+                  <span class="text-gray-500">{{ ressource.createdAt | date: 'dd/MM/yyyy' }}</span>
+              </div>
+          </div>
         </div>
       </div>
-    </div>
 
-    <div *ngIf="(filteredRessources$ | async)?.length === 0" class="text-center py-12">
-      <p class="text-lg text-white">Aucune ressource ne correspond à votre recherche.</p>
-    </div>
+      <div *ngIf="ressources.length === 0" class="text-center py-12">
+        <p class="text-lg text-white">Aucune ressource ne correspond à votre recherche.</p>
+      </div>
+    </ng-container>
   </div>
 </section>
 

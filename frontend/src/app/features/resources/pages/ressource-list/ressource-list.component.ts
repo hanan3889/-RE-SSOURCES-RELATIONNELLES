@@ -3,7 +3,7 @@ import { CommonModule } from '@angular/common';
 import { FormsModule } from '@angular/forms';
 import { RouterModule } from '@angular/router';
 import { Observable, Subject, combineLatest } from 'rxjs';
-import { debounceTime, distinctUntilChanged, map, startWith } from 'rxjs/operators';
+import { debounceTime, distinctUntilChanged, map, shareReplay, startWith } from 'rxjs/operators';
 
 import { Ressource, RessourceService } from '../../services/ressource.service';
 
@@ -44,7 +44,8 @@ export class RessourceListComponent implements OnInit {
           ressource.description.toLowerCase().includes(term.toLowerCase()) ||
           ressource.author.toLowerCase().includes(term.toLowerCase())
         );
-      })
+      }),
+      shareReplay({ bufferSize: 1, refCount: true })
     );
 
     this.setupScrollAnimations();
