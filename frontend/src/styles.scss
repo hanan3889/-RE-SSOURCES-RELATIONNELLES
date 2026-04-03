@@ -36,3 +36,23 @@
   background-color: rgba(0, 0, 145, 0.12);
   color: #000091;
 }
+
+/* Champs de formulaire: fond blanc partout */
+input,
+textarea,
+select {
+  background-color: #ffffff;
+  color: #161616;
+}
+
+input::placeholder,
+textarea::placeholder {
+  color: #6b7280;
+}
+
+input:disabled,
+textarea:disabled,
+select:disabled {
+  background-color: #f3f4f6;
+  color: #6b7280;
+}
