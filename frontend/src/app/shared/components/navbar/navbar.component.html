@@ -1,0 +1,66 @@
+@if (!hideNavbar) {
+<nav class="navbar">
+  <div class="navbar-container">
+
+    <!-- Logo -->
+    <a routerLink="/home" class="navbar-brand">
+      <span class="brand-rf">RF</span>
+      <span class="brand-sep"></span>
+      <span class="brand-name">(Re)ssources Relationnelles</span>
+    </a>
+
+    <!-- Desktop links -->
+    <div class="navbar-links">
+      <a routerLink="/home" routerLinkActive="active" [routerLinkActiveOptions]="{exact:true}" class="nav-link">Accueil</a>
+      <a routerLink="/ressources" routerLinkActive="active" class="nav-link">Ressources</a>
+      @if (isLoggedIn && !isAdmin) {
+        <a routerLink="/mon-espace" routerLinkActive="active" class="nav-link">Mon espace</a>
+      }
+      @if (isAdmin) {
+        <a routerLink="/dashboard" routerLinkActive="active" class="nav-link">Tableau de bord</a>
+      }
+    </div>
+
+    <!-- Auth actions -->
+    <div class="navbar-actions">
+      @if (isLoggedIn) {
+        <span class="nav-username">{{ userName }}</span>
+        <a routerLink="/profile" class="btn-outline-nav">Mon profil</a>
+        <button (click)="logout()" class="btn-logout-nav">Déconnexion</button>
+      } @else {
+        <a routerLink="/auth/login" class="btn-outline-nav">Se connecter</a>
+        <a routerLink="/auth/register" class="btn-primary-nav">S'inscrire</a>
+      }
+    </div>
+
+    <!-- Burger mobile -->
+    <button class="burger" (click)="menuOpen = !menuOpen" aria-label="Menu">
+      <span [class.open]="menuOpen"></span>
+      <span [class.open]="menuOpen"></span>
+      <span [class.open]="menuOpen"></span>
+    </button>
+  </div>
+
+  <!-- Mobile menu -->
+  @if (menuOpen) {
+    <div class="mobile-menu">
+      <a routerLink="/home" (click)="menuOpen=false" class="mobile-link">Accueil</a>
+      <a routerLink="/ressources" (click)="menuOpen=false" class="mobile-link">Ressources</a>
+      @if (isLoggedIn && !isAdmin) {
+        <a routerLink="/mon-espace" (click)="menuOpen=false" class="mobile-link">Mon espace</a>
+      }
+      @if (isAdmin) {
+        <a routerLink="/dashboard" (click)="menuOpen=false" class="mobile-link">Tableau de bord</a>
+      }
+      <div class="mobile-sep"></div>
+      @if (isLoggedIn) {
+        <a routerLink="/profile" (click)="menuOpen=false" class="mobile-link">Mon profil</a>
+        <button (click)="logout(); menuOpen=false" class="mobile-link mobile-logout">Déconnexion</button>
+      } @else {
+        <a routerLink="/auth/login" (click)="menuOpen=false" class="mobile-link">Se connecter</a>
+        <a routerLink="/auth/register" (click)="menuOpen=false" class="mobile-link mobile-register">S'inscrire</a>
+      }
+    </div>
+  }
+</nav>
+}

@@ -1,0 +1,145 @@
+<div class="mon-espace">
+  <!-- Header de bienvenue -->
+  <div class="welcome-header">
+    <div class="welcome-content">
+      <h1>Bonjour, {{ currentUser?.prenom }} {{ currentUser?.nom }}</h1>
+      <p>Bienvenue dans votre espace personnel</p>
+    </div>
+    <div class="header-actions">
+      <a routerLink="/ressources" class="btn btn-primary">
+        Parcourir les ressources
+      </a>
+      <button class="btn btn-logout" (click)="logout()">
+        Déconnexion
+      </button>
+    </div>
+  </div>
+
+  <!-- Stats -->
+  <div class="stats-grid">
+    <div class="stat-card">
+      <div class="stat-info">
+        <span class="stat-value">{{ stats.nbFavoris }}</span>
+        <span class="stat-label">Favoris</span>
+      </div>
+    </div>
+    <div class="stat-card">
+      <div class="stat-info">
+        <span class="stat-value">{{ stats.nbMesRessources }}</span>
+        <span class="stat-label">Mes ressources</span>
+      </div>
+    </div>
+    <div class="stat-card">
+      <div class="stat-info">
+        <span class="stat-value">{{ stats.nbPubliees }}</span>
+        <span class="stat-label">Publiées</span>
+      </div>
+    </div>
+    <div class="stat-card">
+      <div class="stat-info">
+        <span class="stat-value">{{ stats.nbEnAttente }}</span>
+        <span class="stat-label">En attente</span>
+      </div>
+    </div>
+  </div>
+
+  <!-- Actions rapides -->
+  <div class="quick-actions">
+    <a routerLink="/ressources" class="action-card">
+      <span>Explorer les ressources</span>
+    </a>
+    <a routerLink="/ressources/creer" class="action-card">
+      <span>Créer une ressource</span>
+    </a>
+    <a routerLink="/profile" class="action-card">
+      <span>Mon profil</span>
+    </a>
+  </div>
+
+  <!-- Tabs -->
+  <div class="tabs-section">
+    <div class="tabs-header">
+      <button
+        class="tab-btn"
+        [class.active]="activeTab === 'favoris'"
+        (click)="setTab('favoris')">
+        Mes favoris ({{ stats.nbFavoris }})
+      </button>
+      <button
+        class="tab-btn"
+        [class.active]="activeTab === 'mes-ressources'"
+        (click)="setTab('mes-ressources')">
+        Mes ressources ({{ stats.nbMesRessources }})
+      </button>
+    </div>
+
+    <!-- Favoris -->
+    @if (activeTab === 'favoris') {
+      <div class="tab-content">
+        @if (loading) {
+          <p class="loading-text">Chargement...</p>
+        } @else if (favoris.length === 0) {
+          <div class="empty-state">
+            <p>Vous n'avez pas encore de favoris.</p>
+            <a routerLink="/ressources" class="btn btn-outline">Parcourir les ressources</a>
+          </div>
+        } @else {
+          <div class="ressources-grid">
+            @for (ressource of favoris; track ressource.idRessource) {
+              <div class="ressource-card">
+                <div class="card-header">
+                  <span class="format-badge">{{ ressource.format }}</span>
+                  <span class="categorie">{{ ressource.nomCategorie }}</span>
+                </div>
+                <h3 class="card-title">{{ ressource.titre }}</h3>
+                <p class="card-desc">{{ ressource.description }}</p>
+                <div class="card-footer">
+                  <span class="auteur">{{ ressource.prenomAuteur }} {{ ressource.nomAuteur }}</span>
+                  <div class="card-actions">
+                    <a [routerLink]="['/ressources', ressource.idRessource]" class="btn btn-sm btn-outline">Voir</a>
+                    <button class="btn btn-sm btn-danger" (click)="retirerFavori(ressource.idRessource)">Retirer</button>
+                  </div>
+                </div>
+              </div>
+            }
+          </div>
+        }
+      </div>
+    }
+
+    <!-- Mes ressources -->
+    @if (activeTab === 'mes-ressources') {
+      <div class="tab-content">
+        @if (loading) {
+          <p class="loading-text">Chargement...</p>
+        } @else if (mesRessources.length === 0) {
+          <div class="empty-state">
+            <p>Vous n'avez pas encore créé de ressource.</p>
+            <a routerLink="/ressources/creer" class="btn btn-outline">Créer ma première ressource</a>
+          </div>
+        } @else {
+          <div class="ressources-grid">
+            @for (ressource of mesRessources; track ressource.idRessource) {
+              <div class="ressource-card">
+                <div class="card-header">
+                  <span class="format-badge">{{ ressource.format }}</span>
+                  <span [class]="'statut-badge ' + getStatutClass(ressource.statut)">
+                    {{ getStatutLabel(ressource.statut) }}
+                  </span>
+                </div>
+                <h3 class="card-title">{{ ressource.titre }}</h3>
+                <p class="card-desc">{{ ressource.description }}</p>
+                <div class="card-footer">
+                  <span class="date">{{ ressource.dateCreation | date:'dd/MM/yyyy' }}</span>
+                  <div class="card-actions">
+                    <a [routerLink]="['/ressources', ressource.idRessource]" class="btn btn-sm btn-outline">Voir</a>
+                  </div>
+                </div>
+              </div>
+            }
+          </div>
+        }
+      </div>
+    }
+  </div>
+</div>

@@ -16,7 +16,7 @@ namespace RessourceRelationnel.Infrastructure.Data.Migrations
         {
 #pragma warning disable 612, 618
             modelBuilder
-                .HasAnnotation("ProductVersion", "8.0.24")
+                .HasAnnotation("ProductVersion", "8.0.25")
                 .HasAnnotation("Relational:MaxIdentifierLength", 64);
 
             modelBuilder.Entity("RessourceRelationnel.Domain.Models.Categorie", b =>
@@ -36,6 +36,58 @@ namespace RessourceRelationnel.Infrastructure.Data.Migrations
                     b.ToTable("categorie", (string)null);
                 });
 
+            modelBuilder.Entity("RessourceRelationnel.Domain.Models.Commentaire", b =>
+                {
+                    b.Property<long>("IdCommentaire")
+                        .ValueGeneratedOnAdd()
+                        .HasColumnType("bigint");
+
+                    b.Property<string>("Contenu")
+                        .IsRequired()
+                        .HasMaxLength(2000)
+                        .HasColumnType("varchar(2000)")
+                        .HasColumnName("contenu");
+
+                    b.Property<DateTime>("DateCreation")
+                        .HasColumnType("datetime(6)")
+                        .HasColumnName("date_creation");
+
+                    b.Property<long>("IdRessource")
+                        .HasColumnType("bigint")
+                        .HasColumnName("id_ressource");
+
+                    b.Property<long>("IdUtilisateur")
+                        .HasColumnType("bigint")
+                        .HasColumnName("id_utilisateur");
+
+                    b.HasKey("IdCommentaire");
+
+                    b.HasIndex("IdRessource");
+
+                    b.HasIndex("IdUtilisateur");
+
+                    b.ToTable("commentaire", (string)null);
+                });
+
+            modelBuilder.Entity("RessourceRelationnel.Domain.Models.Favori", b =>
+                {
+                    b.Property<long>("IdUtilisateur")
+                        .HasColumnType("bigint");
+
+                    b.Property<long>("IdRessource")
+                        .HasColumnType("bigint");
+
+                    b.Property<DateTime>("DateAjout")
+                        .HasColumnType("datetime(6)")
+                        .HasColumnName("date_ajout");
+
+                    b.HasKey("IdUtilisateur", "IdRessource");
+
+                    b.HasIndex("IdRessource");
+
+                    b.ToTable("favori", (string)null);
+                });
+
             modelBuilder.Entity("RessourceRelationnel.Domain.Models.Message", b =>
                 {
                     b.Property<long>("IdMessage")
@@ -44,8 +96,8 @@ namespace RessourceRelationnel.Infrastructure.Data.Migrations
 
                     b.Property<string>("Contenu")
                         .IsRequired()
-                        .HasMaxLength(255)
-                        .HasColumnType("varchar(255)")
+                        .HasMaxLength(2000)
+                        .HasColumnType("varchar(2000)")
                         .HasColumnName("contenu");
 
                     b.Property<DateTime>("DateCreation")
@@ -92,16 +144,20 @@ namespace RessourceRelationnel.Infrastructure.Data.Migrations
                         .ValueGeneratedOnAdd()
                         .HasColumnType("bigint");
 
+                    b.Property<DateTime>("DateCreation")
+                        .HasColumnType("datetime(6)")
+                        .HasColumnName("date_creation");
+
                     b.Property<string>("Description")
                         .IsRequired()
-                        .HasMaxLength(255)
-                        .HasColumnType("varchar(255)")
+                        .HasMaxLength(2000)
+                        .HasColumnType("varchar(2000)")
                         .HasColumnName("description");
 
                     b.Property<string>("Format")
                         .IsRequired()
-                        .HasMaxLength(255)
-                        .HasColumnType("varchar(255)")
+                        .HasMaxLength(100)
+                        .HasColumnType("varchar(100)")
                         .HasColumnName("format");
 
                     b.Property<long>("IdCategorie")
@@ -112,11 +168,19 @@ namespace RessourceRelationnel.Infrastructure.Data.Migrations
                         .HasColumnType("bigint")
                         .HasColumnName("id_utilisateur");
 
+                    b.Property<int>("Statut")
+                        .HasColumnType("int")
+                        .HasColumnName("statut");
+
                     b.Property<string>("Titre")
                         .IsRequired()
                         .HasMaxLength(255)
                         .HasColumnType("varchar(255)")
                         .HasColumnName("titre");
+
+                    b.Property<int>("Visibilite")
+                        .HasColumnType("int")
+                        .HasColumnName("visibilite");
 
                     b.HasKey("IdRessource");
 
@@ -142,6 +206,28 @@ namespace RessourceRelationnel.Infrastructure.Data.Migrations
                     b.HasKey("IdRole");
 
                     b.ToTable("role", (string)null);
+
+                    b.HasData(
+                        new
+                        {
+                            IdRole = 1L,
+                            NomRole = "citoyen"
+                        },
+                        new
+                        {
+                            IdRole = 2L,
+                            NomRole = "moderateur"
+                        },
+                        new
+                        {
+                            IdRole = 3L,
+                            NomRole = "administrateur"
+                        },
+                        new
+                        {
+                            IdRole = 4L,
+                            NomRole = "super_administrateur"
+                        });
                 });
 
             modelBuilder.Entity("RessourceRelationnel.Domain.Models.Statistique", b =>
@@ -173,6 +259,10 @@ namespace RessourceRelationnel.Infrastructure.Data.Migrations
                         .ValueGeneratedOnAdd()
                         .HasColumnType("bigint");
 
+                    b.Property<DateTime>("CreatedAt")
+                        .HasColumnType("datetime(6)")
+                        .HasColumnName("created_at");
+
                     b.Property<string>("Email")
                         .IsRequired()
                         .HasMaxLength(255)
@@ -182,6 +272,22 @@ namespace RessourceRelationnel.Infrastructure.Data.Migrations
                     b.Property<long>("IdRole")
                         .HasColumnType("bigint")
                         .HasColumnName("id_role");
+
+                    b.Property<bool>("IsActive")
+                        .ValueGeneratedOnAdd()
+                        .HasColumnType("tinyint(1)")
+                        .HasDefaultValue(true)
+                        .HasColumnName("is_active");
+
+                    b.Property<bool>("IsEmailVerified")
+                        .ValueGeneratedOnAdd()
+                        .HasColumnType("tinyint(1)")
+                        .HasDefaultValue(false)
+                        .HasColumnName("is_email_verified");
+
+                    b.Property<DateTime?>("LastLoginAt")
+                        .HasColumnType("datetime(6)")
+                        .HasColumnName("last_login_at");
 
                     b.Property<string>("Nom")
                         .IsRequired()
@@ -201,11 +307,53 @@ namespace RessourceRelationnel.Infrastructure.Data.Migrations
                         .HasColumnType("varchar(255)")
                         .HasColumnName("prenom");
 
+                    b.Property<DateTime>("UpdatedAt")
+                        .HasColumnType("datetime(6)")
+                        .HasColumnName("updated_at");
+
                     b.HasKey("IdUtilisateur");
 
                     b.HasIndex("IdRole");
 
                     b.ToTable("Utilisateur", (string)null);
+                });
+
+            modelBuilder.Entity("RessourceRelationnel.Domain.Models.Commentaire", b =>
+                {
+                    b.HasOne("RessourceRelationnel.Domain.Models.Ressource", "Ressource")
+                        .WithMany("Commentaires")
+                        .HasForeignKey("IdRessource")
+                        .OnDelete(DeleteBehavior.Cascade)
+                        .IsRequired();
+
+                    b.HasOne("RessourceRelationnel.Domain.Models.Utilisateur", "Utilisateur")
+                        .WithMany("Commentaires")
+                        .HasForeignKey("IdUtilisateur")
+                        .OnDelete(DeleteBehavior.Cascade)
+                        .IsRequired();
+
+                    b.Navigation("Ressource");
+
+                    b.Navigation("Utilisateur");
+                });
+
+            modelBuilder.Entity("RessourceRelationnel.Domain.Models.Favori", b =>
+                {
+                    b.HasOne("RessourceRelationnel.Domain.Models.Ressource", "Ressource")
+                        .WithMany("Favoris")
+                        .HasForeignKey("IdRessource")
+                        .OnDelete(DeleteBehavior.Cascade)
+                        .IsRequired();
+
+                    b.HasOne("RessourceRelationnel.Domain.Models.Utilisateur", "Utilisateur")
+                        .WithMany("Favoris")
+                        .HasForeignKey("IdUtilisateur")
+                        .OnDelete(DeleteBehavior.Cascade)
+                        .IsRequired();
+
+                    b.Navigation("Ressource");
+
+                    b.Navigation("Utilisateur");
                 });
 
             modelBuilder.Entity("RessourceRelationnel.Domain.Models.Message", b =>
@@ -276,6 +424,13 @@ namespace RessourceRelationnel.Infrastructure.Data.Migrations
                     b.Navigation("Ressources");
                 });
 
+            modelBuilder.Entity("RessourceRelationnel.Domain.Models.Ressource", b =>
+                {
+                    b.Navigation("Commentaires");
+
+                    b.Navigation("Favoris");
+                });
+
             modelBuilder.Entity("RessourceRelationnel.Domain.Models.Role", b =>
                 {
                     b.Navigation("Utilisateurs");
@@ -283,6 +438,10 @@ namespace RessourceRelationnel.Infrastructure.Data.Migrations
 
             modelBuilder.Entity("RessourceRelationnel.Domain.Models.Utilisateur", b =>
                 {
+                    b.Navigation("Commentaires");
+
+                    b.Navigation("Favoris");
+
                     b.Navigation("Messages");
 
                     b.Navigation("Progressions");

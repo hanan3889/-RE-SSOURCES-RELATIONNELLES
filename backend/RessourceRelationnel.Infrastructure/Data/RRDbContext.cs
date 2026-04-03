@@ -1,6 +1,5 @@
-﻿using Microsoft.EntityFrameworkCore;
+using Microsoft.EntityFrameworkCore;
 using RessourceRelationnel.Domain.Models;
-using System.Data;
 
 namespace RessourceRelationnel.Infrastructure.Data;
 
@@ -15,6 +14,8 @@ public class RRDbContext : DbContext
     public DbSet<Progression> Progressions => Set<Progression>();
     public DbSet<Statistique> Statistiques => Set<Statistique>();
     public DbSet<Message> Messages => Set<Message>();
+    public DbSet<Favori> Favoris => Set<Favori>();
+    public DbSet<Commentaire> Commentaires => Set<Commentaire>();
 
     protected override void OnModelCreating(ModelBuilder modelBuilder)
     {
@@ -29,6 +30,14 @@ public class RRDbContext : DbContext
             .HasMaxLength(255)
             .IsRequired();
 
+        // Seed des rôles
+        modelBuilder.Entity<Role>().HasData(
+            new Role { IdRole = 1, NomRole = "citoyen" },
+            new Role { IdRole = 2, NomRole = "moderateur" },
+            new Role { IdRole = 3, NomRole = "administrateur" },
+            new Role { IdRole = 4, NomRole = "super_administrateur" }
+        );
+
         // UTILISATEUR
         modelBuilder.Entity<Utilisateur>()
             .ToTable("Utilisateur")
@@ -42,7 +51,16 @@ public class RRDbContext : DbContext
             .Property(u => u.Email).HasColumnName("email").HasMaxLength(255).IsRequired();
         modelBuilder.Entity<Utilisateur>()
             .Property(u => u.Password).HasColumnName("password").HasMaxLength(255).IsRequired();
-
+        modelBuilder.Entity<Utilisateur>()
+            .Property(u => u.IsActive).HasColumnName("is_active").HasDefaultValue(true);
+        modelBuilder.Entity<Utilisateur>()
+            .Property(u => u.IsEmailVerified).HasColumnName("is_email_verified").HasDefaultValue(false);
+        modelBuilder.Entity<Utilisateur>()
+            .Property(u => u.CreatedAt).HasColumnName("created_at");
+        modelBuilder.Entity<Utilisateur>()
+            .Property(u => u.UpdatedAt).HasColumnName("updated_at");
+        modelBuilder.Entity<Utilisateur>()
+            .Property(u => u.LastLoginAt).HasColumnName("last_login_at");
         modelBuilder.Entity<Utilisateur>()
             .Property(u => u.IdRole).HasColumnName("id_role").IsRequired();
 
@@ -70,10 +88,15 @@ public class RRDbContext : DbContext
         modelBuilder.Entity<Ressource>()
             .Property(r => r.Titre).HasColumnName("titre").HasMaxLength(255).IsRequired();
         modelBuilder.Entity<Ressource>()
-            .Property(r => r.Description).HasColumnName("description").HasMaxLength(255).IsRequired();
+            .Property(r => r.Description).HasColumnName("description").HasMaxLength(2000).IsRequired();
         modelBuilder.Entity<Ressource>()
-            .Property(r => r.Format).HasColumnName("format").HasMaxLength(255).IsRequired();
-
+            .Property(r => r.Format).HasColumnName("format").HasMaxLength(100).IsRequired();
+        modelBuilder.Entity<Ressource>()
+            .Property(r => r.Visibilite).HasColumnName("visibilite").IsRequired();
+        modelBuilder.Entity<Ressource>()
+            .Property(r => r.Statut).HasColumnName("statut").IsRequired();
+        modelBuilder.Entity<Ressource>()
+            .Property(r => r.DateCreation).HasColumnName("date_creation");
         modelBuilder.Entity<Ressource>()
             .Property(r => r.IdUtilisateur).HasColumnName("id_utilisateur").IsRequired();
         modelBuilder.Entity<Ressource>()
@@ -95,15 +118,9 @@ public class RRDbContext : DbContext
             .HasKey(p => p.IdProgression);
 
         modelBuilder.Entity<Progression>()
-            .Property(p => p.Valeur)
-            .HasColumnName("progression")
-            .HasMaxLength(255)
-            .IsRequired();
-
+            .Property(p => p.Valeur).HasColumnName("progression").HasMaxLength(255).IsRequired();
         modelBuilder.Entity<Progression>()
-            .Property(p => p.IdUtilisateur)
-            .HasColumnName("id_utilisateur")
-            .IsRequired();
+            .Property(p => p.IdUtilisateur).HasColumnName("id_utilisateur").IsRequired();
 
         modelBuilder.Entity<Progression>()
             .HasOne(p => p.Utilisateur)
@@ -116,20 +133,60 @@ public class RRDbContext : DbContext
             .HasKey(s => s.IdStatistique);
 
         modelBuilder.Entity<Statistique>()
-            .Property(s => s.Valeur)
-            .HasColumnName("statistique")
-            .HasMaxLength(255)
-            .IsRequired();
-
+            .Property(s => s.Valeur).HasColumnName("statistique").HasMaxLength(255).IsRequired();
         modelBuilder.Entity<Statistique>()
-            .Property(s => s.IdUtilisateur)
-            .HasColumnName("id_utilisateur")
-            .IsRequired();
+            .Property(s => s.IdUtilisateur).HasColumnName("id_utilisateur").IsRequired();
 
         modelBuilder.Entity<Statistique>()
             .HasOne(s => s.Utilisateur)
             .WithMany(u => u.Statistiques)
             .HasForeignKey(s => s.IdUtilisateur);
+
+        // FAVORI
+        modelBuilder.Entity<Favori>()
+            .ToTable("favori")
+            .HasKey(f => new { f.IdUtilisateur, f.IdRessource });
+
+        modelBuilder.Entity<Favori>()
+            .Property(f => f.DateAjout).HasColumnName("date_ajout");
+
+        modelBuilder.Entity<Favori>()
+            .HasOne(f => f.Utilisateur)
+            .WithMany(u => u.Favoris)
+            .HasForeignKey(f => f.IdUtilisateur)
+            .OnDelete(DeleteBehavior.Cascade);
+
+        modelBuilder.Entity<Favori>()
+            .HasOne(f => f.Ressource)
+            .WithMany(r => r.Favoris)
+            .HasForeignKey(f => f.IdRessource)
+            .OnDelete(DeleteBehavior.Cascade);
+
+        // COMMENTAIRE
+        modelBuilder.Entity<Commentaire>()
+            .ToTable("commentaire")
+            .HasKey(c => c.IdCommentaire);
+
+        modelBuilder.Entity<Commentaire>()
+            .Property(c => c.Contenu).HasColumnName("contenu").HasMaxLength(2000).IsRequired();
+        modelBuilder.Entity<Commentaire>()
+            .Property(c => c.DateCreation).HasColumnName("date_creation");
+        modelBuilder.Entity<Commentaire>()
+            .Property(c => c.IdUtilisateur).HasColumnName("id_utilisateur").IsRequired();
+        modelBuilder.Entity<Commentaire>()
+            .Property(c => c.IdRessource).HasColumnName("id_ressource").IsRequired();
+
+        modelBuilder.Entity<Commentaire>()
+            .HasOne(c => c.Utilisateur)
+            .WithMany(u => u.Commentaires)
+            .HasForeignKey(c => c.IdUtilisateur)
+            .OnDelete(DeleteBehavior.Cascade);
+
+        modelBuilder.Entity<Commentaire>()
+            .HasOne(c => c.Ressource)
+            .WithMany(r => r.Commentaires)
+            .HasForeignKey(c => c.IdRessource)
+            .OnDelete(DeleteBehavior.Cascade);
 
         // MESSAGE
         modelBuilder.Entity<Message>()
@@ -137,20 +194,11 @@ public class RRDbContext : DbContext
             .HasKey(m => m.IdMessage);
 
         modelBuilder.Entity<Message>()
-            .Property(m => m.DateCreation)
-            .HasColumnName("date_creation")
-            .IsRequired();
-
+            .Property(m => m.DateCreation).HasColumnName("date_creation").IsRequired();
         modelBuilder.Entity<Message>()
-            .Property(m => m.Contenu)
-            .HasColumnName("contenu")
-            .HasMaxLength(255)
-            .IsRequired();
-
+            .Property(m => m.Contenu).HasColumnName("contenu").HasMaxLength(2000).IsRequired();
         modelBuilder.Entity<Message>()
-            .Property(m => m.IdUtilisateur)
-            .HasColumnName("id_utilisateur")
-            .IsRequired();
+            .Property(m => m.IdUtilisateur).HasColumnName("id_utilisateur").IsRequired();
 
         modelBuilder.Entity<Message>()
             .HasOne(m => m.Utilisateur)

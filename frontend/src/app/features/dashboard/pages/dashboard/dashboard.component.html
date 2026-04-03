@@ -1,0 +1,67 @@
+<div class="dashboard-container">
+  <div style="display:flex; justify-content:space-between; align-items:center; margin-bottom:1.5rem;">
+    <h1 class="text-3xl font-bold text-marianne-title">Tableau de bord Admin</h1>
+    <button (click)="logout()" style="padding:0.5rem 1.25rem; background:#ef4444; color:white; border:none; border-radius:6px; cursor:pointer; font-size:0.9rem;">
+      Déconnexion
+    </button>
+  </div>
+  <p class="text-gray-custom">Bienvenue sur le tableau de bord administrateur. Ici, vous pourrez gérer les utilisateurs, les ressources et les catégories.</p>
+
+  <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6 mt-8">
+    <div class="bg-white p-6 rounded-lg shadow-soft col-span-full">
+      <h2 class="text-xl font-semibold text-marianne-title mb-3">Gestion des utilisateurs</h2>
+      <p class="text-gray-custom text-sm mb-4">Gérez les comptes utilisateurs : modifiez les informations, réinitialisez les mots de passe ou supprimez les comptes.</p>
+
+      <div class="overflow-x-auto">
+        <table class="min-w-full bg-white">
+          <thead>
+            <tr>
+              <th class="py-2 px-4 border-b border-gray-200 text-left text-sm font-semibold text-gray-600">ID</th>
+              <th class="py-2 px-4 border-b border-gray-200 text-left text-sm font-semibold text-gray-600">Email</th>
+              <th class="py-2 px-4 border-b border-gray-200 text-left text-sm font-semibold text-gray-600">Nom</th>
+              <th class="py-2 px-4 border-b border-gray-200 text-left text-sm font-semibold text-gray-600">Prénom</th>
+              <th class="py-2 px-4 border-b border-gray-200 text-left text-sm font-semibold text-gray-600">Rôle</th>
+              <th class="py-2 px-4 border-b border-gray-200 text-left text-sm font-semibold text-gray-600">Actions</th>
+            </tr>
+          </thead>
+          <tbody>
+            <tr *ngFor="let user of users">
+              <td class="py-2 px-4 border-b border-gray-200 text-sm text-gray-800">{{ user.id }}</td>
+              <td class="py-2 px-4 border-b border-gray-200 text-sm text-gray-800">{{ user.email }}</td>
+              <td class="py-2 px-4 border-b border-gray-200 text-sm text-gray-800">{{ user.nom }}</td>
+              <td class="py-2 px-4 border-b border-gray-200 text-sm text-gray-800">{{ user.prenom }}</td>
+              <td class="py-2 px-4 border-b border-gray-200 text-sm text-gray-800">{{ user.role }}</td>
+              <td class="py-2 px-4 border-b border-gray-200 text-sm text-gray-800">
+                <button (click)="onEditUser(user)" class="text-marianne-blue hover:text-marianne-blue-hover mr-2">Modifier</button>
+                <button (click)="onResetPassword(user)" class="text-yellow-600 hover:text-yellow-800 mr-2">Réinitialiser MDP</button>
+                <button (click)="onDeleteUser(user)" class="text-red-600 hover:text-red-800">Supprimer</button>
+              </td>
+            </tr>
+            <tr *ngIf="users.length === 0">
+              <td colspan="6" class="py-4 text-center text-gray-500">Aucun utilisateur trouvé.</td>
+            </tr>
+          </tbody>
+        </table>
+      </div>
+    </div>
+
+    <div class="bg-white p-6 rounded-lg shadow-soft">
+      <h2 class="text-xl font-semibold text-marianne-title mb-3">Gestion des ressources</h2>
+      <p class="text-gray-custom text-sm">Ajoutez, modifiez ou supprimez des ressources.</p>
+      <button class="mt-4 btn-primary bg-marianne-blue text-white px-4 py-2 rounded-full text-sm hover:bg-marianne-blue-hover transition-colors">Gérer les ressources</button>
+    </div>
+
+    <div class="bg-white p-6 rounded-lg shadow-soft">
+      <h2 class="text-xl font-semibold text-marianne-title mb-3">Gestion des catégories</h2>
+      <p class="text-gray-custom text-sm">Ajoutez, modifiez ou supprimez des catégories de ressources.</p>
+      <button class="mt-4 btn-primary bg-marianne-blue text-white px-4 py-2 rounded-full text-sm hover:bg-marianne-blue-hover transition-colors">Gérer les catégories</button>
+    </div>
+  </div>
+
+  <app-user-edit-modal
+    [user]="selectedUser"
+    [isOpen]="isEditModalOpen"
+    (close)="onCloseEditModal()"
+    (userUpdated)="onUserUpdated($event)">
+  </app-user-edit-modal>
+</div>

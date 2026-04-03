@@ -2,6 +2,7 @@ import { Component, OnInit } from '@angular/core';
 import { CommonModule } from '@angular/common';
 import { FormBuilder, FormGroup, Validators, ReactiveFormsModule } from '@angular/forms';
 import { RouterModule } from '@angular/router';
+import { AuthService } from 'src/app/core/services/auth.service';
 
 @Component({
   selector: 'app-profile',
@@ -19,12 +20,11 @@ export class ProfileComponent implements OnInit {
   passwordForm!: FormGroup;
 
   user = {
-    firstName: 'Monsieur',
-    lastName: 'Test',
-    username: 'Mr_Test',
-    email: 'Test@example.com',
-    avatar: '👤',
-    role: 'Citoyen Connecté',
+    firstName: '',
+    lastName: '',
+    email: '',
+    avatar: '',
+    role: '',
     registrationDate: new Date()
   };
 
@@ -38,9 +38,16 @@ export class ProfileComponent implements OnInit {
   invitations: any[] = [];
   stats = { resourcesViewed: 12, resourcesUsed: 5, resourcesPublished: 2, favoriteCount: 8, savedForLater: 3 };
 
-  constructor(private fb: FormBuilder) {}
+  constructor(private fb: FormBuilder, private authService: AuthService) {}
 
   ngOnInit(): void {
+    const currentUser = this.authService.getCurrentUser();
+    if (currentUser) {
+      this.user.firstName = currentUser.prenom;
+      this.user.lastName = currentUser.nom;
+      this.user.email = currentUser.email;
+      this.user.role = currentUser.role;
+    }
     this.initForms();
   }
 
@@ -48,7 +55,6 @@ export class ProfileComponent implements OnInit {
     this.infoForm = this.fb.group({
       firstName: [this.user.firstName, Validators.required],
       lastName: [this.user.lastName, Validators.required],
-      username: [this.user.username, Validators.required],
       email: [this.user.email, [Validators.required, Validators.email]],
       currentPasswordConfirm: ['', Validators.required]
     });

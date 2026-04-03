@@ -1,4 +1,4 @@
-﻿namespace RessourceRelationnel.Domain.Models;
+namespace RessourceRelationnel.Domain.Models;
 
 public class Utilisateur
 {
@@ -6,13 +6,23 @@ public class Utilisateur
     public string Nom { get; set; } = string.Empty;
     public string Prenom { get; set; } = string.Empty;
     public string Email { get; set; } = string.Empty;
-
     public string Password { get; set; } = string.Empty;
+
+    // Statut
+    public bool IsActive { get; set; } = true;
+    public bool IsEmailVerified { get; set; } = false;
+
+    // Audit
+    public DateTime CreatedAt { get; set; } = DateTime.UtcNow;
+    public DateTime UpdatedAt { get; set; } = DateTime.UtcNow;
+    public DateTime? LastLoginAt { get; set; }
 
     public long IdRole { get; set; }
     public Role? Role { get; set; }
 
     public ICollection<Ressource> Ressources { get; set; } = new List<Ressource>();
+    public ICollection<Favori> Favoris { get; set; } = new List<Favori>();
+    public ICollection<Commentaire> Commentaires { get; set; } = new List<Commentaire>();
     public ICollection<Message> Messages { get; set; } = new List<Message>();
     public ICollection<Progression> Progressions { get; set; } = new List<Progression>();
     public ICollection<Statistique> Statistiques { get; set; } = new List<Statistique>();
