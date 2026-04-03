@@ -1,62 +1,231 @@
 <div class="dashboard-container">
-  <div style="display:flex; justify-content:space-between; align-items:center; margin-bottom:1.5rem;">
-    <h1 class="text-3xl font-bold text-marianne-title">Tableau de bord Admin</h1>
-    <button (click)="logout()" style="padding:0.5rem 1.25rem; background:#ef4444; color:white; border:none; border-radius:6px; cursor:pointer; font-size:0.9rem;">
-      Déconnexion
-    </button>
-  </div>
-  <p class="text-gray-custom">Bienvenue sur le tableau de bord administrateur. Ici, vous pourrez gérer les utilisateurs, les ressources et les catégories.</p>
+  <header class="admin-header">
+    <div>
+      <p class="admin-kicker">Backoffice</p>
+      <h1>Panel administrateur</h1>
+      <p class="admin-subtitle">
+        Gestion centralisée des utilisateurs, ressources et catégories.
+      </p>
+    </div>
+    <button (click)="logout()" class="btn btn-danger">Déconnexion</button>
+  </header>
 
-  <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6 mt-8">
-    <div class="bg-white p-6 rounded-lg shadow-soft col-span-full">
-      <h2 class="text-xl font-semibold text-marianne-title mb-3">Gestion des utilisateurs</h2>
-      <p class="text-gray-custom text-sm mb-4">Gérez les comptes utilisateurs : modifiez les informations, réinitialisez les mots de passe ou supprimez les comptes.</p>
+  <section class="overview-cards">
+    <article class="card">
+      <p>Utilisateurs</p>
+      <strong>{{ users.length }}</strong>
+      <span>comptes</span>
+    </article>
+    <article class="card">
+      <p>Ressources</p>
+      <strong>{{ ressources.length }}</strong>
+      <span>contenus</span>
+    </article>
+    <article class="card">
+      <p>Catégories</p>
+      <strong>{{ categories.length }}</strong>
+      <span>thématiques</span>
+    </article>
+    <article class="card card-soft">
+      <p>En validation</p>
+      <strong>{{ getRessourceCountByStatut('EnValidation') }}</strong>
+      <span>à relire</span>
+    </article>
+  </section>
 
-      <div class="overflow-x-auto">
-        <table class="min-w-full bg-white">
-          <thead>
-            <tr>
-              <th class="py-2 px-4 border-b border-gray-200 text-left text-sm font-semibold text-gray-600">ID</th>
-              <th class="py-2 px-4 border-b border-gray-200 text-left text-sm font-semibold text-gray-600">Email</th>
-              <th class="py-2 px-4 border-b border-gray-200 text-left text-sm font-semibold text-gray-600">Nom</th>
-              <th class="py-2 px-4 border-b border-gray-200 text-left text-sm font-semibold text-gray-600">Prénom</th>
-              <th class="py-2 px-4 border-b border-gray-200 text-left text-sm font-semibold text-gray-600">Rôle</th>
-              <th class="py-2 px-4 border-b border-gray-200 text-left text-sm font-semibold text-gray-600">Actions</th>
-            </tr>
-          </thead>
-          <tbody>
-            <tr *ngFor="let user of users">
-              <td class="py-2 px-4 border-b border-gray-200 text-sm text-gray-800">{{ user.id }}</td>
-              <td class="py-2 px-4 border-b border-gray-200 text-sm text-gray-800">{{ user.email }}</td>
-              <td class="py-2 px-4 border-b border-gray-200 text-sm text-gray-800">{{ user.nom }}</td>
-              <td class="py-2 px-4 border-b border-gray-200 text-sm text-gray-800">{{ user.prenom }}</td>
-              <td class="py-2 px-4 border-b border-gray-200 text-sm text-gray-800">{{ user.role }}</td>
-              <td class="py-2 px-4 border-b border-gray-200 text-sm text-gray-800">
-                <button (click)="onEditUser(user)" class="text-marianne-blue hover:text-marianne-blue-hover mr-2">Modifier</button>
-                <button (click)="onResetPassword(user)" class="text-yellow-600 hover:text-yellow-800 mr-2">Réinitialiser MDP</button>
-                <button (click)="onDeleteUser(user)" class="text-red-600 hover:text-red-800">Supprimer</button>
-              </td>
-            </tr>
-            <tr *ngIf="users.length === 0">
-              <td colspan="6" class="py-4 text-center text-gray-500">Aucun utilisateur trouvé.</td>
-            </tr>
-          </tbody>
-        </table>
+  <section class="panel" id="users">
+    <div class="panel-header">
+      <h2>Gestion des utilisateurs</h2>
+      <button class="btn btn-secondary" (click)="loadUsers()">Actualiser</button>
+    </div>
+
+    <p class="panel-description">Modifiez les informations, gérez les rôles et nettoyez les comptes obsolètes.</p>
+
+    <div class="table-wrap">
+      <table>
+        <thead>
+          <tr>
+            <th>ID</th>
+            <th>Email</th>
+            <th>Nom</th>
+            <th>Prénom</th>
+            <th>Rôle</th>
+            <th>Actions</th>
+          </tr>
+        </thead>
+        <tbody>
+          <tr *ngFor="let user of users">
+            <td>{{ user.id }}</td>
+            <td>{{ user.email }}</td>
+            <td>{{ user.nom }}</td>
+            <td>{{ user.prenom }}</td>
+            <td>{{ user.role }}</td>
+            <td class="actions-inline">
+              <button (click)="onEditUser(user)" class="link-btn">Modifier</button>
+              <button (click)="onResetPassword(user)" class="link-btn warning">Reset MDP</button>
+              <button (click)="onDeleteUser(user)" class="link-btn danger">Supprimer</button>
+            </td>
+          </tr>
+
+          <tr *ngIf="!isLoadingUsers && users.length === 0">
+            <td colspan="6" class="empty-state">Aucun utilisateur trouvé.</td>
+          </tr>
+          <tr *ngIf="isLoadingUsers">
+            <td colspan="6" class="empty-state">Chargement...</td>
+          </tr>
+        </tbody>
+      </table>
+    </div>
+  </section>
+
+  <section class="panel" id="ressources">
+    <div class="panel-header">
+      <h2>Gestion des ressources</h2>
+      <div class="actions-inline">
+        <select [(ngModel)]="selectedStatutFilter" class="input-select">
+          <option value="">Tous les statuts</option>
+          <option *ngFor="let statut of statuts" [value]="statut">{{ statut }}</option>
+        </select>
+        <button class="btn btn-secondary" (click)="applyRessourceFilter()">Filtrer</button>
       </div>
     </div>
 
-    <div class="bg-white p-6 rounded-lg shadow-soft">
-      <h2 class="text-xl font-semibold text-marianne-title mb-3">Gestion des ressources</h2>
-      <p class="text-gray-custom text-sm">Ajoutez, modifiez ou supprimez des ressources.</p>
-      <button class="mt-4 btn-primary bg-marianne-blue text-white px-4 py-2 rounded-full text-sm hover:bg-marianne-blue-hover transition-colors">Gérer les ressources</button>
+    <p class="panel-description">Ajoutez, modifiez ou supprimez les ressources liées à la base relationnelle.</p>
+
+    <div class="create-grid">
+      <input [(ngModel)]="newRessource.titre" type="text" placeholder="Titre" class="input-text" />
+      <input [(ngModel)]="newRessource.format" type="text" placeholder="Format (article, pdf...)" class="input-text" />
+      <select [(ngModel)]="newRessource.idCategorie" class="input-select">
+        <option [ngValue]="0">Catégorie</option>
+        <option *ngFor="let categorie of categories" [ngValue]="categorie.idCategorie">{{ categorie.nomCategorie }}</option>
+      </select>
+      <select [(ngModel)]="newRessource.visibilite" class="input-select">
+        <option *ngFor="let option of visibiliteOptions" [ngValue]="option.value">{{ option.label }}</option>
+      </select>
+      <textarea [(ngModel)]="newRessource.description" class="input-textarea" placeholder="Description"></textarea>
+      <button class="btn btn-primary" (click)="createRessource()">Ajouter la ressource</button>
     </div>
 
-    <div class="bg-white p-6 rounded-lg shadow-soft">
-      <h2 class="text-xl font-semibold text-marianne-title mb-3">Gestion des catégories</h2>
-      <p class="text-gray-custom text-sm">Ajoutez, modifiez ou supprimez des catégories de ressources.</p>
-      <button class="mt-4 btn-primary bg-marianne-blue text-white px-4 py-2 rounded-full text-sm hover:bg-marianne-blue-hover transition-colors">Gérer les catégories</button>
+    <p *ngIf="ressourcesError" class="error-text">{{ ressourcesError }}</p>
+
+    <div class="table-wrap">
+      <table>
+        <thead>
+          <tr>
+            <th>ID</th>
+            <th>Titre</th>
+            <th>Auteur</th>
+            <th>Catégorie</th>
+            <th>Statut</th>
+            <th>Visibilité</th>
+            <th>Actions</th>
+          </tr>
+        </thead>
+        <tbody>
+          <tr *ngFor="let ressource of ressources">
+            <ng-container *ngIf="editingRessourceId !== ressource.idRessource; else editRow">
+              <td>{{ ressource.idRessource }}</td>
+              <td>{{ ressource.titre }}</td>
+              <td>{{ getAuteurFullName(ressource) }}</td>
+              <td>{{ ressource.nomCategorie }}</td>
+              <td>{{ ressource.statut }}</td>
+              <td>{{ ressource.visibilite }}</td>
+              <td class="actions-inline">
+                <button (click)="startEditRessource(ressource)" class="link-btn">Modifier</button>
+                <button (click)="deleteRessource(ressource)" class="link-btn danger">Supprimer</button>
+              </td>
+            </ng-container>
+
+            <ng-template #editRow>
+              <td>{{ ressource.idRessource }}</td>
+              <td><input [(ngModel)]="editingRessource.titre" class="input-text" /></td>
+              <td>{{ getAuteurFullName(ressource) }}</td>
+              <td>
+                <select [(ngModel)]="editingRessource.idCategorie" class="input-select">
+                  <option *ngFor="let categorie of categories" [ngValue]="categorie.idCategorie">{{ categorie.nomCategorie }}</option>
+                </select>
+              </td>
+              <td>{{ ressource.statut }}</td>
+              <td>
+                <select [(ngModel)]="editingRessource.visibilite" class="input-select">
+                  <option *ngFor="let option of visibiliteOptions" [ngValue]="option.value">{{ option.label }}</option>
+                </select>
+              </td>
+              <td class="actions-inline">
+                <button (click)="saveRessource(ressource.idRessource)" class="link-btn success">Enregistrer</button>
+                <button (click)="cancelEditRessource()" class="link-btn">Annuler</button>
+              </td>
+            </ng-template>
+          </tr>
+
+          <tr *ngIf="!isLoadingRessources && ressources.length === 0">
+            <td colspan="7" class="empty-state">Aucune ressource trouvée.</td>
+          </tr>
+          <tr *ngIf="isLoadingRessources">
+            <td colspan="7" class="empty-state">Chargement...</td>
+          </tr>
+        </tbody>
+      </table>
     </div>
-  </div>
+  </section>
+
+  <section class="panel" id="categories">
+    <div class="panel-header">
+      <h2>Gestion des catégories</h2>
+      <button class="btn btn-secondary" (click)="loadCategories()">Actualiser</button>
+    </div>
+
+    <p class="panel-description">Créez, renommez et supprimez les catégories de ressources.</p>
+
+    <div class="create-inline">
+      <input [(ngModel)]="newCategorieName" class="input-text" type="text" placeholder="Nom de la catégorie" />
+      <button class="btn btn-primary" (click)="createCategorie()">Ajouter</button>
+    </div>
+
+    <p *ngIf="categoriesError" class="error-text">{{ categoriesError }}</p>
+
+    <div class="table-wrap">
+      <table>
+        <thead>
+          <tr>
+            <th>ID</th>
+            <th>Nom</th>
+            <th>Actions</th>
+          </tr>
+        </thead>
+        <tbody>
+          <tr *ngFor="let categorie of categories">
+            <ng-container *ngIf="editingCategorieId !== categorie.idCategorie; else editCategorieRow">
+              <td>{{ categorie.idCategorie }}</td>
+              <td>{{ categorie.nomCategorie }}</td>
+              <td class="actions-inline">
+                <button (click)="startEditCategorie(categorie)" class="link-btn">Modifier</button>
+                <button (click)="deleteCategorie(categorie)" class="link-btn danger">Supprimer</button>
+              </td>
+            </ng-container>
+
+            <ng-template #editCategorieRow>
+              <td>{{ categorie.idCategorie }}</td>
+              <td>
+                <input [(ngModel)]="editingCategorieName" class="input-text" type="text" />
+              </td>
+              <td class="actions-inline">
+                <button (click)="saveCategorie(categorie.idCategorie)" class="link-btn success">Enregistrer</button>
+                <button (click)="cancelEditCategorie()" class="link-btn">Annuler</button>
+              </td>
+            </ng-template>
+          </tr>
+
+          <tr *ngIf="!isLoadingCategories && categories.length === 0">
+            <td colspan="3" class="empty-state">Aucune catégorie trouvée.</td>
+          </tr>
+          <tr *ngIf="isLoadingCategories">
+            <td colspan="3" class="empty-state">Chargement...</td>
+          </tr>
+        </tbody>
+      </table>
+    </div>
+  </section>
 
   <app-user-edit-modal
     [user]="selectedUser"

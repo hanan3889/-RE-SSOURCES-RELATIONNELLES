@@ -1,5 +1,261 @@
 .dashboard-container {
   padding: 2rem;
-  background-color: #f6f6f6; /* Using marianne-bg */
-  min-height: calc(100vh - 60px); /* Adjust based on header/footer height */
+  background-color: #f5f7fb;
+  min-height: 100vh;
+  display: flex;
+  flex-direction: column;
+  gap: 1.25rem;
+}
+
+.admin-header {
+  display: flex;
+  align-items: flex-start;
+  justify-content: space-between;
+  gap: 1rem;
+  background: linear-gradient(135deg, #000091 0%, #1212ff 100%);
+  color: #fff;
+  border-radius: 14px;
+  padding: 1.5rem;
+
+  h1 {
+    margin: 0;
+    font-size: 1.75rem;
+    font-weight: 700;
+  }
+}
+
+.admin-kicker {
+  margin: 0 0 0.3rem 0;
+  opacity: 0.85;
+  font-size: 0.8rem;
+  text-transform: uppercase;
+  letter-spacing: 0.08em;
+}
+
+.admin-subtitle {
+  margin: 0.35rem 0 0 0;
+  font-size: 0.95rem;
+  opacity: 0.95;
+}
+
+.overview-cards {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(180px, 1fr));
+  gap: 0.9rem;
+}
+
+.card {
+  background: #fff;
+  border: 1px solid #e5e7eb;
+  border-radius: 12px;
+  padding: 1rem;
+  display: flex;
+  flex-direction: column;
+  gap: 0.2rem;
+
+  p {
+    margin: 0;
+    color: #6b7280;
+    font-size: 0.85rem;
+  }
+
+  strong {
+    font-size: 1.7rem;
+    color: #111827;
+    line-height: 1.1;
+  }
+
+  span {
+    color: #6b7280;
+    font-size: 0.82rem;
+  }
+}
+
+.card-soft {
+  background: #eef2ff;
+  border-color: #c7d2fe;
+}
+
+.panel {
+  background: #fff;
+  border-radius: 12px;
+  border: 1px solid #e5e7eb;
+  padding: 1.1rem;
+}
+
+.panel-header {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 1rem;
+  margin-bottom: 0.45rem;
+
+  h2 {
+    margin: 0;
+    font-size: 1.2rem;
+    color: #111827;
+  }
+}
+
+.panel-description {
+  margin: 0 0 0.95rem 0;
+  color: #6b7280;
+  font-size: 0.9rem;
+}
+
+.table-wrap {
+  width: 100%;
+  overflow-x: auto;
+}
+
+table {
+  width: 100%;
+  border-collapse: collapse;
+  min-width: 800px;
+
+  th,
+  td {
+    border-bottom: 1px solid #f1f5f9;
+    text-align: left;
+    padding: 0.6rem;
+    vertical-align: top;
+    font-size: 0.88rem;
+  }
+
+  th {
+    color: #374151;
+    font-weight: 700;
+    background: #f8fafc;
+  }
+}
+
+.empty-state {
+  text-align: center;
+  color: #6b7280;
+  padding: 1rem;
+}
+
+.actions-inline {
+  display: flex;
+  align-items: center;
+  gap: 0.45rem;
+  flex-wrap: wrap;
+}
+
+.btn {
+  border: none;
+  border-radius: 8px;
+  padding: 0.45rem 0.8rem;
+  font-size: 0.86rem;
+  cursor: pointer;
+  font-weight: 600;
+}
+
+.btn-primary {
+  background: #000091;
+  color: #fff;
+}
+
+.btn-secondary {
+  background: #eef2ff;
+  color: #1e3a8a;
+}
+
+.btn-danger {
+  background: #dc2626;
+  color: #fff;
+}
+
+.link-btn {
+  border: none;
+  background: transparent;
+  color: #1d4ed8;
+  font-size: 0.85rem;
+  cursor: pointer;
+  padding: 0;
+}
+
+.link-btn.warning {
+  color: #ca8a04;
+}
+
+.link-btn.danger {
+  color: #dc2626;
+}
+
+.link-btn.success {
+  color: #059669;
+}
+
+.create-grid {
+  display: grid;
+  grid-template-columns: repeat(4, minmax(130px, 1fr));
+  gap: 0.7rem;
+  margin-bottom: 1rem;
+
+  .input-textarea {
+    grid-column: span 3;
+    min-height: 72px;
+  }
+}
+
+.create-inline {
+  display: flex;
+  align-items: center;
+  gap: 0.65rem;
+  margin-bottom: 1rem;
+}
+
+.input-text,
+.input-select,
+.input-textarea {
+  width: 100%;
+  border: 1px solid #d1d5db;
+  border-radius: 8px;
+  padding: 0.5rem 0.65rem;
+  font-size: 0.88rem;
+  background: #fff;
+}
+
+.input-textarea {
+  resize: vertical;
+}
+
+.error-text {
+  margin: 0 0 0.8rem 0;
+  color: #b91c1c;
+  font-size: 0.85rem;
+}
+
+@media (max-width: 1024px) {
+  .create-grid {
+    grid-template-columns: repeat(2, minmax(130px, 1fr));
+
+    .input-textarea {
+      grid-column: span 2;
+    }
+  }
+}
+
+@media (max-width: 768px) {
+  .dashboard-container {
+    padding: 1rem;
+  }
+
+  .admin-header {
+    flex-direction: column;
+  }
+
+  .create-grid {
+    grid-template-columns: 1fr;
+
+    .input-textarea {
+      grid-column: span 1;
+    }
+  }
+
+  .create-inline {
+    flex-direction: column;
+    align-items: stretch;
+  }
 }
