@@ -8,7 +8,7 @@ input[type="text"] {
 
 /* Assurer que le texte des inputs est visible */
 input {
-  color: #d1d5db !important;
+  color: #111827 !important;
   
   &::selection {
     background-color: #3b82f6;
@@ -18,7 +18,7 @@ input {
 
 /* Style spécifique pour le champ password */
 input[type="password"] {
-  color: #d1d5db !important;
+  color: #111827 !important;
   caret-color: #3b82f6;
   
   /* Affiche les dots en blanc/gris visible */
