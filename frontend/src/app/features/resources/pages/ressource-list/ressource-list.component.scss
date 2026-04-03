@@ -61,7 +61,7 @@ $text-light: #666666;
 // ============================================
 .hero-section {
   position: relative;
-  min-height: 70vh;
+  min-height: 56vh;
   display: flex;
   align-items: center;
   
@@ -77,6 +77,57 @@ $text-light: #666666;
   .btn-secondary {
     animation: fadeIn 0.8s cubic-bezier(0.16, 1, 0.3, 1) 0.3s backwards;
   }
+}
+
+.resource-meta {
+  display: flex;
+  justify-content: space-between;
+  align-items: flex-start;
+  gap: 0.75rem;
+}
+
+.resource-chips {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 0.4rem;
+  min-width: 0;
+}
+
+.resource-chip {
+  display: inline-flex;
+  align-items: center;
+  max-width: 100%;
+  padding: 0.2rem 0.65rem;
+  border-radius: 9999px;
+  font-size: 0.72rem;
+  font-weight: 600;
+  line-height: 1.2;
+  white-space: normal;
+  overflow-wrap: anywhere;
+}
+
+.chip-category {
+  color: #1e40af;
+  background: #dbeafe;
+}
+
+.chip-visibility {
+  color: #6b21a8;
+  background: #f3e8ff;
+}
+
+.chip-status {
+  color: #166534;
+  background: #dcfce7;
+}
+
+.resource-type {
+  display: inline-flex;
+  align-items: center;
+  gap: 0.25rem;
+  flex-shrink: 0;
+  color: #6b7280;
+  font-size: 0.82rem;
 }
 
 // ============================================
@@ -276,6 +327,11 @@ $text-light: #666666;
   .testimonials-section {
     padding-top: 3rem;
     padding-bottom: 3rem;
+  }
+
+  .resource-meta {
+    flex-direction: column;
+    align-items: flex-start;
   }
 }
 

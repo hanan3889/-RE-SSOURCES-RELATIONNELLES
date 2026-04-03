@@ -30,7 +30,9 @@
   align-items: center;
   gap: 0.6rem;
   text-decoration: none;
-  flex: 0 0 auto;
+  flex: 1;
+  justify-content: flex-start;
+  min-width: 0;
 }
 
 .brand-rf-block {
@@ -85,6 +87,7 @@
   justify-content: center;
   gap: 0.25rem;
   flex: 1;
+  min-width: 0;
 }
 
 .nav-link {
@@ -106,7 +109,7 @@
   align-items: center;
   justify-content: flex-end;
   gap: 0.6rem;
-  margin-left: auto;
+  flex: 1;
   flex-shrink: 0;
 }
 
