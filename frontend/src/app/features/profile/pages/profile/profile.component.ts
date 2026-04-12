@@ -1,8 +1,10 @@
-import { Component, OnInit } from '@angular/core';
+import { Component, OnInit, OnDestroy } from '@angular/core';
 import { CommonModule } from '@angular/common';
 import { FormBuilder, FormGroup, Validators, ReactiveFormsModule } from '@angular/forms';
 import { RouterModule } from '@angular/router';
+import { Subscription } from 'rxjs';
 import { AuthService } from 'src/app/core/services/auth.service';
+import { FavorisService, Ressource } from 'src/app/core/services/favoris.service';
 
 @Component({
   selector: 'app-profile',
@@ -11,10 +13,13 @@ import { AuthService } from 'src/app/core/services/auth.service';
   templateUrl: './profile.component.html',
   styleUrl: './profile.component.scss'
 })
-export class ProfileComponent implements OnInit {
+export class ProfileComponent implements OnInit, OnDestroy {
   activeTab = 'identity';
   isEditingInfo = false;
   isChangingPassword = false;
+  favoriteResources: any[] = [];
+  stats = { resourcesViewed: 12, resourcesUsed: 5, resourcesPublished: 2, favoriteCount: 0, savedForLater: 3 };
+  private favorisSub?: Subscription;
 
   infoForm!: FormGroup;
   passwordForm!: FormGroup;
@@ -31,14 +36,12 @@ export class ProfileComponent implements OnInit {
   // Listes pour éviter les erreurs HTML
   exploitedResources: any[] = [];
   savedResources: any[] = [];
-  favoriteResources: any[] = [];
   publications: any[] = [];
   ongoingActivities: any[] = [];
   comments: any[] = [];
   invitations: any[] = [];
-  stats = { resourcesViewed: 12, resourcesUsed: 5, resourcesPublished: 2, favoriteCount: 8, savedForLater: 3 };
 
-  constructor(private fb: FormBuilder, private authService: AuthService) {}
+  constructor(private fb: FormBuilder, private authService: AuthService, private favorisService: FavorisService) {}
 
   ngOnInit(): void {
     const currentUser = this.authService.getCurrentUser();
@@ -48,7 +51,13 @@ export class ProfileComponent implements OnInit {
       this.user.email = currentUser.email;
       this.user.role = currentUser.role;
     }
+
     this.initForms();
+    this.loadFavoriteData();
+
+    this.favorisSub = this.favorisService.favorisChanged$.subscribe(() => {
+      this.loadFavoriteData();
+    });
   }
 
   initForms() {
@@ -69,6 +78,32 @@ export class ProfileComponent implements OnInit {
   passwordMatchValidator(g: FormGroup) {
     return g.get('newPassword')?.value === g.get('confirmNewPassword')?.value
       ? null : { mismatch: true };
+  }
+
+  private loadFavoriteData(): void {
+    this.favorisService.getMesFavoris().subscribe({
+      next: (favoris) => {
+        this.favoriteResources = favoris;
+        this.stats.favoriteCount = favoris.length;
+      },
+      error: () => {
+        this.favoriteResources = [];
+        this.stats.favoriteCount = 0;
+      }
+    });
+
+    this.favorisService.getProgression().subscribe({
+      next: (progression) => {
+        this.stats.resourcesPublished = progression.nbPubliees;
+        this.stats.resourcesViewed = progression.nbMesRessources; // approximation
+        this.stats.favoriteCount = progression.nbFavoris;
+      },
+      error: () => {}
+    });
+  }
+
+  ngOnDestroy(): void {
+    this.favorisSub?.unsubscribe();
   }
 
   // --- FONCTIONS DE NAVIGATION ---
@@ -110,6 +145,25 @@ export class ProfileComponent implements OnInit {
       'private': 'Privé'
     };
     return badges[status] || status;
+  }
+
+  retirerFavori(ressourceId: number): void {
+    this.favorisService.retirerFavori(ressourceId).subscribe({
+      next: () => {
+        this.favoriteResources = this.favoriteResources.filter(res => {
+          const resId = (res as any).idRessource ?? (res as any).id;
+          return resId !== ressourceId;
+        });
+        this.stats.favoriteCount = Math.max(0, this.stats.favoriteCount - 1);
+      },
+      error: () => {
+        alert('Impossible de retirer le favori pour le moment.');
+      }
+    });
+  }
+
+  getResourceId(resource: any): number {
+    return resource.idRessource ?? resource.id ?? 0;
   }
 
   editPublication(id: any) { alert('Édition de la publication ' + id); }

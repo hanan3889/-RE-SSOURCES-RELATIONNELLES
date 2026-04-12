@@ -2,6 +2,7 @@
 @use "tailwindcss/components";
 @use "tailwindcss/utilities";
 
+
 // Custom styles for prose content if needed
 :host ::ng-deep .prose {
   h2, h3 {

@@ -14,43 +14,60 @@
   <!-- Main Content -->
   <main class="py-12">
     <div class="container mx-auto px-4">
-      <div *ngIf="ressource$ | async as ressource; else loadingOrError" class="max-w-4xl mx-auto">
-        
-        <!-- Ressource Header -->
-        <div class="ressource-header mb-8">
-          <span class="text-blue-600 font-semibold text-sm uppercase tracking-wider">{{ ressource.category }}</span>
-          <h1 class="text-4xl md:text-5xl font-bold text-gray-900 mt-2 mb-4 leading-tight">{{ ressource.title }}</h1>
-          <div class="flex items-center text-gray-500 text-sm">
-            <span>Par {{ ressource.author }}</span>
-            <span class="mx-2">|</span>
-            <span>{{ ressource.createdAt | date: 'longDate' }}</span>
-            <span class="mx-2">|</span>
-            <span>Visibilité: {{ ressource.visibilite }}</span>
-            <span class="mx-2">|</span>
-            <span>Statut: {{ ressource.statut }}</span>
-          </div>
+      <ng-container *ngIf="loading; else contentOrError">
+        <div class="text-center py-20">
+          <p class="text-gray-500">Chargement de la ressource...</p>
         </div>
+      </ng-container>
 
-        <!-- Ressource Content -->
-        <article class="prose lg:prose-xl max-w-none bg-white p-8 md:p-12 rounded-2xl shadow-lg">
-          
-          
+      <ng-template #contentOrError>
+        <ng-container *ngIf="errorMessage; else ressourceContent">
+          <div class="text-center py-20">
+            <p class="text-red-500">{{ errorMessage }}</p>
+            <a routerLink="/ressources" class="text-blue-600 underline">Retour à la liste</a>
+          </div>
+        </ng-container>
+      </ng-template>
 
-          <!-- Text Content -->
-          <p class="lead text-lg text-gray-600">{{ ressource.description }}</p>
-          <div [innerHTML]="ressource.content | safeHtml"></div>
+      <ng-template #ressourceContent>
+        <div *ngIf="ressource as ressource" class="max-w-4xl mx-auto">
+          <!-- Ressource Header -->
+          <div class="ressource-header mb-8 relative p-6 pr-16 bg-white border rounded-xl shadow-sm">
+            <button
+              *ngIf="userLoggedIn"
+              class="absolute top-3 right-3 w-12 h-12 rounded-lg text-2xl font-bold leading-none flex items-center justify-center transition-colors"
+              [class.text-yellow-500]="isFavori"
+              [class.text-gray-400]="!isFavori"
+              [class.bg-yellow-100]="isFavori"
+              [class.bg-white]="!isFavori"
+              [disabled]="loadingFavori"
+              (click)="toggleFavori()"
+              [attr.title]="isFavori ? 'Retirer des favoris' : 'Ajouter aux favoris'">
+              {{ isFavori ? '★' : '☆' }}
+            </button>
+            <span class="text-blue-600 font-semibold text-sm uppercase tracking-wider">{{ ressource.category }}</span>
+            <h1 class="text-4xl md:text-5xl font-bold text-gray-900 mt-2 mb-4 leading-tight" *ngIf="ressource.titre || ressource.title">{{ ressource.titre ?? ressource.title }}</h1>
+            <div class="flex items-center text-gray-500 text-sm">
+              <span>Par {{ ressource.author }}</span>
+              <span class="mx-2">|</span>
+              <span>{{ ressource.createdAt | date: 'longDate' }}</span>
+              <span class="mx-2">|</span>
+              <span>Visibilité: {{ ressource.visibilite }}</span>
+              <span class="mx-2">|</span>
+              <span>Statut: {{ ressource.statut }}</span>
+            </div>
+            <div class="my-6">
+              <p class="text-sm text-gray-600">Cliquez sur l'étoile pour {{ isFavori ? 'retirer' : 'ajouter' }} la ressource aux favoris.</p>
+            </div>
+          </div>
 
-        </article>
-
-      </div>
+          <!-- Ressource Content -->
+          <article class="prose lg:prose-xl max-w-none bg-white p-8 md:p-12 rounded-2xl shadow-lg">
+            <p class="lead text-lg text-gray-600">{{ ressource.description }}</p>
+            <div *ngIf="ressource.content" [innerHTML]="ressource.content | safeHtml"></div>
+          </article>
+        </div>
+      </ng-template>
     </div>
   </main>
 </div>
-
-<!-- Loading/Error Template -->
-<ng-template #loadingOrError>
-  <div class="text-center py-20">
-    <p class="text-gray-500">Chargement de la ressource...</p>
-    <!-- You could add a spinner here -->
-  </div>
-</ng-template>

@@ -1,6 +1,7 @@
-import { Component, OnInit } from '@angular/core';
+import { Component, OnInit, OnDestroy } from '@angular/core';
 import { CommonModule } from '@angular/common';
 import { RouterModule } from '@angular/router';
+import { Subscription } from 'rxjs';
 import { AuthService } from 'src/app/core/services/auth.service';
 import { FavorisService, Ressource, ProgressionStats } from 'src/app/core/services/favoris.service';
 
@@ -11,9 +12,10 @@ import { FavorisService, Ressource, ProgressionStats } from 'src/app/core/servic
   templateUrl: './mon-espace.component.html',
   styleUrl: './mon-espace.component.scss'
 })
-export class MonEspaceComponent implements OnInit {
+export class MonEspaceComponent implements OnInit, OnDestroy {
   currentUser = null as ReturnType<AuthService['getCurrentUser']>;
   stats: ProgressionStats = { nbFavoris: 0, nbMesRessources: 0, nbPubliees: 0, nbEnAttente: 0 };
+  private favorisSub?: Subscription;
   favoris: Ressource[] = [];
   mesRessources: Ressource[] = [];
   activeTab: 'favoris' | 'mes-ressources' = 'favoris';
@@ -28,6 +30,13 @@ export class MonEspaceComponent implements OnInit {
 
   ngOnInit(): void {
     this.loadAll();
+    this.favorisSub = this.favorisService.favorisChanged$.subscribe(() => {
+      this.loadAll();
+    });
+  }
+
+  ngOnDestroy(): void {
+    this.favorisSub?.unsubscribe();
   }
 
   loadAll(): void {
@@ -37,8 +46,13 @@ export class MonEspaceComponent implements OnInit {
       error: () => {}
     });
     this.favorisService.getMesFavoris().subscribe({
-      next: (data) => { this.favoris = data; },
-      error: () => {}
+      next: (data) => {
+        this.favoris = data;
+        this.stats.nbFavoris = data.length;
+      },
+      error: () => {
+        this.stats.nbFavoris = 0;
+      }
     });
     this.favorisService.getMesRessources().subscribe({
       next: (data) => { this.mesRessources = data; this.loading = false; },

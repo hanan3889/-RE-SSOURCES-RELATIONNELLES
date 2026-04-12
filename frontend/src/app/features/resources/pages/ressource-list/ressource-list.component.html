@@ -49,7 +49,7 @@
     <!-- Grid -->
     <div class="grid md:grid-cols-2 lg:grid-cols-3 gap-5 max-w-6xl mx-auto">
       <div *ngFor="let ressource of filteredRessources$ | async" 
-           [routerLink]="['/ressources', ressource.id]" 
+           [routerLink]="['/ressources', ressource.idRessource ?? ressource.id]" 
            class="feature-card bg-white p-7 rounded-lg shadow-soft hover:shadow-soft-lg transition-all duration-300 transform hover:-translate-y-1 scroll-animation border border-gray-200/60 cursor-pointer flex flex-col items-center">
         
         <div class="flex-grow">

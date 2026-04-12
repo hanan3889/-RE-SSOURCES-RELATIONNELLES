@@ -1,0 +1,47 @@
+<div class="bg-gray-50 min-h-screen py-12">
+  <div class="container mx-auto px-4">
+    <div class="bg-white rounded-xl shadow-lg p-8 max-w-3xl mx-auto">
+      <h1 class="text-3xl font-bold mb-6">Créer une nouvelle ressource</h1>
+      <form [formGroup]="createForm" (ngSubmit)="onSubmit()" class="space-y-4">
+        <div>
+          <label class="font-semibold">Titre</label>
+          <input formControlName="title" class="w-full border rounded px-3 py-2" placeholder="Titre de la ressource" />
+        </div>
+
+        <div>
+          <label class="font-semibold">Description</label>
+          <textarea formControlName="description" class="w-full border rounded px-3 py-2" rows="3" placeholder="Courte description"></textarea>
+        </div>
+
+        <div>
+          <label class="font-semibold">Contenu</label>
+          <textarea formControlName="content" class="w-full border rounded px-3 py-2" rows="5" placeholder="Contenu détaillé"></textarea>
+        </div>
+
+        <div class="grid grid-cols-1 md:grid-cols-2 gap-3">
+          <div>
+            <label class="font-semibold">Catégorie</label>
+            <select formControlName="categoryId" class="w-full border rounded px-3 py-2">
+              <option *ngFor="let cat of categories" [value]="cat.id">{{ cat.name }}</option>
+            </select>
+          </div>
+          <div>
+            <label class="font-semibold">Visibilité</label>
+            <select formControlName="visibilite" class="w-full border rounded px-3 py-2">
+              <option value="Publique">Publique</option>
+              <option value="Citoyens connectés">Citoyens connectés</option>
+              <option value="Privée">Privée</option>
+            </select>
+          </div>
+        </div>
+
+        <div class="flex items-center justify-between pt-4 border-t">
+          <a routerLink="/ressources" class="underline text-blue-500">Retour aux ressources</a>
+          <button type="submit" class="btn btn-primary px-6 py-2" [disabled]="isSubmitting">
+            {{ isSubmitting ? 'Enregistrement...' : 'Créer la ressource' }}
+          </button>
+        </div>
+      </form>
+    </div>
+  </div>
+</div>

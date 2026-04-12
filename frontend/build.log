@@ -1,0 +1,963 @@
+
+> rr-web@0.0.0 build
+> ng build
+
+❯ Building...
+✔ Building...
+Application bundle generation failed. [5.109 seconds]
+
+[31m✘ [41;31m[[41;97mERROR[41;31m][0m [1mTS2322: Type 'Observable<Ressource[] | Ressource[]>' is not assignable to type 'Observable<Ressource[]>'.
+  Type 'Ressource[] | Ressource[]' is not assignable to type 'Ressource[]'.
+    Type 'import("/home/heloise/Documents/-RE-SSOURCES-RELATIONNELLES/-RE-SSOURCES-RELATIONNELLES/frontend/src/app/features/resources/services/ressource.service").Ressource[]' is not assignable to type 'import("/home/heloise/Documents/-RE-SSOURCES-RELATIONNELLES/-RE-SSOURCES-RELATIONNELLES/frontend/src/app/core/services/favoris.service").Ressource[]'.
+      Type 'Ressource' is missing the following properties from type 'Ressource': idRessource, titre, format, dateCreation, and 5 more.[0m [1m[35m[plugin angular-compiler][0m
+
+    src/app/core/services/favoris.service.ts:74:4:
+[37m      74 │     [32mreturn[37m this.http.get<Ressource[]>(`${this.apiUrl}/ressources/m...
+         ╵     [32m~~~~~~[0m
+
+
+[31m✘ [41;31m[[41;97mERROR[41;31m][0m [1mNG1: Property 'title' does not exist on type 'Ressource'. Did you mean 'titre'?[0m [1m[35m[plugin angular-compiler][0m
+
+    src/app/features/mon-espace/pages/mon-espace/mon-espace.component.html:94:71:
+[37m      94 │ ...3 class="card-title">{{ ressource.titre || ressource.[32mtitle[37m }}</h3>
+         ╵                                                         [32m~~~~~[0m
+
+  Error occurs in the template of component MonEspaceComponent.
+
+    src/app/features/mon-espace/pages/mon-espace/mon-espace.component.ts:12:15:
+[37m      12 │   templateUrl: [32m'./mon-espace.component.html'[37m,
+         ╵                [32m~~~~~~~~~~~~~~~~~~~~~~~~~~~~~[0m
+
+
+[31m✘ [41;31m[[41;97mERROR[41;31m][0m [1mNG9: Property 'content' does not exist on type 'Ressource'.[0m [1m[35m[plugin angular-compiler][0m
+
+    src/app/features/mon-espace/pages/mon-espace/mon-espace.component.html:95:75:
+[37m      95 │ ...s="card-desc">{{ ressource.description || ressource.[32mcontent[37m }}</p>
+         ╵                                                        [32m~~~~~~~[0m
+
+  Error occurs in the template of component MonEspaceComponent.
+
+    src/app/features/mon-espace/pages/mon-espace/mon-espace.component.ts:12:15:
+[37m      12 │   templateUrl: [32m'./mon-espace.component.html'[37m,
+         ╵                [32m~~~~~~~~~~~~~~~~~~~~~~~~~~~~~[0m
+
+
+[31m✘ [41;31m[[41;97mERROR[41;31m][0m [1mNG5002: Parser Error: Missing expected ) at column 25 in [retirerFavori((resource as any).idRessource || (resource as any).id)] in /home/heloise/Documents/-RE-SSOURCES-RELATIONNELLES/-RE-SSOURCES-RELATIONNELLES/frontend/src/app/features/profile/pages/profile/profile.component.html@284:73[0m [1m[35m[plugin angular-compiler][0m
+
+    src/app/features/profile/pages/profile/profile.component.html:285:73:
+[37m      285 │ ... (click)="[32mretirerFavori((resource as any).idRessource || (reso[37m...
+          ╵              [32m~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~[0m
+
+  Error occurs in the template of component ProfileComponent.
+
+    src/app/features/profile/pages/profile/profile.component.ts:13:15:
+[37m      13 │   templateUrl: [32m'./profile.component.html'[37m,
+         ╵                [32m~~~~~~~~~~~~~~~~~~~~~~~~~~[0m
+
+
+[31m✘ [41;31m[[41;97mERROR[41;31m][0m [1mNG5002: Parser Error: Missing expected ) at column 58 in [retirerFavori((resource as any).idRessource || (resource as any).id)] in /home/heloise/Documents/-RE-SSOURCES-RELATIONNELLES/-RE-SSOURCES-RELATIONNELLES/frontend/src/app/features/profile/pages/profile/profile.component.html@284:73[0m [1m[35m[plugin angular-compiler][0m
+
+    src/app/features/profile/pages/profile/profile.component.html:285:73:
+[37m      285 │ ... (click)="[32mretirerFavori((resource as any).idRessource || (reso[37m...
+          ╵              [32m~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~[0m
+
+  Error occurs in the template of component ProfileComponent.
+
+    src/app/features/profile/pages/profile/profile.component.ts:13:15:
+[37m      13 │   templateUrl: [32m'./profile.component.html'[37m,
+         ╵                [32m~~~~~~~~~~~~~~~~~~~~~~~~~~[0m
+
+
+[31m✘ [41;31m[[41;97mERROR[41;31m][0m [1mNG9: Property 'idRessource' does not exist on type 'void'.[0m [1m[35m[plugin angular-compiler][0m
+
+    src/app/features/profile/pages/profile/profile.component.html:285:105:
+[37m      285 │ ...rFavori((resource as any).[32midRessource[37m || (resource as any).id)...
+          ╵                              [32m~~~~~~~~~~~[0m
+
+  Error occurs in the template of component ProfileComponent.
+
+    src/app/features/profile/pages/profile/profile.component.ts:13:15:
+[37m      13 │   templateUrl: [32m'./profile.component.html'[37m,
+         ╵                [32m~~~~~~~~~~~~~~~~~~~~~~~~~~[0m
+
+
+[31m✘ [41;31m[[41;97mERROR[41;31m][0m [1mNG5002: Parser Error: Missing expected ) at column 25 in [retirerFavori((resource as any).idRessource || (resource as any).id)] in /home/heloise/Documents/-RE-SSOURCES-RELATIONNELLES/-RE-SSOURCES-RELATIONNELLES/frontend/src/app/features/profile/pages/profile/profile.component.html@284:73[0m [1m[35m[plugin angular-compiler][0m
+
+    src/app/features/profile/pages/profile/profile.component.html:293:9:
+[37m      293 │     <div [32m*ngIf="activeTab === 'contributions'"[37m class="space-y-8">
+          ╵          [32m~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~[0m
+
+  Error occurs in the template of component ProfileComponent.
+
+    src/app/features/profile/pages/profile/profile.component.ts:13:15:
+[37m      13 │   templateUrl: [32m'./profile.component.html'[37m,
+         ╵                [32m~~~~~~~~~~~~~~~~~~~~~~~~~~[0m
+
+
+[31m✘ [41;31m[[41;97mERROR[41;31m][0m [1mNG5002: Parser Error: Missing expected ) at column 58 in [retirerFavori((resource as any).idRessource || (resource as any).id)] in /home/heloise/Documents/-RE-SSOURCES-RELATIONNELLES/-RE-SSOURCES-RELATIONNELLES/frontend/src/app/features/profile/pages/profile/profile.component.html@284:73[0m [1m[35m[plugin angular-compiler][0m
+
+    src/app/features/profile/pages/profile/profile.component.html:293:9:
+[37m      293 │     <div [32m*ngIf="activeTab === 'contributions'"[37m class="space-y-8">
+          ╵          [32m~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~[0m
+
+  Error occurs in the template of component ProfileComponent.
+
+    src/app/features/profile/pages/profile/profile.component.ts:13:15:
+[37m      13 │   templateUrl: [32m'./profile.component.html'[37m,
+         ╵                [32m~~~~~~~~~~~~~~~~~~~~~~~~~~[0m
+
+
+[31m✘ [41;31m[[41;97mERROR[41;31m][0m [1mNG5002: Parser Error: Missing expected ) at column 25 in [retirerFavori((resource as any).idRessource || (resource as any).id)] in /home/heloise/Documents/-RE-SSOURCES-RELATIONNELLES/-RE-SSOURCES-RELATIONNELLES/frontend/src/app/features/profile/pages/profile/profile.component.html@284:73[0m [1m[35m[plugin angular-compiler][0m
+
+    src/app/features/profile/pages/profile/profile.component.html:299:19:
+[37m      299 │           (click)="[32mcreateNewResource()[37m"
+          ╵                    [32m~~~~~~~~~~~~~~~~~~~[0m
+
+  Error occurs in the template of component ProfileComponent.
+
+    src/app/features/profile/pages/profile/profile.component.ts:13:15:
+[37m      13 │   templateUrl: [32m'./profile.component.html'[37m,
+         ╵                [32m~~~~~~~~~~~~~~~~~~~~~~~~~~[0m
+
+
+[31m✘ [41;31m[[41;97mERROR[41;31m][0m [1mNG5002: Parser Error: Missing expected ) at column 58 in [retirerFavori((resource as any).idRessource || (resource as any).id)] in /home/heloise/Documents/-RE-SSOURCES-RELATIONNELLES/-RE-SSOURCES-RELATIONNELLES/frontend/src/app/features/profile/pages/profile/profile.component.html@284:73[0m [1m[35m[plugin angular-compiler][0m
+
+    src/app/features/profile/pages/profile/profile.component.html:299:19:
+[37m      299 │           (click)="[32mcreateNewResource()[37m"
+          ╵                    [32m~~~~~~~~~~~~~~~~~~~[0m
+
+  Error occurs in the template of component ProfileComponent.
+
+    src/app/features/profile/pages/profile/profile.component.ts:13:15:
+[37m      13 │   templateUrl: [32m'./profile.component.html'[37m,
+         ╵                [32m~~~~~~~~~~~~~~~~~~~~~~~~~~[0m
+
+
+[31m✘ [41;31m[[41;97mERROR[41;31m][0m [1mNG5002: Parser Error: Missing expected ) at column 25 in [retirerFavori((resource as any).idRessource || (resource as any).id)] in /home/heloise/Documents/-RE-SSOURCES-RELATIONNELLES/-RE-SSOURCES-RELATIONNELLES/frontend/src/app/features/profile/pages/profile/profile.component.html@284:73[0m [1m[35m[plugin angular-compiler][0m
+
+    src/app/features/profile/pages/profile/profile.component.html:309:10:
+[37m      309 │           [32mMes publications ({{ publications.length }})[37m
+          ╵           [32m~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~[0m
+
+  Error occurs in the template of component ProfileComponent.
+
+    src/app/features/profile/pages/profile/profile.component.ts:13:15:
+[37m      13 │   templateUrl: [32m'./profile.component.html'[37m,
+         ╵                [32m~~~~~~~~~~~~~~~~~~~~~~~~~~[0m
+
+
+[31m✘ [41;31m[[41;97mERROR[41;31m][0m [1mNG5002: Parser Error: Missing expected ) at column 58 in [retirerFavori((resource as any).idRessource || (resource as any).id)] in /home/heloise/Documents/-RE-SSOURCES-RELATIONNELLES/-RE-SSOURCES-RELATIONNELLES/frontend/src/app/features/profile/pages/profile/profile.component.html@284:73[0m [1m[35m[plugin angular-compiler][0m
+
+    src/app/features/profile/pages/profile/profile.component.html:309:10:
+[37m      309 │           [32mMes publications ({{ publications.length }})[37m
+          ╵           [32m~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~[0m
+
+  Error occurs in the template of component ProfileComponent.
+
+    src/app/features/profile/pages/profile/profile.component.ts:13:15:
+[37m      13 │   templateUrl: [32m'./profile.component.html'[37m,
+         ╵                [32m~~~~~~~~~~~~~~~~~~~~~~~~~~[0m
+
+
+[31m✘ [41;31m[[41;97mERROR[41;31m][0m [1mNG5002: Parser Error: Missing expected ) at column 25 in [retirerFavori((resource as any).idRessource || (resource as any).id)] in /home/heloise/Documents/-RE-SSOURCES-RELATIONNELLES/-RE-SSOURCES-RELATIONNELLES/frontend/src/app/features/profile/pages/profile/profile.component.html@284:73[0m [1m[35m[plugin angular-compiler][0m
+
+    src/app/features/profile/pages/profile/profile.component.html:312:15:
+[37m      312 │           <div [32m*ngFor="let pub of publications"[37m class="p-4 border...
+          ╵                [32m~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~[0m
+
+  Error occurs in the template of component ProfileComponent.
+
+    src/app/features/profile/pages/profile/profile.component.ts:13:15:
+[37m      13 │   templateUrl: [32m'./profile.component.html'[37m,
+         ╵                [32m~~~~~~~~~~~~~~~~~~~~~~~~~~[0m
+
+
+[31m✘ [41;31m[[41;97mERROR[41;31m][0m [1mNG5002: Parser Error: Missing expected ) at column 58 in [retirerFavori((resource as any).idRessource || (resource as any).id)] in /home/heloise/Documents/-RE-SSOURCES-RELATIONNELLES/-RE-SSOURCES-RELATIONNELLES/frontend/src/app/features/profile/pages/profile/profile.component.html@284:73[0m [1m[35m[plugin angular-compiler][0m
+
+    src/app/features/profile/pages/profile/profile.component.html:312:15:
+[37m      312 │           <div [32m*ngFor="let pub of publications"[37m class="p-4 border...
+          ╵                [32m~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~[0m
+
+  Error occurs in the template of component ProfileComponent.
+
+    src/app/features/profile/pages/profile/profile.component.ts:13:15:
+[37m      13 │   templateUrl: [32m'./profile.component.html'[37m,
+         ╵                [32m~~~~~~~~~~~~~~~~~~~~~~~~~~[0m
+
+
+[31m✘ [41;31m[[41;97mERROR[41;31m][0m [1mNG5002: Parser Error: Missing expected ) at column 25 in [retirerFavori((resource as any).idRessource || (resource as any).id)] in /home/heloise/Documents/-RE-SSOURCES-RELATIONNELLES/-RE-SSOURCES-RELATIONNELLES/frontend/src/app/features/profile/pages/profile/profile.component.html@284:73[0m [1m[35m[plugin angular-compiler][0m
+
+    src/app/features/profile/pages/profile/profile.component.html:315:56:
+[37m      315 │ ...     <h3 class="font-semibold text-gray-900">[32m{{ pub.title }}[37m</h3>
+          ╵                                                 [32m~~~~~~~~~~~~~~~[0m
+
+  Error occurs in the template of component ProfileComponent.
+
+    src/app/features/profile/pages/profile/profile.component.ts:13:15:
+[37m      13 │   templateUrl: [32m'./profile.component.html'[37m,
+         ╵                [32m~~~~~~~~~~~~~~~~~~~~~~~~~~[0m
+
+
+[31m✘ [41;31m[[41;97mERROR[41;31m][0m [1mNG5002: Parser Error: Missing expected ) at column 58 in [retirerFavori((resource as any).idRessource || (resource as any).id)] in /home/heloise/Documents/-RE-SSOURCES-RELATIONNELLES/-RE-SSOURCES-RELATIONNELLES/frontend/src/app/features/profile/pages/profile/profile.component.html@284:73[0m [1m[35m[plugin angular-compiler][0m
+
+    src/app/features/profile/pages/profile/profile.component.html:315:56:
+[37m      315 │ ...     <h3 class="font-semibold text-gray-900">[32m{{ pub.title }}[37m</h3>
+          ╵                                                 [32m~~~~~~~~~~~~~~~[0m
+
+  Error occurs in the template of component ProfileComponent.
+
+    src/app/features/profile/pages/profile/profile.component.ts:13:15:
+[37m      13 │   templateUrl: [32m'./profile.component.html'[37m,
+         ╵                [32m~~~~~~~~~~~~~~~~~~~~~~~~~~[0m
+
+
+[31m✘ [41;31m[[41;97mERROR[41;31m][0m [1mNG5002: Parser Error: Missing expected ) at column 25 in [retirerFavori((resource as any).idRessource || (resource as any).id)] in /home/heloise/Documents/-RE-SSOURCES-RELATIONNELLES/-RE-SSOURCES-RELATIONNELLES/frontend/src/app/features/profile/pages/profile/profile.component.html@284:73[0m [1m[35m[plugin angular-compiler][0m
+
+    src/app/features/profile/pages/profile/profile.component.html:318:31:
+[37m      318 │                     [ngClass]="[32m{[37m
+          ╵                                [32m^[0m
+
+  Error occurs in the template of component ProfileComponent.
+
+    src/app/features/profile/pages/profile/profile.component.ts:13:15:
+[37m      13 │   templateUrl: [32m'./profile.component.html'[37m,
+         ╵                [32m~~~~~~~~~~~~~~~~~~~~~~~~~~[0m
+
+
+[31m✘ [41;31m[[41;97mERROR[41;31m][0m [1mNG5002: Parser Error: Missing expected ) at column 58 in [retirerFavori((resource as any).idRessource || (resource as any).id)] in /home/heloise/Documents/-RE-SSOURCES-RELATIONNELLES/-RE-SSOURCES-RELATIONNELLES/frontend/src/app/features/profile/pages/profile/profile.component.html@284:73[0m [1m[35m[plugin angular-compiler][0m
+
+    src/app/features/profile/pages/profile/profile.component.html:318:31:
+[37m      318 │                     [ngClass]="[32m{[37m
+          ╵                                [32m^[0m
+
+  Error occurs in the template of component ProfileComponent.
+
+    src/app/features/profile/pages/profile/profile.component.ts:13:15:
+[37m      13 │   templateUrl: [32m'./profile.component.html'[37m,
+         ╵                [32m~~~~~~~~~~~~~~~~~~~~~~~~~~[0m
+
+
+[31m✘ [41;31m[[41;97mERROR[41;31m][0m [1mNG5002: Parser Error: Missing expected ) at column 25 in [retirerFavori((resource as any).idRessource || (resource as any).id)] in /home/heloise/Documents/-RE-SSOURCES-RELATIONNELLES/-RE-SSOURCES-RELATIONNELLES/frontend/src/app/features/profile/pages/profile/profile.component.html@284:73[0m [1m[35m[plugin angular-compiler][0m
+
+    src/app/features/profile/pages/profile/profile.component.html:325:20:
+[37m      325 │                     [32m{{ getStatusBadge(pub.status) }}[37m
+          ╵                     [32m~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~[0m
+
+  Error occurs in the template of component ProfileComponent.
+
+    src/app/features/profile/pages/profile/profile.component.ts:13:15:
+[37m      13 │   templateUrl: [32m'./profile.component.html'[37m,
+         ╵                [32m~~~~~~~~~~~~~~~~~~~~~~~~~~[0m
+
+
+[31m✘ [41;31m[[41;97mERROR[41;31m][0m [1mNG5002: Parser Error: Missing expected ) at column 58 in [retirerFavori((resource as any).idRessource || (resource as any).id)] in /home/heloise/Documents/-RE-SSOURCES-RELATIONNELLES/-RE-SSOURCES-RELATIONNELLES/frontend/src/app/features/profile/pages/profile/profile.component.html@284:73[0m [1m[35m[plugin angular-compiler][0m
+
+    src/app/features/profile/pages/profile/profile.component.html:325:20:
+[37m      325 │                     [32m{{ getStatusBadge(pub.status) }}[37m
+          ╵                     [32m~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~[0m
+
+  Error occurs in the template of component ProfileComponent.
+
+    src/app/features/profile/pages/profile/profile.component.ts:13:15:
+[37m      13 │   templateUrl: [32m'./profile.component.html'[37m,
+         ╵                [32m~~~~~~~~~~~~~~~~~~~~~~~~~~[0m
+
+
+[31m✘ [41;31m[[41;97mERROR[41;31m][0m [1mNG5002: Parser Error: Missing expected ) at column 25 in [retirerFavori((resource as any).idRessource || (resource as any).id)] in /home/heloise/Documents/-RE-SSOURCES-RELATIONNELLES/-RE-SSOURCES-RELATIONNELLES/frontend/src/app/features/profile/pages/profile/profile.component.html@284:73[0m [1m[35m[plugin angular-compiler][0m
+
+    src/app/features/profile/pages/profile/profile.component.html:327:54:
+[37m      327 │ ...="text-xs text-gray-500">[32m{{ formatDate(pub.createdDate) }}[37m</span>
+          ╵                             [32m~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~[0m
+
+  Error occurs in the template of component ProfileComponent.
+
+    src/app/features/profile/pages/profile/profile.component.ts:13:15:
+[37m      13 │   templateUrl: [32m'./profile.component.html'[37m,
+         ╵                [32m~~~~~~~~~~~~~~~~~~~~~~~~~~[0m
+
+
+[31m✘ [41;31m[[41;97mERROR[41;31m][0m [1mNG5002: Parser Error: Missing expected ) at column 58 in [retirerFavori((resource as any).idRessource || (resource as any).id)] in /home/heloise/Documents/-RE-SSOURCES-RELATIONNELLES/-RE-SSOURCES-RELATIONNELLES/frontend/src/app/features/profile/pages/profile/profile.component.html@284:73[0m [1m[35m[plugin angular-compiler][0m
+
+    src/app/features/profile/pages/profile/profile.component.html:327:54:
+[37m      327 │ ...="text-xs text-gray-500">[32m{{ formatDate(pub.createdDate) }}[37m</span>
+          ╵                             [32m~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~[0m
+
+  Error occurs in the template of component ProfileComponent.
+
+    src/app/features/profile/pages/profile/profile.component.ts:13:15:
+[37m      13 │   templateUrl: [32m'./profile.component.html'[37m,
+         ╵                [32m~~~~~~~~~~~~~~~~~~~~~~~~~~[0m
+
+
+[31m✘ [41;31m[[41;97mERROR[41;31m][0m [1mNG5002: Parser Error: Missing expected ) at column 25 in [retirerFavori((resource as any).idRessource || (resource as any).id)] in /home/heloise/Documents/-RE-SSOURCES-RELATIONNELLES/-RE-SSOURCES-RELATIONNELLES/frontend/src/app/features/profile/pages/profile/profile.component.html@284:73[0m [1m[35m[plugin angular-compiler][0m
+
+    src/app/features/profile/pages/profile/profile.component.html:332:27:
+[37m      332 │                   (click)="[32meditPublication(pub.id)[37m"
+          ╵                            [32m~~~~~~~~~~~~~~~~~~~~~~~[0m
+
+  Error occurs in the template of component ProfileComponent.
+
+    src/app/features/profile/pages/profile/profile.component.ts:13:15:
+[37m      13 │   templateUrl: [32m'./profile.component.html'[37m,
+         ╵                [32m~~~~~~~~~~~~~~~~~~~~~~~~~~[0m
+
+
+[31m✘ [41;31m[[41;97mERROR[41;31m][0m [1mNG5002: Parser Error: Missing expected ) at column 58 in [retirerFavori((resource as any).idRessource || (resource as any).id)] in /home/heloise/Documents/-RE-SSOURCES-RELATIONNELLES/-RE-SSOURCES-RELATIONNELLES/frontend/src/app/features/profile/pages/profile/profile.component.html@284:73[0m [1m[35m[plugin angular-compiler][0m
+
+    src/app/features/profile/pages/profile/profile.component.html:332:27:
+[37m      332 │                   (click)="[32meditPublication(pub.id)[37m"
+          ╵                            [32m~~~~~~~~~~~~~~~~~~~~~~~[0m
+
+  Error occurs in the template of component ProfileComponent.
+
+    src/app/features/profile/pages/profile/profile.component.ts:13:15:
+[37m      13 │   templateUrl: [32m'./profile.component.html'[37m,
+         ╵                [32m~~~~~~~~~~~~~~~~~~~~~~~~~~[0m
+
+
+[31m✘ [41;31m[[41;97mERROR[41;31m][0m [1mNG5002: Parser Error: Missing expected ) at column 25 in [retirerFavori((resource as any).idRessource || (resource as any).id)] in /home/heloise/Documents/-RE-SSOURCES-RELATIONNELLES/-RE-SSOURCES-RELATIONNELLES/frontend/src/app/features/profile/pages/profile/profile.component.html@284:73[0m [1m[35m[plugin angular-compiler][0m
+
+    src/app/features/profile/pages/profile/profile.component.html:338:27:
+[37m      338 │                   (click)="[32mdeletePublication(pub.id)[37m"
+          ╵                            [32m~~~~~~~~~~~~~~~~~~~~~~~~~[0m
+
+  Error occurs in the template of component ProfileComponent.
+
+    src/app/features/profile/pages/profile/profile.component.ts:13:15:
+[37m      13 │   templateUrl: [32m'./profile.component.html'[37m,
+         ╵                [32m~~~~~~~~~~~~~~~~~~~~~~~~~~[0m
+
+
+[31m✘ [41;31m[[41;97mERROR[41;31m][0m [1mNG5002: Parser Error: Missing expected ) at column 58 in [retirerFavori((resource as any).idRessource || (resource as any).id)] in /home/heloise/Documents/-RE-SSOURCES-RELATIONNELLES/-RE-SSOURCES-RELATIONNELLES/frontend/src/app/features/profile/pages/profile/profile.component.html@284:73[0m [1m[35m[plugin angular-compiler][0m
+
+    src/app/features/profile/pages/profile/profile.component.html:338:27:
+[37m      338 │                   (click)="[32mdeletePublication(pub.id)[37m"
+          ╵                            [32m~~~~~~~~~~~~~~~~~~~~~~~~~[0m
+
+  Error occurs in the template of component ProfileComponent.
+
+    src/app/features/profile/pages/profile/profile.component.ts:13:15:
+[37m      13 │   templateUrl: [32m'./profile.component.html'[37m,
+         ╵                [32m~~~~~~~~~~~~~~~~~~~~~~~~~~[0m
+
+
+[31m✘ [41;31m[[41;97mERROR[41;31m][0m [1mNG5002: Parser Error: Missing expected ) at column 25 in [retirerFavori((resource as any).idRessource || (resource as any).id)] in /home/heloise/Documents/-RE-SSOURCES-RELATIONNELLES/-RE-SSOURCES-RELATIONNELLES/frontend/src/app/features/profile/pages/profile/profile.component.html@284:73[0m [1m[35m[plugin angular-compiler][0m
+
+    src/app/features/profile/pages/profile/profile.component.html:346:20:
+[37m      346 │               <span>[32m{{ pub.views }} vues[37m</span>
+          ╵                     [32m~~~~~~~~~~~~~~~~~~~~[0m
+
+  Error occurs in the template of component ProfileComponent.
+
+    src/app/features/profile/pages/profile/profile.component.ts:13:15:
+[37m      13 │   templateUrl: [32m'./profile.component.html'[37m,
+         ╵                [32m~~~~~~~~~~~~~~~~~~~~~~~~~~[0m
+
+
+[31m✘ [41;31m[[41;97mERROR[41;31m][0m [1mNG5002: Parser Error: Missing expected ) at column 58 in [retirerFavori((resource as any).idRessource || (resource as any).id)] in /home/heloise/Documents/-RE-SSOURCES-RELATIONNELLES/-RE-SSOURCES-RELATIONNELLES/frontend/src/app/features/profile/pages/profile/profile.component.html@284:73[0m [1m[35m[plugin angular-compiler][0m
+
+    src/app/features/profile/pages/profile/profile.component.html:346:20:
+[37m      346 │               <span>[32m{{ pub.views }} vues[37m</span>
+          ╵                     [32m~~~~~~~~~~~~~~~~~~~~[0m
+
+  Error occurs in the template of component ProfileComponent.
+
+    src/app/features/profile/pages/profile/profile.component.ts:13:15:
+[37m      13 │   templateUrl: [32m'./profile.component.html'[37m,
+         ╵                [32m~~~~~~~~~~~~~~~~~~~~~~~~~~[0m
+
+
+[31m✘ [41;31m[[41;97mERROR[41;31m][0m [1mNG5002: Parser Error: Missing expected ) at column 25 in [retirerFavori((resource as any).idRessource || (resource as any).id)] in /home/heloise/Documents/-RE-SSOURCES-RELATIONNELLES/-RE-SSOURCES-RELATIONNELLES/frontend/src/app/features/profile/pages/profile/profile.component.html@284:73[0m [1m[35m[plugin angular-compiler][0m
+
+    src/app/features/profile/pages/profile/profile.component.html:347:33:
+[37m      347 │ ...        <span class="ml-4">[32m{{ pub.comments }} commentaires[37m</span>
+          ╵                               [32m~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~[0m
+
+  Error occurs in the template of component ProfileComponent.
+
+    src/app/features/profile/pages/profile/profile.component.ts:13:15:
+[37m      13 │   templateUrl: [32m'./profile.component.html'[37m,
+         ╵                [32m~~~~~~~~~~~~~~~~~~~~~~~~~~[0m
+
+
+[31m✘ [41;31m[[41;97mERROR[41;31m][0m [1mNG5002: Parser Error: Missing expected ) at column 58 in [retirerFavori((resource as any).idRessource || (resource as any).id)] in /home/heloise/Documents/-RE-SSOURCES-RELATIONNELLES/-RE-SSOURCES-RELATIONNELLES/frontend/src/app/features/profile/pages/profile/profile.component.html@284:73[0m [1m[35m[plugin angular-compiler][0m
+
+    src/app/features/profile/pages/profile/profile.component.html:347:33:
+[37m      347 │ ...        <span class="ml-4">[32m{{ pub.comments }} commentaires[37m</span>
+          ╵                               [32m~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~[0m
+
+  Error occurs in the template of component ProfileComponent.
+
+    src/app/features/profile/pages/profile/profile.component.ts:13:15:
+[37m      13 │   templateUrl: [32m'./profile.component.html'[37m,
+         ╵                [32m~~~~~~~~~~~~~~~~~~~~~~~~~~[0m
+
+
+[31m✘ [41;31m[[41;97mERROR[41;31m][0m [1mNG5002: Parser Error: Missing expected ) at column 25 in [retirerFavori((resource as any).idRessource || (resource as any).id)] in /home/heloise/Documents/-RE-SSOURCES-RELATIONNELLES/-RE-SSOURCES-RELATIONNELLES/frontend/src/app/features/profile/pages/profile/profile.component.html@284:73[0m [1m[35m[plugin angular-compiler][0m
+
+    src/app/features/profile/pages/profile/profile.component.html:355:9:
+[37m      355 │     <div [32m*ngIf="activeTab === 'social'"[37m class="space-y-8">
+          ╵          [32m~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~[0m
+
+  Error occurs in the template of component ProfileComponent.
+
+    src/app/features/profile/pages/profile/profile.component.ts:13:15:
+[37m      13 │   templateUrl: [32m'./profile.component.html'[37m,
+         ╵                [32m~~~~~~~~~~~~~~~~~~~~~~~~~~[0m
+
+
+[31m✘ [41;31m[[41;97mERROR[41;31m][0m [1mNG5002: Parser Error: Missing expected ) at column 58 in [retirerFavori((resource as any).idRessource || (resource as any).id)] in /home/heloise/Documents/-RE-SSOURCES-RELATIONNELLES/-RE-SSOURCES-RELATIONNELLES/frontend/src/app/features/profile/pages/profile/profile.component.html@284:73[0m [1m[35m[plugin angular-compiler][0m
+
+    src/app/features/profile/pages/profile/profile.component.html:355:9:
+[37m      355 │     <div [32m*ngIf="activeTab === 'social'"[37m class="space-y-8">
+          ╵          [32m~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~[0m
+
+  Error occurs in the template of component ProfileComponent.
+
+    src/app/features/profile/pages/profile/profile.component.ts:13:15:
+[37m      13 │   templateUrl: [32m'./profile.component.html'[37m,
+         ╵                [32m~~~~~~~~~~~~~~~~~~~~~~~~~~[0m
+
+
+[31m✘ [41;31m[[41;97mERROR[41;31m][0m [1mNG5002: Parser Error: Missing expected ) at column 25 in [retirerFavori((resource as any).idRessource || (resource as any).id)] in /home/heloise/Documents/-RE-SSOURCES-RELATIONNELLES/-RE-SSOURCES-RELATIONNELLES/frontend/src/app/features/profile/pages/profile/profile.component.html@284:73[0m [1m[35m[plugin angular-compiler][0m
+
+    src/app/features/profile/pages/profile/profile.component.html:362:15:
+[37m      362 │ ...     <div [32m*ngFor="let activity of ongoingActivities"[37m class="p-...
+          ╵              [32m~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~[0m
+
+  Error occurs in the template of component ProfileComponent.
+
+    src/app/features/profile/pages/profile/profile.component.ts:13:15:
+[37m      13 │   templateUrl: [32m'./profile.component.html'[37m,
+         ╵                [32m~~~~~~~~~~~~~~~~~~~~~~~~~~[0m
+
+
+[31m✘ [41;31m[[41;97mERROR[41;31m][0m [1mNG5002: Parser Error: Missing expected ) at column 58 in [retirerFavori((resource as any).idRessource || (resource as any).id)] in /home/heloise/Documents/-RE-SSOURCES-RELATIONNELLES/-RE-SSOURCES-RELATIONNELLES/frontend/src/app/features/profile/pages/profile/profile.component.html@284:73[0m [1m[35m[plugin angular-compiler][0m
+
+    src/app/features/profile/pages/profile/profile.component.html:362:15:
+[37m      362 │ ...     <div [32m*ngFor="let activity of ongoingActivities"[37m class="p-...
+          ╵              [32m~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~[0m
+
+  Error occurs in the template of component ProfileComponent.
+
+    src/app/features/profile/pages/profile/profile.component.ts:13:15:
+[37m      13 │   templateUrl: [32m'./profile.component.html'[37m,
+         ╵                [32m~~~~~~~~~~~~~~~~~~~~~~~~~~[0m
+
+
+[31m✘ [41;31m[[41;97mERROR[41;31m][0m [1mNG5002: Parser Error: Missing expected ) at column 25 in [retirerFavori((resource as any).idRessource || (resource as any).id)] in /home/heloise/Documents/-RE-SSOURCES-RELATIONNELLES/-RE-SSOURCES-RELATIONNELLES/frontend/src/app/features/profile/pages/profile/profile.component.html@284:73[0m [1m[35m[plugin angular-compiler][0m
+
+    src/app/features/profile/pages/profile/profile.component.html:365:56:
+[37m      365 │ ...<h3 class="font-semibold text-gray-900">[32m{{ activity.title }}[37m</h3>
+          ╵                                            [32m~~~~~~~~~~~~~~~~~~~~[0m
+
+  Error occurs in the template of component ProfileComponent.
+
+    src/app/features/profile/pages/profile/profile.component.ts:13:15:
+[37m      13 │   templateUrl: [32m'./profile.component.html'[37m,
+         ╵                [32m~~~~~~~~~~~~~~~~~~~~~~~~~~[0m
+
+
+[31m✘ [41;31m[[41;97mERROR[41;31m][0m [1mNG5002: Parser Error: Missing expected ) at column 58 in [retirerFavori((resource as any).idRessource || (resource as any).id)] in /home/heloise/Documents/-RE-SSOURCES-RELATIONNELLES/-RE-SSOURCES-RELATIONNELLES/frontend/src/app/features/profile/pages/profile/profile.component.html@284:73[0m [1m[35m[plugin angular-compiler][0m
+
+    src/app/features/profile/pages/profile/profile.component.html:365:56:
+[37m      365 │ ...<h3 class="font-semibold text-gray-900">[32m{{ activity.title }}[37m</h3>
+          ╵                                            [32m~~~~~~~~~~~~~~~~~~~~[0m
+
+  Error occurs in the template of component ProfileComponent.
+
+    src/app/features/profile/pages/profile/profile.component.ts:13:15:
+[37m      13 │   templateUrl: [32m'./profile.component.html'[37m,
+         ╵                [32m~~~~~~~~~~~~~~~~~~~~~~~~~~[0m
+
+
+[31m✘ [41;31m[[41;97mERROR[41;31m][0m [1mNG5002: Parser Error: Missing expected ) at column 25 in [retirerFavori((resource as any).idRessource || (resource as any).id)] in /home/heloise/Documents/-RE-SSOURCES-RELATIONNELLES/-RE-SSOURCES-RELATIONNELLES/frontend/src/app/features/profile/pages/profile/profile.component.html@284:73[0m [1m[35m[plugin angular-compiler][0m
+
+    src/app/features/profile/pages/profile/profile.component.html:366:54:
+[37m      366 │ ...    <p class="text-sm text-gray-600 mt-1">[32m{{ activity.type }}[37m</p>
+          ╵                                              [32m~~~~~~~~~~~~~~~~~~~[0m
+
+  Error occurs in the template of component ProfileComponent.
+
+    src/app/features/profile/pages/profile/profile.component.ts:13:15:
+[37m      13 │   templateUrl: [32m'./profile.component.html'[37m,
+         ╵                [32m~~~~~~~~~~~~~~~~~~~~~~~~~~[0m
+
+
+[31m✘ [41;31m[[41;97mERROR[41;31m][0m [1mNG5002: Parser Error: Missing expected ) at column 58 in [retirerFavori((resource as any).idRessource || (resource as any).id)] in /home/heloise/Documents/-RE-SSOURCES-RELATIONNELLES/-RE-SSOURCES-RELATIONNELLES/frontend/src/app/features/profile/pages/profile/profile.component.html@284:73[0m [1m[35m[plugin angular-compiler][0m
+
+    src/app/features/profile/pages/profile/profile.component.html:366:54:
+[37m      366 │ ...    <p class="text-sm text-gray-600 mt-1">[32m{{ activity.type }}[37m</p>
+          ╵                                              [32m~~~~~~~~~~~~~~~~~~~[0m
+
+  Error occurs in the template of component ProfileComponent.
+
+    src/app/features/profile/pages/profile/profile.component.ts:13:15:
+[37m      13 │   templateUrl: [32m'./profile.component.html'[37m,
+         ╵                [32m~~~~~~~~~~~~~~~~~~~~~~~~~~[0m
+
+
+[31m✘ [41;31m[[41;97mERROR[41;31m][0m [1mNG5002: Parser Error: Missing expected ) at column 25 in [retirerFavori((resource as any).idRessource || (resource as any).id)] in /home/heloise/Documents/-RE-SSOURCES-RELATIONNELLES/-RE-SSOURCES-RELATIONNELLES/frontend/src/app/features/profile/pages/profile/profile.component.html@284:73[0m [1m[35m[plugin angular-compiler][0m
+
+    src/app/features/profile/pages/profile/profile.component.html:369:25:
+[37m      369 │                 (click)="[32mresumeActivity(activity.id)[37m"
+          ╵                          [32m~~~~~~~~~~~~~~~~~~~~~~~~~~~[0m
+
+  Error occurs in the template of component ProfileComponent.
+
+    src/app/features/profile/pages/profile/profile.component.ts:13:15:
+[37m      13 │   templateUrl: [32m'./profile.component.html'[37m,
+         ╵                [32m~~~~~~~~~~~~~~~~~~~~~~~~~~[0m
+
+
+[31m✘ [41;31m[[41;97mERROR[41;31m][0m [1mNG5002: Parser Error: Missing expected ) at column 58 in [retirerFavori((resource as any).idRessource || (resource as any).id)] in /home/heloise/Documents/-RE-SSOURCES-RELATIONNELLES/-RE-SSOURCES-RELATIONNELLES/frontend/src/app/features/profile/pages/profile/profile.component.html@284:73[0m [1m[35m[plugin angular-compiler][0m
+
+    src/app/features/profile/pages/profile/profile.component.html:369:25:
+[37m      369 │                 (click)="[32mresumeActivity(activity.id)[37m"
+          ╵                          [32m~~~~~~~~~~~~~~~~~~~~~~~~~~~[0m
+
+  Error occurs in the template of component ProfileComponent.
+
+    src/app/features/profile/pages/profile/profile.component.ts:13:15:
+[37m      13 │   templateUrl: [32m'./profile.component.html'[37m,
+         ╵                [32m~~~~~~~~~~~~~~~~~~~~~~~~~~[0m
+
+
+[31m✘ [41;31m[[41;97mERROR[41;31m][0m [1mNG5002: Parser Error: Missing expected ) at column 25 in [retirerFavori((resource as any).idRessource || (resource as any).id)] in /home/heloise/Documents/-RE-SSOURCES-RELATIONNELLES/-RE-SSOURCES-RELATIONNELLES/frontend/src/app/features/profile/pages/profile/profile.component.html@284:73[0m [1m[35m[plugin angular-compiler][0m
+
+    src/app/features/profile/pages/profile/profile.component.html:376:36:
+[37m      376 │ ... <div [style.width.%]="[32mactivity.progress[37m" class="bg-blue-600 h...
+          ╵                           [32m~~~~~~~~~~~~~~~~~[0m
+
+  Error occurs in the template of component ProfileComponent.
+
+    src/app/features/profile/pages/profile/profile.component.ts:13:15:
+[37m      13 │   templateUrl: [32m'./profile.component.html'[37m,
+         ╵                [32m~~~~~~~~~~~~~~~~~~~~~~~~~~[0m
+
+
+[31m✘ [41;31m[[41;97mERROR[41;31m][0m [1mNG5002: Parser Error: Missing expected ) at column 58 in [retirerFavori((resource as any).idRessource || (resource as any).id)] in /home/heloise/Documents/-RE-SSOURCES-RELATIONNELLES/-RE-SSOURCES-RELATIONNELLES/frontend/src/app/features/profile/pages/profile/profile.component.html@284:73[0m [1m[35m[plugin angular-compiler][0m
+
+    src/app/features/profile/pages/profile/profile.component.html:376:36:
+[37m      376 │ ... <div [style.width.%]="[32mactivity.progress[37m" class="bg-blue-600 h...
+          ╵                           [32m~~~~~~~~~~~~~~~~~[0m
+
+  Error occurs in the template of component ProfileComponent.
+
+    src/app/features/profile/pages/profile/profile.component.ts:13:15:
+[37m      13 │   templateUrl: [32m'./profile.component.html'[37m,
+         ╵                [32m~~~~~~~~~~~~~~~~~~~~~~~~~~[0m
+
+
+[31m✘ [41;31m[[41;97mERROR[41;31m][0m [1mNG5002: Parser Error: Missing expected ) at column 25 in [retirerFavori((resource as any).idRessource || (resource as any).id)] in /home/heloise/Documents/-RE-SSOURCES-RELATIONNELLES/-RE-SSOURCES-RELATIONNELLES/frontend/src/app/features/profile/pages/profile/profile.component.html@284:73[0m [1m[35m[plugin angular-compiler][0m
+
+    src/app/features/profile/pages/profile/profile.component.html:378:50:
+[37m      378 │ ...xt-xs text-gray-600 mt-2">[32m{{ activity.progress }}% complét[37mé</p>
+          ╵                              [32m~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~[0m
+
+  Error occurs in the template of component ProfileComponent.
+
+    src/app/features/profile/pages/profile/profile.component.ts:13:15:
+[37m      13 │   templateUrl: [32m'./profile.component.html'[37m,
+         ╵                [32m~~~~~~~~~~~~~~~~~~~~~~~~~~[0m
+
+
+[31m✘ [41;31m[[41;97mERROR[41;31m][0m [1mNG5002: Parser Error: Missing expected ) at column 58 in [retirerFavori((resource as any).idRessource || (resource as any).id)] in /home/heloise/Documents/-RE-SSOURCES-RELATIONNELLES/-RE-SSOURCES-RELATIONNELLES/frontend/src/app/features/profile/pages/profile/profile.component.html@284:73[0m [1m[35m[plugin angular-compiler][0m
+
+    src/app/features/profile/pages/profile/profile.component.html:378:50:
+[37m      378 │ ...xt-xs text-gray-600 mt-2">[32m{{ activity.progress }}% complét[37mé</p>
+          ╵                              [32m~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~[0m
+
+  Error occurs in the template of component ProfileComponent.
+
+    src/app/features/profile/pages/profile/profile.component.ts:13:15:
+[37m      13 │   templateUrl: [32m'./profile.component.html'[37m,
+         ╵                [32m~~~~~~~~~~~~~~~~~~~~~~~~~~[0m
+
+
+[31m✘ [41;31m[[41;97mERROR[41;31m][0m [1mNG5002: Parser Error: Missing expected ) at column 25 in [retirerFavori((resource as any).idRessource || (resource as any).id)] in /home/heloise/Documents/-RE-SSOURCES-RELATIONNELLES/-RE-SSOURCES-RELATIONNELLES/frontend/src/app/features/profile/pages/profile/profile.component.html@284:73[0m [1m[35m[plugin angular-compiler][0m
+
+    src/app/features/profile/pages/profile/profile.component.html:389:15:
+[37m      389 │           <div [32m*ngFor="let comment of comments"[37m class="p-4 border...
+          ╵                [32m~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~[0m
+
+  Error occurs in the template of component ProfileComponent.
+
+    src/app/features/profile/pages/profile/profile.component.ts:13:15:
+[37m      13 │   templateUrl: [32m'./profile.component.html'[37m,
+         ╵                [32m~~~~~~~~~~~~~~~~~~~~~~~~~~[0m
+
+
+[31m✘ [41;31m[[41;97mERROR[41;31m][0m [1mNG5002: Parser Error: Missing expected ) at column 58 in [retirerFavori((resource as any).idRessource || (resource as any).id)] in /home/heloise/Documents/-RE-SSOURCES-RELATIONNELLES/-RE-SSOURCES-RELATIONNELLES/frontend/src/app/features/profile/pages/profile/profile.component.html@284:73[0m [1m[35m[plugin angular-compiler][0m
+
+    src/app/features/profile/pages/profile/profile.component.html:389:15:
+[37m      389 │           <div [32m*ngFor="let comment of comments"[37m class="p-4 border...
+          ╵                [32m~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~[0m
+
+  Error occurs in the template of component ProfileComponent.
+
+    src/app/features/profile/pages/profile/profile.component.ts:13:15:
+[37m      13 │   templateUrl: [32m'./profile.component.html'[37m,
+         ╵                [32m~~~~~~~~~~~~~~~~~~~~~~~~~~[0m
+
+
+[31m✘ [41;31m[[41;97mERROR[41;31m][0m [1mNG5002: Parser Error: Missing expected ) at column 25 in [retirerFavori((resource as any).idRessource || (resource as any).id)] in /home/heloise/Documents/-RE-SSOURCES-RELATIONNELLES/-RE-SSOURCES-RELATIONNELLES/frontend/src/app/features/profile/pages/profile/profile.component.html@284:73[0m [1m[35m[plugin angular-compiler][0m
+
+    src/app/features/profile/pages/profile/profile.component.html:392:56:
+[37m      392 │ ...ss="font-semibold text-gray-900">[32m{{ comment.resourceTitle }}[37m</h3>
+          ╵                                     [32m~~~~~~~~~~~~~~~~~~~~~~~~~~~[0m
+
+  Error occurs in the template of component ProfileComponent.
+
+    src/app/features/profile/pages/profile/profile.component.ts:13:15:
+[37m      13 │   templateUrl: [32m'./profile.component.html'[37m,
+         ╵                [32m~~~~~~~~~~~~~~~~~~~~~~~~~~[0m
+
+
+[31m✘ [41;31m[[41;97mERROR[41;31m][0m [1mNG5002: Parser Error: Missing expected ) at column 58 in [retirerFavori((resource as any).idRessource || (resource as any).id)] in /home/heloise/Documents/-RE-SSOURCES-RELATIONNELLES/-RE-SSOURCES-RELATIONNELLES/frontend/src/app/features/profile/pages/profile/profile.component.html@284:73[0m [1m[35m[plugin angular-compiler][0m
+
+    src/app/features/profile/pages/profile/profile.component.html:392:56:
+[37m      392 │ ...ss="font-semibold text-gray-900">[32m{{ comment.resourceTitle }}[37m</h3>
+          ╵                                     [32m~~~~~~~~~~~~~~~~~~~~~~~~~~~[0m
+
+  Error occurs in the template of component ProfileComponent.
+
+    src/app/features/profile/pages/profile/profile.component.ts:13:15:
+[37m      13 │   templateUrl: [32m'./profile.component.html'[37m,
+         ╵                [32m~~~~~~~~~~~~~~~~~~~~~~~~~~[0m
+
+
+[31m✘ [41;31m[[41;97mERROR[41;31m][0m [1mNG5002: Parser Error: Missing expected ) at column 25 in [retirerFavori((resource as any).idRessource || (resource as any).id)] in /home/heloise/Documents/-RE-SSOURCES-RELATIONNELLES/-RE-SSOURCES-RELATIONNELLES/frontend/src/app/features/profile/pages/profile/profile.component.html@284:73[0m [1m[35m[plugin angular-compiler][0m
+
+    src/app/features/profile/pages/profile/profile.component.html:393:54:
+[37m      393 │ ...s="text-xs text-gray-500 mt-1">[32m{{ formatDate(comment.date) }}[37m</p>
+          ╵                                   [32m~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~[0m
+
+  Error occurs in the template of component ProfileComponent.
+
+    src/app/features/profile/pages/profile/profile.component.ts:13:15:
+[37m      13 │   templateUrl: [32m'./profile.component.html'[37m,
+         ╵                [32m~~~~~~~~~~~~~~~~~~~~~~~~~~[0m
+
+
+[31m✘ [41;31m[[41;97mERROR[41;31m][0m [1mNG5002: Parser Error: Missing expected ) at column 58 in [retirerFavori((resource as any).idRessource || (resource as any).id)] in /home/heloise/Documents/-RE-SSOURCES-RELATIONNELLES/-RE-SSOURCES-RELATIONNELLES/frontend/src/app/features/profile/pages/profile/profile.component.html@284:73[0m [1m[35m[plugin angular-compiler][0m
+
+    src/app/features/profile/pages/profile/profile.component.html:393:54:
+[37m      393 │ ...s="text-xs text-gray-500 mt-1">[32m{{ formatDate(comment.date) }}[37m</p>
+          ╵                                   [32m~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~[0m
+
+  Error occurs in the template of component ProfileComponent.
+
+    src/app/features/profile/pages/profile/profile.component.ts:13:15:
+[37m      13 │   templateUrl: [32m'./profile.component.html'[37m,
+         ╵                [32m~~~~~~~~~~~~~~~~~~~~~~~~~~[0m
+
+
+[31m✘ [41;31m[[41;97mERROR[41;31m][0m [1mNG5002: Parser Error: Missing expected ) at column 25 in [retirerFavori((resource as any).idRessource || (resource as any).id)] in /home/heloise/Documents/-RE-SSOURCES-RELATIONNELLES/-RE-SSOURCES-RELATIONNELLES/frontend/src/app/features/profile/pages/profile/profile.component.html@284:73[0m [1m[35m[plugin angular-compiler][0m
+
+    src/app/features/profile/pages/profile/profile.component.html:397:27:
+[37m      397 │                   (click)="[32meditComment(comment.id)[37m"
+          ╵                            [32m~~~~~~~~~~~~~~~~~~~~~~~[0m
+
+  Error occurs in the template of component ProfileComponent.
+
+    src/app/features/profile/pages/profile/profile.component.ts:13:15:
+[37m      13 │   templateUrl: [32m'./profile.component.html'[37m,
+         ╵                [32m~~~~~~~~~~~~~~~~~~~~~~~~~~[0m
+
+
+[31m✘ [41;31m[[41;97mERROR[41;31m][0m [1mNG5002: Parser Error: Missing expected ) at column 58 in [retirerFavori((resource as any).idRessource || (resource as any).id)] in /home/heloise/Documents/-RE-SSOURCES-RELATIONNELLES/-RE-SSOURCES-RELATIONNELLES/frontend/src/app/features/profile/pages/profile/profile.component.html@284:73[0m [1m[35m[plugin angular-compiler][0m
+
+    src/app/features/profile/pages/profile/profile.component.html:397:27:
+[37m      397 │                   (click)="[32meditComment(comment.id)[37m"
+          ╵                            [32m~~~~~~~~~~~~~~~~~~~~~~~[0m
+
+  Error occurs in the template of component ProfileComponent.
+
+    src/app/features/profile/pages/profile/profile.component.ts:13:15:
+[37m      13 │   templateUrl: [32m'./profile.component.html'[37m,
+         ╵                [32m~~~~~~~~~~~~~~~~~~~~~~~~~~[0m
+
+
+[31m✘ [41;31m[[41;97mERROR[41;31m][0m [1mNG5002: Parser Error: Missing expected ) at column 25 in [retirerFavori((resource as any).idRessource || (resource as any).id)] in /home/heloise/Documents/-RE-SSOURCES-RELATIONNELLES/-RE-SSOURCES-RELATIONNELLES/frontend/src/app/features/profile/pages/profile/profile.component.html@284:73[0m [1m[35m[plugin angular-compiler][0m
+
+    src/app/features/profile/pages/profile/profile.component.html:403:27:
+[37m      403 │                   (click)="[32mdeleteComment(comment.id)[37m"
+          ╵                            [32m~~~~~~~~~~~~~~~~~~~~~~~~~[0m
+
+  Error occurs in the template of component ProfileComponent.
+
+    src/app/features/profile/pages/profile/profile.component.ts:13:15:
+[37m      13 │   templateUrl: [32m'./profile.component.html'[37m,
+         ╵                [32m~~~~~~~~~~~~~~~~~~~~~~~~~~[0m
+
+
+[31m✘ [41;31m[[41;97mERROR[41;31m][0m [1mNG5002: Parser Error: Missing expected ) at column 58 in [retirerFavori((resource as any).idRessource || (resource as any).id)] in /home/heloise/Documents/-RE-SSOURCES-RELATIONNELLES/-RE-SSOURCES-RELATIONNELLES/frontend/src/app/features/profile/pages/profile/profile.component.html@284:73[0m [1m[35m[plugin angular-compiler][0m
+
+    src/app/features/profile/pages/profile/profile.component.html:403:27:
+[37m      403 │                   (click)="[32mdeleteComment(comment.id)[37m"
+          ╵                            [32m~~~~~~~~~~~~~~~~~~~~~~~~~[0m
+
+  Error occurs in the template of component ProfileComponent.
+
+    src/app/features/profile/pages/profile/profile.component.ts:13:15:
+[37m      13 │   templateUrl: [32m'./profile.component.html'[37m,
+         ╵                [32m~~~~~~~~~~~~~~~~~~~~~~~~~~[0m
+
+
+[31m✘ [41;31m[[41;97mERROR[41;31m][0m [1mNG5002: Parser Error: Missing expected ) at column 25 in [retirerFavori((resource as any).idRessource || (resource as any).id)] in /home/heloise/Documents/-RE-SSOURCES-RELATIONNELLES/-RE-SSOURCES-RELATIONNELLES/frontend/src/app/features/profile/pages/profile/profile.component.html@284:73[0m [1m[35m[plugin angular-compiler][0m
+
+    src/app/features/profile/pages/profile/profile.component.html:410:42:
+[37m      410 │             <p class="text-gray-700 mb-3">[32m{{ comment.content }}[37m</p>
+          ╵                                           [32m~~~~~~~~~~~~~~~~~~~~~[0m
+
+  Error occurs in the template of component ProfileComponent.
+
+    src/app/features/profile/pages/profile/profile.component.ts:13:15:
+[37m      13 │   templateUrl: [32m'./profile.component.html'[37m,
+         ╵                [32m~~~~~~~~~~~~~~~~~~~~~~~~~~[0m
+
+
+[31m✘ [41;31m[[41;97mERROR[41;31m][0m [1mNG5002: Parser Error: Missing expected ) at column 58 in [retirerFavori((resource as any).idRessource || (resource as any).id)] in /home/heloise/Documents/-RE-SSOURCES-RELATIONNELLES/-RE-SSOURCES-RELATIONNELLES/frontend/src/app/features/profile/pages/profile/profile.component.html@284:73[0m [1m[35m[plugin angular-compiler][0m
+
+    src/app/features/profile/pages/profile/profile.component.html:410:42:
+[37m      410 │             <p class="text-gray-700 mb-3">[32m{{ comment.content }}[37m</p>
+          ╵                                           [32m~~~~~~~~~~~~~~~~~~~~~[0m
+
+  Error occurs in the template of component ProfileComponent.
+
+    src/app/features/profile/pages/profile/profile.component.ts:13:15:
+[37m      13 │   templateUrl: [32m'./profile.component.html'[37m,
+         ╵                [32m~~~~~~~~~~~~~~~~~~~~~~~~~~[0m
+
+
+[31m✘ [41;31m[[41;97mERROR[41;31m][0m [1mNG5002: Parser Error: Missing expected ) at column 25 in [retirerFavori((resource as any).idRessource || (resource as any).id)] in /home/heloise/Documents/-RE-SSOURCES-RELATIONNELLES/-RE-SSOURCES-RELATIONNELLES/frontend/src/app/features/profile/pages/profile/profile.component.html@284:73[0m [1m[35m[plugin angular-compiler][0m
+
+    src/app/features/profile/pages/profile/profile.component.html:412:28:
+[37m      412 │               <ng-container [32m*ngFor="let i of [0,1,2,3,4]"[37m>
+          ╵                             [32m~~~~~~~~~~~~~~~~~~~~~~~~~~~~~[0m
+
+  Error occurs in the template of component ProfileComponent.
+
+    src/app/features/profile/pages/profile/profile.component.ts:13:15:
+[37m      13 │   templateUrl: [32m'./profile.component.html'[37m,
+         ╵                [32m~~~~~~~~~~~~~~~~~~~~~~~~~~[0m
+
+
+[31m✘ [41;31m[[41;97mERROR[41;31m][0m [1mNG5002: Parser Error: Missing expected ) at column 58 in [retirerFavori((resource as any).idRessource || (resource as any).id)] in /home/heloise/Documents/-RE-SSOURCES-RELATIONNELLES/-RE-SSOURCES-RELATIONNELLES/frontend/src/app/features/profile/pages/profile/profile.component.html@284:73[0m [1m[35m[plugin angular-compiler][0m
+
+    src/app/features/profile/pages/profile/profile.component.html:412:28:
+[37m      412 │               <ng-container [32m*ngFor="let i of [0,1,2,3,4]"[37m>
+          ╵                             [32m~~~~~~~~~~~~~~~~~~~~~~~~~~~~~[0m
+
+  Error occurs in the template of component ProfileComponent.
+
+    src/app/features/profile/pages/profile/profile.component.ts:13:15:
+[37m      13 │   templateUrl: [32m'./profile.component.html'[37m,
+         ╵                [32m~~~~~~~~~~~~~~~~~~~~~~~~~~[0m
+
+
+[31m✘ [41;31m[[41;97mERROR[41;31m][0m [1mNG5002: Parser Error: Missing expected ) at column 25 in [retirerFavori((resource as any).idRessource || (resource as any).id)] in /home/heloise/Documents/-RE-SSOURCES-RELATIONNELLES/-RE-SSOURCES-RELATIONNELLES/frontend/src/app/features/profile/pages/profile/profile.component.html@284:73[0m [1m[35m[plugin angular-compiler][0m
+
+    src/app/features/profile/pages/profile/profile.component.html:413:22:
+[37m      413 │ ...            <span [32m*ngIf="i < comment.rating"[37m class="text-yello...
+          ╵                      [32m~~~~~~~~~~~~~~~~~~~~~~~~~~[0m
+
+  Error occurs in the template of component ProfileComponent.
+
+    src/app/features/profile/pages/profile/profile.component.ts:13:15:
+[37m      13 │   templateUrl: [32m'./profile.component.html'[37m,
+         ╵                [32m~~~~~~~~~~~~~~~~~~~~~~~~~~[0m
+
+
+[31m✘ [41;31m[[41;97mERROR[41;31m][0m [1mNG5002: Parser Error: Missing expected ) at column 58 in [retirerFavori((resource as any).idRessource || (resource as any).id)] in /home/heloise/Documents/-RE-SSOURCES-RELATIONNELLES/-RE-SSOURCES-RELATIONNELLES/frontend/src/app/features/profile/pages/profile/profile.component.html@284:73[0m [1m[35m[plugin angular-compiler][0m
+
+    src/app/features/profile/pages/profile/profile.component.html:413:22:
+[37m      413 │ ...            <span [32m*ngIf="i < comment.rating"[37m class="text-yello...
+          ╵                      [32m~~~~~~~~~~~~~~~~~~~~~~~~~~[0m
+
+  Error occurs in the template of component ProfileComponent.
+
+    src/app/features/profile/pages/profile/profile.component.ts:13:15:
+[37m      13 │   templateUrl: [32m'./profile.component.html'[37m,
+         ╵                [32m~~~~~~~~~~~~~~~~~~~~~~~~~~[0m
+
+
+[31m✘ [41;31m[[41;97mERROR[41;31m][0m [1mNG5002: Parser Error: Missing expected ) at column 25 in [retirerFavori((resource as any).idRessource || (resource as any).id)] in /home/heloise/Documents/-RE-SSOURCES-RELATIONNELLES/-RE-SSOURCES-RELATIONNELLES/frontend/src/app/features/profile/pages/profile/profile.component.html@284:73[0m [1m[35m[plugin angular-compiler][0m
+
+    src/app/features/profile/pages/profile/profile.component.html:426:15:
+[37m      426 │           <div [32m*ngFor="let invitation of invitations"[37m class="p-4 ...
+          ╵                [32m~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~[0m
+
+  Error occurs in the template of component ProfileComponent.
+
+    src/app/features/profile/pages/profile/profile.component.ts:13:15:
+[37m      13 │   templateUrl: [32m'./profile.component.html'[37m,
+         ╵                [32m~~~~~~~~~~~~~~~~~~~~~~~~~~[0m
+
+
+[31m✘ [41;31m[[41;97mERROR[41;31m][0m [1mNG5002: Parser Error: Missing expected ) at column 58 in [retirerFavori((resource as any).idRessource || (resource as any).id)] in /home/heloise/Documents/-RE-SSOURCES-RELATIONNELLES/-RE-SSOURCES-RELATIONNELLES/frontend/src/app/features/profile/pages/profile/profile.component.html@284:73[0m [1m[35m[plugin angular-compiler][0m
+
+    src/app/features/profile/pages/profile/profile.component.html:426:15:
+[37m      426 │           <div [32m*ngFor="let invitation of invitations"[37m class="p-4 ...
+          ╵                [32m~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~[0m
+
+  Error occurs in the template of component ProfileComponent.
+
+    src/app/features/profile/pages/profile/profile.component.ts:13:15:
+[37m      13 │   templateUrl: [32m'./profile.component.html'[37m,
+         ╵                [32m~~~~~~~~~~~~~~~~~~~~~~~~~~[0m
+
+
+[31m✘ [41;31m[[41;97mERROR[41;31m][0m [1mNG5002: Parser Error: Missing expected ) at column 25 in [retirerFavori((resource as any).idRessource || (resource as any).id)] in /home/heloise/Documents/-RE-SSOURCES-RELATIONNELLES/-RE-SSOURCES-RELATIONNELLES/frontend/src/app/features/profile/pages/profile/profile.component.html@284:73[0m [1m[35m[plugin angular-compiler][0m
+
+    src/app/features/profile/pages/profile/profile.component.html:427:52:
+[37m      427 │ ...3 class="font-semibold text-gray-900">[32m{{ invitation.title }}[37m</h3>
+          ╵                                          [32m~~~~~~~~~~~~~~~~~~~~~~[0m
+
+  Error occurs in the template of component ProfileComponent.
+
+    src/app/features/profile/pages/profile/profile.component.ts:13:15:
+[37m      13 │   templateUrl: [32m'./profile.component.html'[37m,
+         ╵                [32m~~~~~~~~~~~~~~~~~~~~~~~~~~[0m
+
+
+[31m✘ [41;31m[[41;97mERROR[41;31m][0m [1mNG5002: Parser Error: Missing expected ) at column 58 in [retirerFavori((resource as any).idRessource || (resource as any).id)] in /home/heloise/Documents/-RE-SSOURCES-RELATIONNELLES/-RE-SSOURCES-RELATIONNELLES/frontend/src/app/features/profile/pages/profile/profile.component.html@284:73[0m [1m[35m[plugin angular-compiler][0m
+
+    src/app/features/profile/pages/profile/profile.component.html:427:52:
+[37m      427 │ ...3 class="font-semibold text-gray-900">[32m{{ invitation.title }}[37m</h3>
+          ╵                                          [32m~~~~~~~~~~~~~~~~~~~~~~[0m
+
+  Error occurs in the template of component ProfileComponent.
+
+    src/app/features/profile/pages/profile/profile.component.ts:13:15:
+[37m      13 │   templateUrl: [32m'./profile.component.html'[37m,
+         ╵                [32m~~~~~~~~~~~~~~~~~~~~~~~~~~[0m
+
+
+[31m✘ [41;31m[[41;97mERROR[41;31m][0m [1mNG5002: Parser Error: Missing expected ) at column 25 in [retirerFavori((resource as any).idRessource || (resource as any).id)] in /home/heloise/Documents/-RE-SSOURCES-RELATIONNELLES/-RE-SSOURCES-RELATIONNELLES/frontend/src/app/features/profile/pages/profile/profile.component.html@284:73[0m [1m[35m[plugin angular-compiler][0m
+
+    src/app/features/profile/pages/profile/profile.component.html:428:50:
+[37m      428 │ ...="text-sm text-gray-600 mt-1">[32mDe : {{ invitation.organizer }}[37m</p>
+          ╵                                  [32m~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~[0m
+
+  Error occurs in the template of component ProfileComponent.
+
+    src/app/features/profile/pages/profile/profile.component.ts:13:15:
+[37m      13 │   templateUrl: [32m'./profile.component.html'[37m,
+         ╵                [32m~~~~~~~~~~~~~~~~~~~~~~~~~~[0m
+
+
+[31m✘ [41;31m[[41;97mERROR[41;31m][0m [1mNG5002: Parser Error: Missing expected ) at column 58 in [retirerFavori((resource as any).idRessource || (resource as any).id)] in /home/heloise/Documents/-RE-SSOURCES-RELATIONNELLES/-RE-SSOURCES-RELATIONNELLES/frontend/src/app/features/profile/pages/profile/profile.component.html@284:73[0m [1m[35m[plugin angular-compiler][0m
+
+    src/app/features/profile/pages/profile/profile.component.html:428:50:
+[37m      428 │ ...="text-sm text-gray-600 mt-1">[32mDe : {{ invitation.organizer }}[37m</p>
+          ╵                                  [32m~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~[0m
+
+  Error occurs in the template of component ProfileComponent.
+
+    src/app/features/profile/pages/profile/profile.component.ts:13:15:
+[37m      13 │   templateUrl: [32m'./profile.component.html'[37m,
+         ╵                [32m~~~~~~~~~~~~~~~~~~~~~~~~~~[0m
+
+
+[31m✘ [41;31m[[41;97mERROR[41;31m][0m [1mNG5002: Parser Error: Missing expected ) at column 25 in [retirerFavori((resource as any).idRessource || (resource as any).id)] in /home/heloise/Documents/-RE-SSOURCES-RELATIONNELLES/-RE-SSOURCES-RELATIONNELLES/frontend/src/app/features/profile/pages/profile/profile.component.html@284:73[0m [1m[35m[plugin angular-compiler][0m
+
+    src/app/features/profile/pages/profile/profile.component.html:429:50:
+[37m      429 │ ...text-xs text-gray-500 mt-2">[32m{{ formatDate(invitation.date) }}[37m</p>
+          ╵                                [32m~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~[0m
+
+  Error occurs in the template of component ProfileComponent.
+
+    src/app/features/profile/pages/profile/profile.component.ts:13:15:
+[37m      13 │   templateUrl: [32m'./profile.component.html'[37m,
+         ╵                [32m~~~~~~~~~~~~~~~~~~~~~~~~~~[0m
+
+
+[31m✘ [41;31m[[41;97mERROR[41;31m][0m [1mNG5002: Parser Error: Missing expected ) at column 58 in [retirerFavori((resource as any).idRessource || (resource as any).id)] in /home/heloise/Documents/-RE-SSOURCES-RELATIONNELLES/-RE-SSOURCES-RELATIONNELLES/frontend/src/app/features/profile/pages/profile/profile.component.html@284:73[0m [1m[35m[plugin angular-compiler][0m
+
+    src/app/features/profile/pages/profile/profile.component.html:429:50:
+[37m      429 │ ...text-xs text-gray-500 mt-2">[32m{{ formatDate(invitation.date) }}[37m</p>
+          ╵                                [32m~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~[0m
+
+  Error occurs in the template of component ProfileComponent.
+
+    src/app/features/profile/pages/profile/profile.component.ts:13:15:
+[37m      13 │   templateUrl: [32m'./profile.component.html'[37m,
+         ╵                [32m~~~~~~~~~~~~~~~~~~~~~~~~~~[0m
+
+
+[31m✘ [41;31m[[41;97mERROR[41;31m][0m [1mNG5002: Parser Error: Missing expected ) at column 25 in [retirerFavori((resource as any).idRessource || (resource as any).id)] in /home/heloise/Documents/-RE-SSOURCES-RELATIONNELLES/-RE-SSOURCES-RELATIONNELLES/frontend/src/app/features/profile/pages/profile/profile.component.html@284:73[0m [1m[35m[plugin angular-compiler][0m
+
+    src/app/features/profile/pages/profile/profile.component.html:432:25:
+[37m      432 │                 (click)="[32mrespondToInvitation(invitation.id, true)[37m"
+          ╵                          [32m~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~[0m
+
+  Error occurs in the template of component ProfileComponent.
+
+    src/app/features/profile/pages/profile/profile.component.ts:13:15:
+[37m      13 │   templateUrl: [32m'./profile.component.html'[37m,
+         ╵                [32m~~~~~~~~~~~~~~~~~~~~~~~~~~[0m
+
+
+[31m✘ [41;31m[[41;97mERROR[41;31m][0m [1mNG5002: Parser Error: Missing expected ) at column 58 in [retirerFavori((resource as any).idRessource || (resource as any).id)] in /home/heloise/Documents/-RE-SSOURCES-RELATIONNELLES/-RE-SSOURCES-RELATIONNELLES/frontend/src/app/features/profile/pages/profile/profile.component.html@284:73[0m [1m[35m[plugin angular-compiler][0m
+
+    src/app/features/profile/pages/profile/profile.component.html:432:25:
+[37m      432 │                 (click)="[32mrespondToInvitation(invitation.id, true)[37m"
+          ╵                          [32m~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~[0m
+
+  Error occurs in the template of component ProfileComponent.
+
+    src/app/features/profile/pages/profile/profile.component.ts:13:15:
+[37m      13 │   templateUrl: [32m'./profile.component.html'[37m,
+         ╵                [32m~~~~~~~~~~~~~~~~~~~~~~~~~~[0m
+
+
+[31m✘ [41;31m[[41;97mERROR[41;31m][0m [1mNG5002: Parser Error: Missing expected ) at column 25 in [retirerFavori((resource as any).idRessource || (resource as any).id)] in /home/heloise/Documents/-RE-SSOURCES-RELATIONNELLES/-RE-SSOURCES-RELATIONNELLES/frontend/src/app/features/profile/pages/profile/profile.component.html@284:73[0m [1m[35m[plugin angular-compiler][0m
+
+    src/app/features/profile/pages/profile/profile.component.html:438:25:
+[37m      438 │                 (click)="[32mrespondToInvitation(invitation.id, false)[37m"
+          ╵                          [32m~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~[0m
+
+  Error occurs in the template of component ProfileComponent.
+
+    src/app/features/profile/pages/profile/profile.component.ts:13:15:
+[37m      13 │   templateUrl: [32m'./profile.component.html'[37m,
+         ╵                [32m~~~~~~~~~~~~~~~~~~~~~~~~~~[0m
+
+
+[31m✘ [41;31m[[41;97mERROR[41;31m][0m [1mNG5002: Parser Error: Missing expected ) at column 58 in [retirerFavori((resource as any).idRessource || (resource as any).id)] in /home/heloise/Documents/-RE-SSOURCES-RELATIONNELLES/-RE-SSOURCES-RELATIONNELLES/frontend/src/app/features/profile/pages/profile/profile.component.html@284:73[0m [1m[35m[plugin angular-compiler][0m
+
+    src/app/features/profile/pages/profile/profile.component.html:438:25:
+[37m      438 │                 (click)="[32mrespondToInvitation(invitation.id, false)[37m"
+          ╵                          [32m~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~[0m
+
+  Error occurs in the template of component ProfileComponent.
+
+    src/app/features/profile/pages/profile/profile.component.ts:13:15:
+[37m      13 │   templateUrl: [32m'./profile.component.html'[37m,
+         ╵                [32m~~~~~~~~~~~~~~~~~~~~~~~~~~[0m
+
+
+[31m✘ [41;31m[[41;97mERROR[41;31m][0m [1mTS2345: Argument of type '{ categoryId: any; title: any; description: any; content: any; visibilite: any; category: string; author: string; createdAt: Date; type: "article"; statut: string; }' is not assignable to parameter of type 'Partial<Ressource>'.
+  Types of property 'statut' are incompatible.
+    Type 'string' is not assignable to type '"Brouillon" | "En validation" | "Publiée" | "Rejetée" | "Archivée" | undefined'.[0m [1m[35m[plugin angular-compiler][0m
+
+    src/app/features/resources/pages/ressource-create/ressource-create.component.ts:83:42:
+[37m      83 │     this.ressourceService.createRessource([32mbackendPayload[37m).subscribe({
+         ╵                                           [32m~~~~~~~~~~~~~~[0m
+
+
+[31m✘ [41;31m[[41;97mERROR[41;31m][0m [1mNG1: Property 'titre' does not exist on type 'Ressource'. Did you mean 'title'?[0m [1m[35m[plugin angular-compiler][0m
+
+    src/app/features/resources/pages/ressource-detail/ressource-detail.component.html:34:123:
+[37m      34 │ ... mb-4 leading-tight">{{ ressource.title || ressource.[32mtitre[37m }}</h1>
+         ╵                                                         [32m~~~~~[0m
+
+  Error occurs in the template of component RessourceDetailComponent.
+
+    src/app/features/resources/pages/ressource-detail/ressource-detail.component.ts:15:15:
+[37m      15 │   templateUrl: [32m'./ressource-detail.component.html'[37m,
+         ╵                [32m~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~[0m
+
+

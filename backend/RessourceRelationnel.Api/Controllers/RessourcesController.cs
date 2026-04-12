@@ -60,10 +60,19 @@ public class RessourcesController : ControllerBase
             .FirstOrDefaultAsync(r => r.IdRessource == id);
 
         if (r == null) return NotFound();
+
+        // Si la ressource n'est pas publique, vérifier les permissions
         if (r.Statut != Statut.Publiee || r.Visibilite != Visibilite.Publique)
         {
-            // Seuls les utilisateurs connectés ou auteurs/admins peuvent voir
             if (!User.Identity!.IsAuthenticated) return NotFound();
+
+            // Vérifier si l'utilisateur est l'auteur ou un admin/modérateur
+            var userId = User.FindFirstValue(ClaimTypes.NameIdentifier);
+            var role = User.FindFirstValue(ClaimTypes.Role);
+            bool isAdmin = role == "administrateur" || role == "super_administrateur" || role == "moderateur";
+            bool isOwner = r.IdUtilisateur.ToString() == userId;
+
+            if (!isAdmin && !isOwner) return NotFound();
         }
 
         return Ok(ToDto(r));
@@ -74,7 +83,9 @@ public class RessourcesController : ControllerBase
     [Authorize]
     public async Task<IActionResult> Create([FromBody] CreateRessourceDto dto)
     {
-        var userId = long.Parse(User.FindFirstValue(ClaimTypes.NameIdentifier)!);
+        var userId = User.FindFirstValue(ClaimTypes.NameIdentifier);
+        if (string.IsNullOrEmpty(userId))
+            return Unauthorized(new { message = "Utilisateur non identifié" });
 
         var categorie = await _context.Categories.FindAsync(dto.IdCategorie);
         if (categorie == null) return BadRequest(new { message = "Catégorie invalide." });

@@ -40,9 +40,9 @@ export class RessourceListComponent implements OnInit {
           return ressources;
         }
         return ressources.filter(ressource =>
-          ressource.title.toLowerCase().includes(term.toLowerCase()) ||
-          ressource.description.toLowerCase().includes(term.toLowerCase()) ||
-          ressource.author.toLowerCase().includes(term.toLowerCase())
+          (ressource.title?.toLowerCase().includes(term.toLowerCase()) ?? false)
+        || (ressource.description?.toLowerCase().includes(term.toLowerCase()) ?? false)
+        || (ressource.author?.toLowerCase().includes(term.toLowerCase()) ?? false)
         );
       })
     );

@@ -279,10 +279,10 @@
           <div *ngFor="let resource of favoriteResources" class="p-4 border border-pink-200 rounded-lg bg-pink-50">
             <div class="flex items-start justify-between">
               <div>
-                <h3 class="font-semibold text-gray-900">{{ resource.title }}</h3>
-                <p class="text-sm text-gray-600 mt-1">{{ resource.category }}</p>
+                <h3 class="font-semibold text-gray-900">{{ resource.titre || resource.title }}</h3>
+                <p class="text-sm text-gray-600 mt-1">{{ resource.nomCategorie || resource.category }}</p>
               </div>
-              <button class="text-pink-600 hover:text-pink-700">Retirer</button>
+              <button class="text-pink-600 hover:text-pink-700" (click)="retirerFavori(getResourceId(resource))">Retirer</button>
             </div>
           </div>
         </div>

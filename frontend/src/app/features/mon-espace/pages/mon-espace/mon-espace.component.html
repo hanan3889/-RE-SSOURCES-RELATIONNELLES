@@ -91,13 +91,13 @@
                   <span class="format-badge">{{ ressource.format }}</span>
                   <span class="categorie">{{ ressource.nomCategorie }}</span>
                 </div>
-                <h3 class="card-title">{{ ressource.titre }}</h3>
-                <p class="card-desc">{{ ressource.description }}</p>
+                <h3 class="card-title" *ngIf="ressource.titre || ressource.title">{{ ressource.titre ?? ressource.title }}</h3>
+                <p class="card-desc" *ngIf="ressource.description || ressource.content">{{ ressource.description ?? ressource.content }}</p>
                 <div class="card-footer">
                   <span class="auteur">{{ ressource.prenomAuteur }} {{ ressource.nomAuteur }}</span>
                   <div class="card-actions">
                     <a [routerLink]="['/ressources', ressource.idRessource]" class="btn btn-sm btn-outline">Voir</a>
-                    <button class="btn btn-sm btn-danger" (click)="retirerFavori(ressource.idRessource)">Retirer</button>
+                    <button class="btn btn-sm btn-danger" *ngIf="ressource.idRessource" (click)="retirerFavori(ressource.idRessource)">Retirer</button>
                   </div>
                 </div>
               </div>
@@ -123,7 +123,7 @@
               <div class="ressource-card">
                 <div class="card-header">
                   <span class="format-badge">{{ ressource.format }}</span>
-                  <span [class]="'statut-badge ' + getStatutClass(ressource.statut)">
+                    <span *ngIf="ressource.statut" [class]="'statut-badge ' + getStatutClass(ressource.statut)">
                     {{ getStatutLabel(ressource.statut) }}
                   </span>
                 </div>
