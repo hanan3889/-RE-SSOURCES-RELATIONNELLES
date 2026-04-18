@@ -20,7 +20,7 @@
         <div class="ressource-header mb-8">
           <span class="text-blue-600 font-semibold text-sm uppercase tracking-wider">{{ ressource.category }}</span>
           <h1 class="text-4xl md:text-5xl font-bold text-gray-900 mt-2 mb-4 leading-tight">{{ ressource.title }}</h1>
-          <div class="flex items-center text-gray-500 text-sm">
+          <div class="flex items-center gap-4 text-gray-500 text-sm flex-wrap">
             <span>Par {{ ressource.author }}</span>
             <span class="mx-2">|</span>
             <span>{{ ressource.createdAt | date: 'longDate' }}</span>
@@ -28,6 +28,11 @@
             <span>Visibilité: {{ ressource.visibilite }}</span>
             <span class="mx-2">|</span>
             <span>Statut: {{ ressource.statut }}</span>
+          </div>
+          <div class="mt-6 flex gap-3">
+            <button *ngIf="isLoggedIn" type="button" (click)="addToFavorites(ressource.id)" class="rounded-full bg-[#000091] px-6 py-2 text-white text-sm font-semibold hover:bg-[#1d1db5] transition">
+              ★ Ajouter aux favoris
+            </button>
           </div>
         </div>
 

@@ -1,10 +1,11 @@
 import { Component, OnInit } from '@angular/core';
 import { CommonModule } from '@angular/common';
 import { FormsModule } from '@angular/forms';
-import { RouterModule } from '@angular/router';
+import { Router, RouterModule } from '@angular/router';
 import { Observable, Subject, combineLatest } from 'rxjs';
 import { debounceTime, distinctUntilChanged, map, shareReplay, startWith } from 'rxjs/operators';
 
+import { AuthService } from 'src/app/core/services/auth.service';
 import { Ressource, RessourceService } from '../../services/ressource.service';
 
 @Component({
@@ -16,15 +17,21 @@ import { Ressource, RessourceService } from '../../services/ressource.service';
 })
 export class RessourceListComponent implements OnInit {
   currentYear: number = new Date().getFullYear();
+  isLoggedIn = false;
   
   private allRessources$!: Observable<Ressource[]>;
   filteredRessources$!: Observable<Ressource[]>;
   
   private searchTerm$ = new Subject<string>();
 
-  constructor(private ressourceService: RessourceService) { }
+  constructor(
+    private ressourceService: RessourceService,
+    private router: Router,
+    private authService: AuthService
+  ) { }
 
   ngOnInit(): void {
+    this.isLoggedIn = this.authService.isLoggedIn();
     this.allRessources$ = this.ressourceService.getRessources();
 
     const search$ = this.searchTerm$.pipe(
@@ -50,6 +57,17 @@ export class RessourceListComponent implements OnInit {
 
     this.setupScrollAnimations();
   }
+
+  onCreateResource(): void {
+    this.router.navigate(['/ressources/creer']);
+  }
+
+  onCardClick(ressourceId: number): void {
+    if (ressourceId && !isNaN(ressourceId)) {
+      this.router.navigate(['/ressources', ressourceId]);
+    }
+  }
+
 
   onSearch(event: Event): void {
     const term = (event.target as HTMLInputElement).value;

@@ -16,6 +16,14 @@ export interface Ressource {
   statut: 'Brouillon' | 'En validation' | 'Publiée' | 'Rejetée' | 'Archivée';
 }
 
+export interface CreateRessourceDto {
+  titre: string;
+  description: string;
+  format: string;
+  visibilite: number | 'Publique' | 'Connectes' | 'Privee';
+  idCategorie: number;
+}
+
 interface ApiRessourceDto {
   idRessource: number;
   titre: string;
@@ -49,6 +57,16 @@ export class RessourceService {
     return this.http
       .get<ApiRessourceDto>(`${this.apiUrl}/${id}`)
       .pipe(map((item) => this.mapDtoToRessource(item)));
+  }
+
+  createRessource(dto: CreateRessourceDto): Observable<Ressource> {
+    return this.http
+      .post<ApiRessourceDto>(this.apiUrl, dto)
+      .pipe(map((item) => this.mapDtoToRessource(item)));
+  }
+
+  addFavori(ressourceId: number) {
+    return this.http.post(`${this.apiUrl}/${ressourceId}/favoris`, {});
   }
 
   private mapDtoToRessource(dto: ApiRessourceDto): Ressource {

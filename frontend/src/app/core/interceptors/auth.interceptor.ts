@@ -4,7 +4,7 @@ import { environment } from 'src/environments/environment';
 export const authInterceptor: HttpInterceptorFn = (req, next) => {
   const token = localStorage.getItem(environment.jwtTokenName);
 
-  if (token) {
+  if (token && token !== 'undefined' && token !== 'null') {
     const cloned = req.clone({
       setHeaders: { Authorization: `Bearer ${token}` }
     });

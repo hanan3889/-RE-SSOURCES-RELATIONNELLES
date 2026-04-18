@@ -1,7 +1,7 @@
 import { Component, OnInit } from '@angular/core';
 import { CommonModule } from '@angular/common';
 import { FormBuilder, FormGroup, Validators, ReactiveFormsModule } from '@angular/forms';
-import { RouterModule } from '@angular/router';
+import { Router, RouterModule } from '@angular/router';
 import { AuthService } from 'src/app/core/services/auth.service';
 
 @Component({
@@ -29,16 +29,13 @@ export class ProfileComponent implements OnInit {
   };
 
   // Listes pour éviter les erreurs HTML
-  exploitedResources: any[] = [];
-  savedResources: any[] = [];
-  favoriteResources: any[] = [];
   publications: any[] = [];
   ongoingActivities: any[] = [];
   comments: any[] = [];
   invitations: any[] = [];
   stats = { resourcesViewed: 12, resourcesUsed: 5, resourcesPublished: 2, favoriteCount: 8, savedForLater: 3 };
 
-  constructor(private fb: FormBuilder, private authService: AuthService) {}
+  constructor(private fb: FormBuilder, private authService: AuthService, private router: Router) {}
 
   ngOnInit(): void {
     const currentUser = this.authService.getCurrentUser();
@@ -101,7 +98,7 @@ export class ProfileComponent implements OnInit {
   }
 
   // --- GESTION DES PUBLICATIONS & CONTENU ---
-  createNewResource() { alert('Ouverture du formulaire de création...'); }
+  createNewResource() { this.router.navigate(['/ressources/creer']); }
   
   getStatusBadge(status: string): string {
     const badges: any = {

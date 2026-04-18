@@ -27,7 +27,9 @@ export class MonEspaceComponent implements OnInit {
   }
 
   ngOnInit(): void {
-    this.loadAll();
+    if (this.authService.isLoggedIn()) {
+      this.loadAll();
+    }
   }
 
   loadAll(): void {

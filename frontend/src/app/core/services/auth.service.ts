@@ -56,7 +56,8 @@ export class AuthService {
   }
 
   isLoggedIn(): boolean {
-    return !!this.getToken();
+    const token = this.getToken();
+    return !!token && token !== 'undefined' && token !== 'null';
   }
 
   getCurrentUser(): AuthResponse | null {
@@ -74,7 +75,12 @@ export class AuthService {
   }
 
   private saveSession(response: AuthResponse): void {
-    localStorage.setItem(environment.jwtTokenName, response.token);
+    const token = response.token ?? (response as any).Token ?? (response as any).access_token;
+    if (!token || token === 'undefined' || token === 'null') {
+      return;
+    }
+
+    localStorage.setItem(environment.jwtTokenName, token);
     localStorage.setItem('currentUser', JSON.stringify(response));
   }
 }
