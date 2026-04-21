@@ -280,6 +280,14 @@
     &:hover { background: #fecaca; }
   }
 
+  &-edit {
+    background: #e0ecff;
+    color: #1d4ed8;
+    border: 1px solid #93c5fd;
+
+    &:hover { background: #dbeafe; }
+  }
+
   &-logout {
     background: rgba(255, 255, 255, 0.15);
     color: white;

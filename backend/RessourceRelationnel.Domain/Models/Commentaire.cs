@@ -6,6 +6,10 @@ public class Commentaire
     public string Contenu { get; set; } = string.Empty;
     public DateTime DateCreation { get; set; } = DateTime.UtcNow;
 
+    public long? IdCommentaireParent { get; set; }
+    public Commentaire? ParentCommentaire { get; set; }
+    public ICollection<Commentaire> Reponses { get; set; } = new List<Commentaire>();
+
     public long IdUtilisateur { get; set; }
     public Utilisateur? Utilisateur { get; set; }
 

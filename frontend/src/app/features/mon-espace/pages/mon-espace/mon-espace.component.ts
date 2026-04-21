@@ -82,6 +82,11 @@ export class MonEspaceComponent implements OnInit {
     return map[statut] ?? statut;
   }
 
+  canEditRessource(statut: string): boolean {
+    const normalized = (statut ?? '').toLowerCase();
+    return normalized === 'brouillon' || normalized === 'rejetee';
+  }
+
   logout(): void {
     this.authService.logout();
   }

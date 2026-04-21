@@ -73,6 +73,38 @@ public class CommentairesControllerTests
         Assert.Equal("Mon commentaire", commentaire.Contenu);
     }
 
+    // ─── Répondre à un commentaire ──────────────────────────────────────────────
+    [Fact]
+    public async Task Reply_AuthenticatedUser_ReturnsCreatedWithParentId()
+    {
+        using var context = TestDbContextFactory.Create(nameof(Reply_AuthenticatedUser_ReturnsCreatedWithParentId));
+        TestDbContextFactory.SeedRoles(context);
+        var user = TestDbContextFactory.CreateUtilisateur(context);
+        var cat = TestDbContextFactory.CreateCategorie(context);
+        var ressource = TestDbContextFactory.CreateRessource(context, user.IdUtilisateur, cat.IdCategorie);
+
+        var parent = new Commentaire
+        {
+            Contenu = "Commentaire parent",
+            IdUtilisateur = user.IdUtilisateur,
+            IdRessource = ressource.IdRessource,
+            DateCreation = DateTime.UtcNow
+        };
+        context.Commentaires.Add(parent);
+        context.SaveChanges();
+
+        var controller = new CommentairesController(context);
+        ControllerTestHelper.SetUser(controller, user.IdUtilisateur, "citoyen");
+
+        var dto = new CreateCommentaireDto { Contenu = "Réponse" };
+        var result = await controller.Reply(parent.IdCommentaire, dto);
+
+        var created = Assert.IsType<CreatedResult>(result);
+        var commentaire = Assert.IsType<CommentaireDto>(created.Value);
+        Assert.Equal(parent.IdCommentaire, commentaire.IdCommentaireParent);
+        Assert.Equal("Réponse", commentaire.Contenu);
+    }
+
     // ─── CT-MOD-004 — Modérateur supprime un commentaire ─────────────────────────
     [Fact]
     public async Task Delete_ByModerator_ReturnsNoContent()

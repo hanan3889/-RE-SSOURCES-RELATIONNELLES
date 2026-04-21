@@ -1,7 +1,7 @@
 import { Component, OnInit } from '@angular/core';
 import { CommonModule } from '@angular/common';
 import { FormBuilder, FormGroup, ReactiveFormsModule, Validators } from '@angular/forms';
-import { Router, RouterModule } from '@angular/router';
+import { ActivatedRoute, Router, RouterModule } from '@angular/router';
 import { RessourceService } from '../../services/ressource.service';
 import { CategorieService, Categorie } from '../../services/categorie.service';
 import { AuthService } from 'src/app/core/services/auth.service';
@@ -17,10 +17,14 @@ export class RessourceCreateComponent implements OnInit {
   categories: Categorie[] = [];
   form!: FormGroup;
   isSubmitting = false;
+  isLoading = false;
+  isEditMode = false;
+  resourceId: number | null = null;
   errorMessage = '';
 
   constructor(
     private readonly fb: FormBuilder,
+    private readonly route: ActivatedRoute,
     private readonly router: Router,
     private readonly ressourceService: RessourceService,
     private readonly categorieService: CategorieService,
@@ -37,12 +41,42 @@ export class RessourceCreateComponent implements OnInit {
     });
 
     this.loadCategories();
+
+    const idParam = this.route.snapshot.paramMap.get('id');
+    const id = idParam ? Number(idParam) : NaN;
+    if (!Number.isNaN(id) && id > 0) {
+      this.isEditMode = true;
+      this.resourceId = id;
+      this.loadResourceForEdit(id);
+    }
   }
 
   private loadCategories(): void {
     this.categorieService.getCategories().subscribe({
       next: (categories) => { this.categories = categories; },
       error: () => { this.categories = []; }
+    });
+  }
+
+  private loadResourceForEdit(id: number): void {
+    this.isLoading = true;
+    this.errorMessage = '';
+
+    this.ressourceService.getRessourceForEdit(id).subscribe({
+      next: (resource) => {
+        this.form.patchValue({
+          titre: resource.titre,
+          description: resource.description,
+          format: resource.format,
+          visibilite: String(resource.visibilite),
+          idCategorie: resource.idCategorie
+        });
+        this.isLoading = false;
+      },
+      error: (err) => {
+        this.errorMessage = err?.error?.message || 'Impossible de charger la ressource à éditer.';
+        this.isLoading = false;
+      }
     });
   }
 
@@ -66,15 +100,23 @@ export class RessourceCreateComponent implements OnInit {
       return;
     }
 
-    this.ressourceService.createRessource({
+    const payload = {
       titre: value.titre,
       description: value.description,
       format: value.format,
       visibilite: Number(value.visibilite),
       idCategorie: Number(value.idCategorie)
-    }).subscribe({
+    };
+
+    const request$ = this.isEditMode && this.resourceId
+      ? this.ressourceService.updateRessource(this.resourceId, payload)
+      : this.ressourceService.createRessource(payload);
+
+    request$.subscribe({
       next: () => {
-        alert('Votre ressource a bien été soumise et sera validée par l’équipe.');
+        alert(this.isEditMode
+          ? 'Votre ressource a bien été mise à jour et renvoyée en validation.'
+          : 'Votre ressource a bien été soumise et sera validée par l’équipe.');
         this.router.navigate(['/ressources']);
       },
       error: (err) => {

@@ -60,6 +60,34 @@ public class CommentairesController : ControllerBase
         return Created("", ToDto(commentaire));
     }
 
+    // POST /api/commentaires/{id}/reponses — citoyen connecté
+    [HttpPost("api/commentaires/{id:long}/reponses")]
+    [Authorize]
+    public async Task<IActionResult> Reply(long id, [FromBody] CreateCommentaireDto dto)
+    {
+        var parent = await _context.Commentaires
+            .FirstOrDefaultAsync(c => c.IdCommentaire == id);
+
+        if (parent == null) return NotFound(new { message = "Commentaire parent introuvable." });
+
+        var userId = long.Parse(User.FindFirstValue(ClaimTypes.NameIdentifier)!);
+
+        var reponse = new Commentaire
+        {
+            Contenu = dto.Contenu,
+            IdUtilisateur = userId,
+            IdRessource = parent.IdRessource,
+            IdCommentaireParent = parent.IdCommentaire,
+            DateCreation = DateTime.UtcNow
+        };
+
+        _context.Commentaires.Add(reponse);
+        await _context.SaveChangesAsync();
+
+        await _context.Entry(reponse).Reference(c => c.Utilisateur).LoadAsync();
+        return Created("", ToDto(reponse));
+    }
+
     // DELETE /api/commentaires/{id} — auteur ou modérateur
     [HttpDelete("api/commentaires/{id:long}")]
     [Authorize]
@@ -82,6 +110,7 @@ public class CommentairesController : ControllerBase
     private static CommentaireDto ToDto(Commentaire c) => new()
     {
         IdCommentaire = c.IdCommentaire,
+        IdCommentaireParent = c.IdCommentaireParent,
         Contenu = c.Contenu,
         DateCreation = c.DateCreation,
         IdUtilisateur = c.IdUtilisateur,

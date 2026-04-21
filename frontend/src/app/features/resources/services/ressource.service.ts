@@ -24,6 +24,10 @@ export interface CreateRessourceDto {
   idCategorie: number;
 }
 
+export interface EditableRessourceDto extends CreateRessourceDto {
+  idRessource: number;
+}
+
 interface ApiRessourceDto {
   idRessource: number;
   titre: string;
@@ -63,6 +67,27 @@ export class RessourceService {
     return this.http
       .post<ApiRessourceDto>(this.apiUrl, dto)
       .pipe(map((item) => this.mapDtoToRessource(item)));
+  }
+
+  updateRessource(id: number, dto: CreateRessourceDto): Observable<Ressource> {
+    return this.http
+      .put<ApiRessourceDto>(`${this.apiUrl}/${id}`, dto)
+      .pipe(map((item) => this.mapDtoToRessource(item)));
+  }
+
+  getRessourceForEdit(id: number): Observable<EditableRessourceDto> {
+    return this.http
+      .get<ApiRessourceDto>(`${this.apiUrl}/${id}`)
+      .pipe(
+        map((item) => ({
+          idRessource: item.idRessource,
+          titre: item.titre,
+          description: item.description,
+          format: item.format,
+          visibilite: this.mapVisibiliteToNumber(item.visibilite),
+          idCategorie: item.idCategorie
+        }))
+      );
   }
 
   addFavori(ressourceId: number) {
@@ -123,5 +148,22 @@ export class RessourceService {
       default:
         return 'Publiée';
     }
+  }
+
+  private mapVisibiliteToNumber(value: string): number {
+    const normalized = value
+      .normalize('NFD')
+      .replace(/[\u0300-\u036f]/g, '')
+      .toLowerCase();
+
+    if (normalized.includes('connect')) {
+      return 1;
+    }
+
+    if (normalized.includes('prive')) {
+      return 2;
+    }
+
+    return 0;
   }
 }

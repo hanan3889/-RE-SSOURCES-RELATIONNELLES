@@ -52,6 +52,10 @@ namespace RessourceRelationnel.Infrastructure.Data.Migrations
                         .HasColumnType("datetime(6)")
                         .HasColumnName("date_creation");
 
+                    b.Property<long?>("IdCommentaireParent")
+                        .HasColumnType("bigint")
+                        .HasColumnName("id_commentaire_parent");
+
                     b.Property<long>("IdRessource")
                         .HasColumnType("bigint")
                         .HasColumnName("id_ressource");
@@ -61,6 +65,8 @@ namespace RessourceRelationnel.Infrastructure.Data.Migrations
                         .HasColumnName("id_utilisateur");
 
                     b.HasKey("IdCommentaire");
+
+                    b.HasIndex("IdCommentaireParent");
 
                     b.HasIndex("IdRessource");
 
@@ -320,6 +326,11 @@ namespace RessourceRelationnel.Infrastructure.Data.Migrations
 
             modelBuilder.Entity("RessourceRelationnel.Domain.Models.Commentaire", b =>
                 {
+                    b.HasOne("RessourceRelationnel.Domain.Models.Commentaire", "ParentCommentaire")
+                        .WithMany("Reponses")
+                        .HasForeignKey("IdCommentaireParent")
+                        .OnDelete(DeleteBehavior.Cascade);
+
                     b.HasOne("RessourceRelationnel.Domain.Models.Ressource", "Ressource")
                         .WithMany("Commentaires")
                         .HasForeignKey("IdRessource")
@@ -331,6 +342,10 @@ namespace RessourceRelationnel.Infrastructure.Data.Migrations
                         .HasForeignKey("IdUtilisateur")
                         .OnDelete(DeleteBehavior.Cascade)
                         .IsRequired();
+
+                    b.Navigation("ParentCommentaire");
+
+                    b.Navigation("Reponses");
 
                     b.Navigation("Ressource");
 

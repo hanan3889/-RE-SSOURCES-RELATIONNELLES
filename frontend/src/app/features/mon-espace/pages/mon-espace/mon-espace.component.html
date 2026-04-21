@@ -133,6 +133,13 @@
                   <span class="date">{{ ressource.dateCreation | date:'dd/MM/yyyy' }}</span>
                   <div class="card-actions">
                     <a [routerLink]="['/ressources', ressource.idRessource]" class="btn btn-sm btn-outline">Voir</a>
+                    <a
+                      *ngIf="canEditRessource(ressource.statut)"
+                      [routerLink]="['/ressources', ressource.idRessource, 'editer']"
+                      class="btn btn-sm btn-edit"
+                    >
+                      Éditer
+                    </a>
                   </div>
                 </div>
               </div>

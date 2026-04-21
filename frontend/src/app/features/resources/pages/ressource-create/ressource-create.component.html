@@ -10,8 +10,16 @@
         </a>
       </div>
 
-      <h1 class="text-3xl font-bold mb-4">Créer une nouvelle ressource</h1>
-      <p class="text-gray-600 mb-8">Les ressources soumises seront envoyées en validation avant publication.</p>
+      <h1 class="text-3xl font-bold mb-4">{{ isEditMode ? 'Éditer la ressource' : 'Créer une nouvelle ressource' }}</h1>
+      <p class="text-gray-600 mb-8">
+        {{ isEditMode
+          ? 'Les modifications seront renvoyées en validation avant publication.'
+          : 'Les ressources soumises seront envoyées en validation avant publication.' }}
+      </p>
+
+      <div *ngIf="isLoading" class="rounded-xl bg-slate-100 border border-slate-200 px-4 py-3 text-sm text-slate-700 mb-6">
+        Chargement de la ressource...
+      </div>
 
       <form [formGroup]="form" (ngSubmit)="submit()" class="space-y-6">
         <div>
@@ -55,7 +63,9 @@
         <div *ngIf="errorMessage" class="rounded-xl bg-red-50 border border-red-200 px-4 py-3 text-sm text-red-700">{{ errorMessage }}</div>
 
         <div class="flex items-center justify-between gap-4">
-          <button type="submit" [disabled]="isSubmitting" class="btn btn-primary">{{ isSubmitting ? 'Envoi…' : 'Envoyer la ressource' }}</button>
+          <button type="submit" [disabled]="isSubmitting || isLoading" class="btn btn-primary">
+            {{ isSubmitting ? (isEditMode ? 'Mise à jour…' : 'Envoi…') : (isEditMode ? 'Mettre à jour la ressource' : 'Envoyer la ressource') }}
+          </button>
           <a routerLink="/ressources" class="text-sm text-gray-600 hover:text-gray-900">Annuler</a>
         </div>
       </form>

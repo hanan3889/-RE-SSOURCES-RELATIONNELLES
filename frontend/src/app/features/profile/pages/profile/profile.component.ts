@@ -33,6 +33,7 @@ export class ProfileComponent implements OnInit {
   ongoingActivities: any[] = [];
   comments: any[] = [];
   invitations: any[] = [];
+  favoriteResources: any[] = [];
   stats = { resourcesViewed: 12, resourcesUsed: 5, resourcesPublished: 2, favoriteCount: 8, savedForLater: 3 };
 
   constructor(private fb: FormBuilder, private authService: AuthService, private router: Router) {}

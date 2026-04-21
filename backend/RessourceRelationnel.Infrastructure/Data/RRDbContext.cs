@@ -172,6 +172,8 @@ public class RRDbContext : DbContext
         modelBuilder.Entity<Commentaire>()
             .Property(c => c.DateCreation).HasColumnName("date_creation");
         modelBuilder.Entity<Commentaire>()
+            .Property(c => c.IdCommentaireParent).HasColumnName("id_commentaire_parent");
+        modelBuilder.Entity<Commentaire>()
             .Property(c => c.IdUtilisateur).HasColumnName("id_utilisateur").IsRequired();
         modelBuilder.Entity<Commentaire>()
             .Property(c => c.IdRessource).HasColumnName("id_ressource").IsRequired();
@@ -186,6 +188,12 @@ public class RRDbContext : DbContext
             .HasOne(c => c.Ressource)
             .WithMany(r => r.Commentaires)
             .HasForeignKey(c => c.IdRessource)
+            .OnDelete(DeleteBehavior.Cascade);
+
+        modelBuilder.Entity<Commentaire>()
+            .HasOne(c => c.ParentCommentaire)
+            .WithMany(c => c.Reponses)
+            .HasForeignKey(c => c.IdCommentaireParent)
             .OnDelete(DeleteBehavior.Cascade);
 
         // MESSAGE

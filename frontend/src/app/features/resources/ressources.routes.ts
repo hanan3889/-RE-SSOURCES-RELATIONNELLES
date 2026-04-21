@@ -12,6 +12,11 @@ export const RESSOURCES_ROUTES: Routes = [
         canActivate: [AuthGuard]
     },
     {
+        path: ':id/editer',
+        loadComponent: () => import('./pages/ressource-create/ressource-create.component').then(m => m.RessourceCreateComponent),
+        canActivate: [AuthGuard]
+    },
+    {
         path: ':id',
         loadComponent: () => import('./pages/ressource-detail/ressource-detail.component').then(m => m.RessourceDetailComponent)
     }
