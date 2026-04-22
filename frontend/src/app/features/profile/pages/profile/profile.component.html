@@ -87,6 +87,10 @@
 
   <!-- Contenu principal -->
   <div class="container mx-auto px-4 py-12">
+    <div *ngIf="loading" class="mb-6 rounded-lg border border-blue-200 bg-blue-50 px-4 py-3 text-blue-900">
+      Chargement des données réelles de votre profil...
+    </div>
+
     <!-- TAB 1: IDENTITÉ ET COMPTE -->
     <div *ngIf="activeTab === 'identity'" class="space-y-8">
       <!-- Informations personnelles -->
@@ -241,10 +245,11 @@
                 <h3 class="font-semibold text-gray-900">{{ resource.title }}</h3>
                 <p class="text-sm text-gray-600 mt-1">{{ resource.category }}</p>
               </div>
-              <button class="text-pink-600 hover:text-pink-700">Retirer</button>
+              <button (click)="removeFavorite(resource.id)" class="text-pink-600 hover:text-pink-700">Retirer</button>
             </div>
           </div>
         </div>
+        <p *ngIf="!loading && favoriteResources.length === 0" class="text-sm text-gray-500">Aucun favori pour le moment.</p>
       </div>
     </div>
 
@@ -307,6 +312,7 @@
             </div>
           </div>
         </div>
+        <p *ngIf="!loading && publications.length === 0" class="text-sm text-gray-500">Aucune publication trouvée pour ce compte.</p>
       </div>
     </div>
 
@@ -374,6 +380,7 @@
             </div>
           </div>
         </div>
+        <p *ngIf="!loading && comments.length === 0" class="text-sm text-gray-500">Vous n'avez encore écrit aucun commentaire.</p>
       </div>
 
       <!-- Invitations reçues -->

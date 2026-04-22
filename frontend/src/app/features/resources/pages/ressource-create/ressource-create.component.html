@@ -37,8 +37,11 @@
         <div class="grid sm:grid-cols-2 gap-6">
           <div>
             <label class="block text-sm font-semibold mb-2" for="format">Format</label>
-            <input id="format" type="text" formControlName="format" class="w-full rounded-xl border border-slate-200 px-4 py-3 focus:outline-none focus:ring-2 focus:ring-blue-500" placeholder="Article, Vidéo, PDF..." />
+            <select id="format" formControlName="format" class="w-full rounded-xl border border-slate-200 px-4 py-3 focus:outline-none focus:ring-2 focus:ring-blue-500">
+              <option *ngFor="let format of availableFormats" [value]="format">{{ format }}</option>
+            </select>
             <p *ngIf="form.get('format')?.invalid && form.get('format')?.touched" class="mt-2 text-sm text-red-600">Veuillez indiquer un format.</p>
+            <p *ngIf="!isAdmin" class="mt-2 text-xs text-slate-500">Les formats Activité et Jeu sont réservés aux administrateurs.</p>
           </div>
 
           <div>

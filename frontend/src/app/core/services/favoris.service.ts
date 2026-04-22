@@ -23,6 +23,24 @@ export interface ProgressionStats {
   nbMesRessources: number;
   nbPubliees: number;
   nbEnAttente: number;
+  nbExploitees: number;
+  nbSauvegardees: number;
+  nbActivitesDemarrees: number;
+}
+
+export interface ExploitationStatus {
+  ressourceId: number;
+  exploitee: boolean;
+}
+
+export interface SauvegardeStatus {
+  ressourceId: number;
+  sauvegardee: boolean;
+}
+
+export interface DemarrageStatus {
+  ressourceId: number;
+  demarree: boolean;
 }
 
 @Injectable({
@@ -51,5 +69,29 @@ export class FavorisService {
 
   retirerFavori(ressourceId: number): Observable<any> {
     return this.http.delete(`${this.apiUrl}/ressources/${ressourceId}/favoris`);
+  }
+
+  getExploitationStatus(ressourceId: number): Observable<ExploitationStatus> {
+    return this.http.get<ExploitationStatus>(`${this.apiUrl}/progression/ressources/${ressourceId}/exploitation`);
+  }
+
+  setExploitationStatus(ressourceId: number, exploitee: boolean): Observable<ExploitationStatus> {
+    return this.http.put<ExploitationStatus>(`${this.apiUrl}/progression/ressources/${ressourceId}/exploitation`, { exploitee });
+  }
+
+  getSauvegardeStatus(ressourceId: number): Observable<SauvegardeStatus> {
+    return this.http.get<SauvegardeStatus>(`${this.apiUrl}/progression/ressources/${ressourceId}/sauvegarde`);
+  }
+
+  setSauvegardeStatus(ressourceId: number, sauvegardee: boolean): Observable<SauvegardeStatus> {
+    return this.http.put<SauvegardeStatus>(`${this.apiUrl}/progression/ressources/${ressourceId}/sauvegarde`, { sauvegardee });
+  }
+
+  getDemarrageStatus(ressourceId: number): Observable<DemarrageStatus> {
+    return this.http.get<DemarrageStatus>(`${this.apiUrl}/progression/ressources/${ressourceId}/demarrage`);
+  }
+
+  setDemarrageStatus(ressourceId: number, demarree: boolean): Observable<DemarrageStatus> {
+    return this.http.put<DemarrageStatus>(`${this.apiUrl}/progression/ressources/${ressourceId}/demarrage`, { demarree });
   }
 }

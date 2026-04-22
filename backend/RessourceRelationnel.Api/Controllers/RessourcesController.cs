@@ -1,4 +1,6 @@
+using System.Globalization;
 using System.Security.Claims;
+using System.Text;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.EntityFrameworkCore;
@@ -75,9 +77,13 @@ public class RessourcesController : ControllerBase
     public async Task<IActionResult> Create([FromBody] CreateRessourceDto dto)
     {
         var userId = long.Parse(User.FindFirstValue(ClaimTypes.NameIdentifier)!);
+        var role = User.FindFirstValue(ClaimTypes.Role);
+        var isAdmin = role == "administrateur" || role == "super_administrateur";
 
         var categorie = await _context.Categories.FindAsync(dto.IdCategorie);
         if (categorie == null) return BadRequest(new { message = "Catégorie invalide." });
+        if (IsAdminOnlyFormat(dto.Format) && !isAdmin)
+            return Forbid();
 
         var ressource = new Ressource
         {
@@ -121,6 +127,8 @@ public class RessourcesController : ControllerBase
         if (!isAdmin && !isOwner) return Forbid();
         if (!isAdmin && ressource.Statut != Statut.Brouillon && ressource.Statut != Statut.Rejetee)
             return BadRequest(new { message = "Vous ne pouvez modifier cette ressource qu'à l'état brouillon ou refusée." });
+        if (dto.Format != null && IsAdminOnlyFormat(dto.Format) && !isAdmin)
+            return Forbid();
 
         if (dto.Titre != null) ressource.Titre = dto.Titre;
         if (dto.Description != null) ressource.Description = dto.Description;
@@ -186,6 +194,22 @@ public class RessourcesController : ControllerBase
 
         var result = await query.OrderByDescending(r => r.DateCreation).Select(r => ToDto(r)).ToListAsync();
         return Ok(result);
+    }
+
+    private static bool IsAdminOnlyFormat(string? format)
+    {
+        if (string.IsNullOrWhiteSpace(format)) return false;
+
+        var normalized = format
+            .Trim()
+            .Normalize(NormalizationForm.FormD)
+            .Where(c => CharUnicodeInfo.GetUnicodeCategory(c) != UnicodeCategory.NonSpacingMark)
+            .ToArray();
+
+        var normalizedFormat = new string(normalized)
+            .ToLowerInvariant();
+
+        return normalizedFormat == "activite" || normalizedFormat == "jeu";
     }
 
     private static RessourceDto ToDto(Ressource r) => new()

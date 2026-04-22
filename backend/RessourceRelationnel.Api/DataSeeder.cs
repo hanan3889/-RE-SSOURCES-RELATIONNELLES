@@ -193,5 +193,27 @@ public static class DataSeeder
             );
             await db.SaveChangesAsync();
         }
+
+        // --- Ressource activité/jeu de démonstration ---
+        const string activityTitle = "Atelier de médiation collaborative";
+        if (!await db.Ressources.AnyAsync(r => r.Titre == activityTitle))
+        {
+            var systemUser = await db.Utilisateurs.FirstAsync(u => u.Email == "system@ressources-relationnelles.fr");
+            var categorie = await db.Categories.FirstAsync();
+
+            db.Ressources.Add(new Ressource
+            {
+                Titre = activityTitle,
+                Description = "Une activité guidée pour apprendre à désamorcer un conflit en 5 étapes avec plusieurs participants.",
+                Format = "Activité",
+                Visibilite = Visibilite.Publique,
+                Statut = Statut.Publiee,
+                IdUtilisateur = systemUser.IdUtilisateur,
+                IdCategorie = categorie.IdCategorie,
+                DateCreation = DateTime.UtcNow.AddDays(-1)
+            });
+
+            await db.SaveChangesAsync();
+        }
     }
 }

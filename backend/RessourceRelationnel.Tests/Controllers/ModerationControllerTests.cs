@@ -1,4 +1,5 @@
 using Microsoft.AspNetCore.Mvc;
+using RessourceRelationnel.Domain.DTOs.CommentaireDto;
 using RessourceRelationnel.Api.Controllers;
 using RessourceRelationnel.Domain.DTOs.RessourceDto;
 using RessourceRelationnel.Domain.Models;
@@ -122,5 +123,127 @@ public class ModerationControllerTests
         var ok = Assert.IsType<OkObjectResult>(result);
         var list = Assert.IsAssignableFrom<IEnumerable<RessourceDto>>(ok.Value).ToList();
         Assert.Empty(list);
+    }
+
+    // ─── Modération commentaires: lister tous les commentaires ───────────────────
+    [Fact]
+    public async Task GetCommentaires_ReturnsCommentairesForModeration()
+    {
+        using var context = TestDbContextFactory.Create(nameof(GetCommentaires_ReturnsCommentairesForModeration));
+        TestDbContextFactory.SeedRoles(context);
+        var user = TestDbContextFactory.CreateUtilisateur(context);
+        var cat = TestDbContextFactory.CreateCategorie(context);
+        var ressource = TestDbContextFactory.CreateRessource(context, user.IdUtilisateur, cat.IdCategorie, Statut.Publiee);
+
+        context.Commentaires.AddRange(
+            new Commentaire
+            {
+                Contenu = "Commentaire 1",
+                IdUtilisateur = user.IdUtilisateur,
+                IdRessource = ressource.IdRessource,
+                DateCreation = DateTime.UtcNow
+            },
+            new Commentaire
+            {
+                Contenu = "Commentaire 2",
+                IdUtilisateur = user.IdUtilisateur,
+                IdRessource = ressource.IdRessource,
+                DateCreation = DateTime.UtcNow
+            }
+        );
+        context.SaveChanges();
+
+        var controller = new ModerationController(context);
+        ControllerTestHelper.SetUser(controller, user.IdUtilisateur, "moderateur");
+
+        var result = await controller.GetCommentaires();
+
+        var ok = Assert.IsType<OkObjectResult>(result);
+        var list = Assert.IsAssignableFrom<IEnumerable<ModerationCommentaireDto>>(ok.Value).ToList();
+        Assert.Equal(2, list.Count);
+        Assert.All(list, c => Assert.Equal(ressource.IdRessource, c.IdRessource));
+    }
+
+    // ─── Modération commentaires: filtrer par ressource ──────────────────────────
+    [Fact]
+    public async Task GetCommentaires_WithRessourceFilter_ReturnsOnlyMatchingCommentaires()
+    {
+        using var context = TestDbContextFactory.Create(nameof(GetCommentaires_WithRessourceFilter_ReturnsOnlyMatchingCommentaires));
+        TestDbContextFactory.SeedRoles(context);
+        var user = TestDbContextFactory.CreateUtilisateur(context);
+        var cat = TestDbContextFactory.CreateCategorie(context);
+        var ressourceA = TestDbContextFactory.CreateRessource(context, user.IdUtilisateur, cat.IdCategorie, Statut.Publiee);
+        var ressourceB = TestDbContextFactory.CreateRessource(context, user.IdUtilisateur, cat.IdCategorie, Statut.Publiee);
+
+        context.Commentaires.AddRange(
+            new Commentaire
+            {
+                Contenu = "A",
+                IdUtilisateur = user.IdUtilisateur,
+                IdRessource = ressourceA.IdRessource,
+                DateCreation = DateTime.UtcNow
+            },
+            new Commentaire
+            {
+                Contenu = "B",
+                IdUtilisateur = user.IdUtilisateur,
+                IdRessource = ressourceB.IdRessource,
+                DateCreation = DateTime.UtcNow
+            }
+        );
+        context.SaveChanges();
+
+        var controller = new ModerationController(context);
+        ControllerTestHelper.SetUser(controller, user.IdUtilisateur, "moderateur");
+
+        var result = await controller.GetCommentaires(ressourceA.IdRessource);
+
+        var ok = Assert.IsType<OkObjectResult>(result);
+        var list = Assert.IsAssignableFrom<IEnumerable<ModerationCommentaireDto>>(ok.Value).ToList();
+        Assert.Single(list);
+        Assert.Equal(ressourceA.IdRessource, list[0].IdRessource);
+        Assert.Equal("A", list[0].Contenu);
+    }
+
+    // ─── Modération commentaires: suppression ────────────────────────────────────
+    [Fact]
+    public async Task DeleteCommentaire_ExistingCommentaire_ReturnsNoContent()
+    {
+        using var context = TestDbContextFactory.Create(nameof(DeleteCommentaire_ExistingCommentaire_ReturnsNoContent));
+        TestDbContextFactory.SeedRoles(context);
+        var user = TestDbContextFactory.CreateUtilisateur(context);
+        var cat = TestDbContextFactory.CreateCategorie(context);
+        var ressource = TestDbContextFactory.CreateRessource(context, user.IdUtilisateur, cat.IdCategorie, Statut.Publiee);
+
+        var commentaire = new Commentaire
+        {
+            Contenu = "A supprimer",
+            IdUtilisateur = user.IdUtilisateur,
+            IdRessource = ressource.IdRessource,
+            DateCreation = DateTime.UtcNow
+        };
+        context.Commentaires.Add(commentaire);
+        context.SaveChanges();
+
+        var controller = new ModerationController(context);
+        ControllerTestHelper.SetUser(controller, user.IdUtilisateur, "moderateur");
+
+        var result = await controller.DeleteCommentaire(commentaire.IdCommentaire);
+
+        Assert.IsType<NoContentResult>(result);
+        Assert.Empty(context.Commentaires);
+    }
+
+    // ─── Modération commentaires: suppression inexistante → 404 ─────────────────
+    [Fact]
+    public async Task DeleteCommentaire_NonExistent_ReturnsNotFound()
+    {
+        using var context = TestDbContextFactory.Create(nameof(DeleteCommentaire_NonExistent_ReturnsNotFound));
+        var controller = new ModerationController(context);
+        ControllerTestHelper.SetUser(controller, 1, "moderateur");
+
+        var result = await controller.DeleteCommentaire(999999);
+
+        Assert.IsType<NotFoundResult>(result);
     }
 }

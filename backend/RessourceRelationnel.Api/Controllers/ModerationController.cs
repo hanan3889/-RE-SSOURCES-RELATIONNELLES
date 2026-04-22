@@ -1,6 +1,7 @@
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.EntityFrameworkCore;
+using RessourceRelationnel.Domain.DTOs.CommentaireDto;
 using RessourceRelationnel.Domain.DTOs.RessourceDto;
 using RessourceRelationnel.Domain.Models;
 using RessourceRelationnel.Infrastructure.Data;
@@ -69,6 +70,53 @@ public class ModerationController : ControllerBase
         if (ressource == null) return NotFound();
 
         ressource.Statut = Statut.Rejetee;
+        await _context.SaveChangesAsync();
+
+        return NoContent();
+    }
+
+    // GET /api/moderateur/commentaires?ressourceId=1 — liste des commentaires pour modération
+    [HttpGet("commentaires")]
+    public async Task<IActionResult> GetCommentaires([FromQuery] long? ressourceId = null)
+    {
+        var query = _context.Commentaires
+            .AsNoTracking()
+            .Include(c => c.Utilisateur)
+            .Include(c => c.Ressource)
+            .AsQueryable();
+
+        if (ressourceId.HasValue)
+        {
+            query = query.Where(c => c.IdRessource == ressourceId.Value);
+        }
+
+        var commentaires = await query
+            .OrderByDescending(c => c.DateCreation)
+            .Select(c => new ModerationCommentaireDto
+            {
+                IdCommentaire = c.IdCommentaire,
+                IdCommentaireParent = c.IdCommentaireParent,
+                Contenu = c.Contenu,
+                DateCreation = c.DateCreation,
+                IdUtilisateur = c.IdUtilisateur,
+                NomAuteur = c.Utilisateur != null ? c.Utilisateur.Nom : string.Empty,
+                PrenomAuteur = c.Utilisateur != null ? c.Utilisateur.Prenom : string.Empty,
+                IdRessource = c.IdRessource,
+                TitreRessource = c.Ressource != null ? c.Ressource.Titre : string.Empty
+            })
+            .ToListAsync();
+
+        return Ok(commentaires);
+    }
+
+    // DELETE /api/moderateur/commentaires/{id} — suppression modérateur
+    [HttpDelete("commentaires/{id:long}")]
+    public async Task<IActionResult> DeleteCommentaire(long id)
+    {
+        var commentaire = await _context.Commentaires.FindAsync(id);
+        if (commentaire == null) return NotFound();
+
+        _context.Commentaires.Remove(commentaire);
         await _context.SaveChangesAsync();
 
         return NoContent();

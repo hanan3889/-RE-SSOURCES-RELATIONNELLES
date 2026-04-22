@@ -105,6 +105,44 @@ public class CommentairesControllerTests
         Assert.Equal("Réponse", commentaire.Contenu);
     }
 
+    [Fact]
+    public async Task GetMine_AuthenticatedUser_ReturnsOnlyOwnComments()
+    {
+        using var context = TestDbContextFactory.Create(nameof(GetMine_AuthenticatedUser_ReturnsOnlyOwnComments));
+        TestDbContextFactory.SeedRoles(context);
+        var user1 = TestDbContextFactory.CreateUtilisateur(context, email: "mine@example.com");
+        var user2 = TestDbContextFactory.CreateUtilisateur(context, email: "other@example.com");
+        var cat = TestDbContextFactory.CreateCategorie(context);
+        var ressource = TestDbContextFactory.CreateRessource(context, user1.IdUtilisateur, cat.IdCategorie);
+
+        context.Commentaires.AddRange(
+            new Commentaire
+            {
+                Contenu = "Mon commentaire",
+                IdUtilisateur = user1.IdUtilisateur,
+                IdRessource = ressource.IdRessource,
+                DateCreation = DateTime.UtcNow
+            },
+            new Commentaire
+            {
+                Contenu = "Autre commentaire",
+                IdUtilisateur = user2.IdUtilisateur,
+                IdRessource = ressource.IdRessource,
+                DateCreation = DateTime.UtcNow
+            }
+        );
+        context.SaveChanges();
+
+        var controller = new CommentairesController(context);
+        ControllerTestHelper.SetUser(controller, user1.IdUtilisateur, "citoyen");
+
+        var result = await controller.GetMine();
+
+        var ok = Assert.IsType<OkObjectResult>(result);
+        dynamic list = ok.Value!;
+        Assert.Single(list);
+    }
+
     // ─── CT-MOD-004 — Modérateur supprime un commentaire ─────────────────────────
     [Fact]
     public async Task Delete_ByModerator_ReturnsNoContent()

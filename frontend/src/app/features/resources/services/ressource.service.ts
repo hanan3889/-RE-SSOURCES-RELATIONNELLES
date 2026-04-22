@@ -11,6 +11,7 @@ export interface Ressource {
   author: string;
   category: string;
   createdAt: Date;
+  format: string;
   type: 'article';
   visibilite: 'Publique' | 'Citoyens connectés' | 'Privée';
   statut: 'Brouillon' | 'En validation' | 'Publiée' | 'Rejetée' | 'Archivée';
@@ -103,6 +104,7 @@ export class RessourceService {
       author: `${dto.prenomAuteur} ${dto.nomAuteur}`.trim(),
       category: dto.nomCategorie,
       createdAt: new Date(dto.dateCreation),
+      format: dto.format,
       type: 'article',
       visibilite: this.mapVisibilite(dto.visibilite),
       statut: this.mapStatut(dto.statut)

@@ -14,6 +14,14 @@ export interface Commentaire {
   idRessource: number;
 }
 
+export interface MesCommentaire {
+  idCommentaire: number;
+  idRessource: number;
+  titreRessource: string;
+  contenu: string;
+  dateCreation: string;
+}
+
 interface CreateCommentaireDto {
   contenu: string;
 }
@@ -28,6 +36,10 @@ export class CommentaireService {
 
   getByRessource(ressourceId: number): Observable<Commentaire[]> {
     return this.http.get<Commentaire[]>(`${this.apiUrl}/ressources/${ressourceId}/commentaires`);
+  }
+
+  getMine(): Observable<MesCommentaire[]> {
+    return this.http.get<MesCommentaire[]>(`${this.apiUrl}/commentaires/mes`);
   }
 
   create(ressourceId: number, contenu: string): Observable<Commentaire> {

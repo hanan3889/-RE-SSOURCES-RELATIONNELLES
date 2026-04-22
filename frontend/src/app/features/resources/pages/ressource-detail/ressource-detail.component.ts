@@ -8,6 +8,12 @@ import { switchMap, tap } from 'rxjs/operators';
 import { SafeHtmlPipe } from '../../../../core/pipes/safe-html.pipe';
 import { AuthService } from 'src/app/core/services/auth.service';
 import { Commentaire, CommentaireService } from '../../services/commentaire.service';
+import { FavorisService } from 'src/app/core/services/favoris.service';
+
+interface ActivityQuestion {
+  prompt: string;
+  options: string[];
+}
 
 @Component({
   selector: 'app-ressource-detail',
@@ -23,6 +29,28 @@ export class RessourceDetailComponent implements OnInit {
   commentsLoading = false;
   isSubmittingComment = false;
   isSubmittingReply = false;
+  isExploitee = false;
+  isSavedForLater = false;
+  isStarted = false;
+  quizError = '';
+  currentQuestionIndex = 0;
+  selectedOptionIndex: number | null = null;
+  userAnswers: number[] = [];
+  quizCompleted = false;
+  readonly activityQuestions: ActivityQuestion[] = [
+    {
+      prompt: 'Quand vous avez une heure libre, que préférez-vous faire ?',
+      options: ['Lire ou regarder un contenu inspirant', 'Ranger la maison', 'Répondre à mes emails']
+    },
+    {
+      prompt: 'Quelle activité vous motive le plus à partager avec d\'autres ?',
+      options: ['Un atelier créatif ou collaboratif', 'Une réunion administrative', 'Une tâche répétitive']
+    },
+    {
+      prompt: 'Pour mieux vous connaître, quel choix vous ressemble le plus ?',
+      options: ['Découvrir de nouvelles idées', 'Toujours faire la même chose', 'Éviter toute interaction']
+    }
+  ];
   currentRessourceId: number | null = null;
   replyBoxOpenFor: number | null = null;
   replyDrafts: Record<number, string> = {};
@@ -32,6 +60,7 @@ export class RessourceDetailComponent implements OnInit {
     private route: ActivatedRoute,
     private ressourceService: RessourceService,
     private commentaireService: CommentaireService,
+    private favorisService: FavorisService,
     private authService: AuthService,
     private fb: FormBuilder,
     private router: Router
@@ -49,12 +78,19 @@ export class RessourceDetailComponent implements OnInit {
         this.currentRessourceId = Number.isNaN(id) ? null : id;
         if (!Number.isNaN(id)) {
           this.loadComments(id);
+          this.loadExploitationStatus(id);
+          this.loadSauvegardeStatus(id);
         }
         return this.ressourceService.getRessourceById(id);
       }),
       tap((ressource) => {
         if (!ressource) {
           this.comments = [];
+          this.isStarted = false;
+        } else if (this.isDemarrable(ressource)) {
+          this.loadDemarrageStatus(ressource.id);
+        } else {
+          this.isStarted = false;
         }
       })
     );
@@ -72,6 +108,108 @@ export class RessourceDetailComponent implements OnInit {
         this.commentsLoading = false;
       }
     });
+  }
+
+  private loadExploitationStatus(ressourceId: number): void {
+    if (!this.isLoggedIn) {
+      this.isExploitee = false;
+      return;
+    }
+
+    this.favorisService.getExploitationStatus(ressourceId).subscribe({
+      next: (status) => {
+        this.isExploitee = status.exploitee;
+      },
+      error: () => {
+        this.isExploitee = false;
+      }
+    });
+  }
+
+  private loadSauvegardeStatus(ressourceId: number): void {
+    if (!this.isLoggedIn) {
+      this.isSavedForLater = false;
+      return;
+    }
+
+    this.favorisService.getSauvegardeStatus(ressourceId).subscribe({
+      next: (status) => {
+        this.isSavedForLater = status.sauvegardee;
+      },
+      error: () => {
+        this.isSavedForLater = false;
+      }
+    });
+  }
+
+  private loadDemarrageStatus(ressourceId: number): void {
+    if (!this.isLoggedIn) {
+      this.isStarted = false;
+      return;
+    }
+
+    this.favorisService.getDemarrageStatus(ressourceId).subscribe({
+      next: (status) => {
+        this.isStarted = status.demarree;
+        if (this.isStarted) {
+          this.startQuiz();
+        } else {
+          this.resetQuiz();
+        }
+      },
+      error: () => {
+        this.isStarted = false;
+        this.resetQuiz();
+      }
+    });
+  }
+
+  get currentQuestion(): ActivityQuestion | null {
+    return this.activityQuestions[this.currentQuestionIndex] ?? null;
+  }
+
+  get totalQuestions(): number {
+    return this.activityQuestions.length;
+  }
+
+  startQuiz(): void {
+    this.quizError = '';
+    this.currentQuestionIndex = 0;
+    this.selectedOptionIndex = null;
+    this.userAnswers = [];
+    this.quizCompleted = false;
+  }
+
+  resetQuiz(): void {
+    this.quizError = '';
+    this.currentQuestionIndex = 0;
+    this.selectedOptionIndex = null;
+    this.userAnswers = [];
+    this.quizCompleted = false;
+  }
+
+  selectOption(optionIndex: number): void {
+    this.selectedOptionIndex = optionIndex;
+    this.quizError = '';
+  }
+
+  validateAnswer(): void {
+    if (this.selectedOptionIndex === null) {
+      this.quizError = 'Veuillez sélectionner une option avant de valider.';
+      return;
+    }
+
+    this.userAnswers[this.currentQuestionIndex] = this.selectedOptionIndex;
+    this.selectedOptionIndex = null;
+    this.quizError = '';
+
+    const isLastQuestion = this.currentQuestionIndex >= this.totalQuestions - 1;
+    if (isLastQuestion) {
+      this.quizCompleted = true;
+      return;
+    }
+
+    this.currentQuestionIndex += 1;
   }
 
   submitComment(): void {
@@ -183,6 +321,77 @@ export class RessourceDetailComponent implements OnInit {
       next: () => alert('Ressource ajoutée à vos favoris.'),
       error: (err) => {
         const message = err?.error?.message || 'Impossible d\'ajouter ce favori.';
+        alert(message);
+      }
+    });
+  }
+
+  toggleExploitation(ressourceId: number): void {
+    if (!this.isLoggedIn) {
+      alert('Veuillez vous connecter pour modifier le statut de progression.');
+      this.router.navigate(['/auth/login']);
+      return;
+    }
+
+    const nextValue = !this.isExploitee;
+    this.favorisService.setExploitationStatus(ressourceId, nextValue).subscribe({
+      next: () => {
+        this.isExploitee = nextValue;
+      },
+      error: (err) => {
+        const message = err?.error?.message || 'Impossible de mettre à jour le statut de progression.';
+        alert(message);
+      }
+    });
+  }
+
+  toggleSauvegarde(ressourceId: number): void {
+    if (!this.isLoggedIn) {
+      alert('Veuillez vous connecter pour mettre une ressource de côté.');
+      this.router.navigate(['/auth/login']);
+      return;
+    }
+
+    const nextValue = !this.isSavedForLater;
+    this.favorisService.setSauvegardeStatus(ressourceId, nextValue).subscribe({
+      next: () => {
+        this.isSavedForLater = nextValue;
+      },
+      error: (err) => {
+        const message = err?.error?.message || 'Impossible de mettre a jour la sauvegarde de cette ressource.';
+        alert(message);
+      }
+    });
+  }
+
+  isDemarrable(ressource: Ressource): boolean {
+    const normalized = (ressource.format ?? '')
+      .normalize('NFD')
+      .replace(/[\u0300-\u036f]/g, '')
+      .toLowerCase();
+
+    return normalized === 'activite' || normalized === 'jeu';
+  }
+
+  toggleDemarrage(ressourceId: number): void {
+    if (!this.isLoggedIn) {
+      alert('Veuillez vous connecter pour démarrer cette activité.');
+      this.router.navigate(['/auth/login']);
+      return;
+    }
+
+    const nextValue = !this.isStarted;
+    this.favorisService.setDemarrageStatus(ressourceId, nextValue).subscribe({
+      next: () => {
+        this.isStarted = nextValue;
+        if (nextValue) {
+          this.startQuiz();
+        } else {
+          this.resetQuiz();
+        }
+      },
+      error: (err) => {
+        const message = err?.error?.message || 'Impossible de mettre à jour le démarrage de cette activité.';
         alert(message);
       }
     });

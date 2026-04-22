@@ -2,7 +2,35 @@ import { Component, OnInit } from '@angular/core';
 import { CommonModule } from '@angular/common';
 import { FormBuilder, FormGroup, Validators, ReactiveFormsModule } from '@angular/forms';
 import { Router, RouterModule } from '@angular/router';
+import { forkJoin } from 'rxjs';
 import { AuthService } from 'src/app/core/services/auth.service';
+import { FavorisService, ProgressionStats, Ressource } from 'src/app/core/services/favoris.service';
+import { CommentaireService, MesCommentaire } from 'src/app/features/resources/services/commentaire.service';
+import { UserService } from 'src/app/core/services/user.service';
+
+interface ProfilePublication {
+  id: number;
+  title: string;
+  status: 'published' | 'pending' | 'private';
+  createdDate: Date;
+  views: number;
+  comments: number;
+}
+
+interface ProfileFavorite {
+  id: number;
+  title: string;
+  category: string;
+}
+
+interface ProfileComment {
+  id: number;
+  resourceId: number;
+  resourceTitle: string;
+  date: Date;
+  content: string;
+  rating: number;
+}
 
 @Component({
   selector: 'app-profile',
@@ -15,6 +43,7 @@ export class ProfileComponent implements OnInit {
   activeTab = 'identity';
   isEditingInfo = false;
   isChangingPassword = false;
+  loading = false;
 
   infoForm!: FormGroup;
   passwordForm!: FormGroup;
@@ -28,15 +57,21 @@ export class ProfileComponent implements OnInit {
     registrationDate: new Date()
   };
 
-  // Listes pour éviter les erreurs HTML
-  publications: any[] = [];
+  publications: ProfilePublication[] = [];
   ongoingActivities: any[] = [];
-  comments: any[] = [];
+  comments: ProfileComment[] = [];
   invitations: any[] = [];
-  favoriteResources: any[] = [];
-  stats = { resourcesViewed: 12, resourcesUsed: 5, resourcesPublished: 2, favoriteCount: 8, savedForLater: 3 };
+  favoriteResources: ProfileFavorite[] = [];
+  stats = { resourcesViewed: 0, resourcesUsed: 0, resourcesPublished: 0, favoriteCount: 0, savedForLater: 0 };
 
-  constructor(private fb: FormBuilder, private authService: AuthService, private router: Router) {}
+  constructor(
+    private fb: FormBuilder,
+    private authService: AuthService,
+    private router: Router,
+    private favorisService: FavorisService,
+    private commentaireService: CommentaireService,
+    private userService: UserService
+  ) {}
 
   ngOnInit(): void {
     const currentUser = this.authService.getCurrentUser();
@@ -45,8 +80,105 @@ export class ProfileComponent implements OnInit {
       this.user.lastName = currentUser.nom;
       this.user.email = currentUser.email;
       this.user.role = currentUser.role;
+
+      this.loadRealProfileData(currentUser.idUtilisateur);
     }
     this.initForms();
+  }
+
+  private loadRealProfileData(userId: number): void {
+    this.loading = true;
+
+    forkJoin({
+      profile: this.userService.getUserById(userId),
+      progression: this.favorisService.getProgression(),
+      favoris: this.favorisService.getMesFavoris(),
+      ressources: this.favorisService.getMesRessources(),
+      commentaires: this.commentaireService.getMine()
+    }).subscribe({
+      next: ({ profile, progression, favoris, ressources, commentaires }) => {
+        this.bindIdentity(profile);
+        this.bindProgression(progression, commentaires);
+        this.bindFavoris(favoris);
+        this.bindPublications(ressources, commentaires);
+        this.bindCommentaires(commentaires);
+        this.loading = false;
+      },
+      error: () => {
+        this.loading = false;
+      }
+    });
+  }
+
+  private bindIdentity(profile: any): void {
+    this.user.firstName = profile?.prenom ?? this.user.firstName;
+    this.user.lastName = profile?.nom ?? this.user.lastName;
+    this.user.email = profile?.email ?? this.user.email;
+    this.user.role = profile?.nomRole ?? this.user.role;
+    if (profile?.createdAt) {
+      this.user.registrationDate = new Date(profile.createdAt);
+    }
+
+    if (this.infoForm) {
+      this.infoForm.patchValue({
+        firstName: this.user.firstName,
+        lastName: this.user.lastName,
+        email: this.user.email
+      });
+    }
+  }
+
+  private bindProgression(progression: ProgressionStats, commentaires: MesCommentaire[]): void {
+    const viewedDistinct = new Set(commentaires.map(c => c.idRessource)).size;
+    this.stats = {
+      resourcesViewed: viewedDistinct,
+      resourcesUsed: progression.nbExploitees,
+      resourcesPublished: progression.nbPubliees,
+      favoriteCount: progression.nbFavoris,
+      savedForLater: progression.nbSauvegardees
+    };
+  }
+
+  private bindFavoris(favoris: Ressource[]): void {
+    this.favoriteResources = favoris.map(f => ({
+      id: f.idRessource,
+      title: f.titre,
+      category: f.nomCategorie
+    }));
+  }
+
+  private bindPublications(ressources: Ressource[], commentaires: MesCommentaire[]): void {
+    const commentsByResource = new Map<number, number>();
+    for (const comment of commentaires) {
+      commentsByResource.set(comment.idRessource, (commentsByResource.get(comment.idRessource) ?? 0) + 1);
+    }
+
+    this.publications = ressources.map(r => ({
+      id: r.idRessource,
+      title: r.titre,
+      status: this.mapPublicationStatus(r.statut),
+      createdDate: new Date(r.dateCreation),
+      views: 0,
+      comments: commentsByResource.get(r.idRessource) ?? 0
+    }));
+  }
+
+  private bindCommentaires(commentaires: MesCommentaire[]): void {
+    this.comments = commentaires.map(c => ({
+      id: c.idCommentaire,
+      resourceId: c.idRessource,
+      resourceTitle: c.titreRessource,
+      date: new Date(c.dateCreation),
+      content: c.contenu,
+      rating: 5
+    }));
+  }
+
+  private mapPublicationStatus(statut: string): 'published' | 'pending' | 'private' {
+    const normalized = (statut ?? '').toLowerCase();
+    if (normalized === 'publiee') return 'published';
+    if (normalized === 'envalidation') return 'pending';
+    return 'private';
   }
 
   initForms() {
@@ -110,14 +242,37 @@ export class ProfileComponent implements OnInit {
     return badges[status] || status;
   }
 
-  editPublication(id: any) { alert('Édition de la publication ' + id); }
-  deletePublication(id: any) { alert('Suppression de la publication ' + id); }
-
   // --- INTERACTIONS SOCIALES ---
   resumeActivity(id: any) { alert('Reprise de l\'activité...'); }
   editComment(id: any) { alert('Modification du commentaire...'); }
-  deleteComment(id: any) { alert('Commentaire supprimé.'); }
+  deleteComment(id: any) {
+    this.commentaireService.delete(id).subscribe({
+      next: () => {
+        this.comments = this.comments.filter(c => c.id !== id);
+        this.stats.resourcesViewed = new Set(this.comments.map(c => c.resourceId)).size;
+      },
+      error: () => {}
+    });
+  }
   respondToInvitation(id: any, accept: boolean) {
     alert(accept ? 'Invitation acceptée !' : 'Invitation refusée.');
+  }
+
+  removeFavorite(resourceId: number): void {
+    this.favorisService.retirerFavori(resourceId).subscribe({
+      next: () => {
+        this.favoriteResources = this.favoriteResources.filter(r => r.id !== resourceId);
+        this.stats.favoriteCount = Math.max(0, this.stats.favoriteCount - 1);
+      },
+      error: () => {}
+    });
+  }
+
+  editPublication(id: number): void {
+    this.router.navigate(['/ressources', id, 'editer']);
+  }
+
+  deletePublication(id: number): void {
+    alert('Suppression publication à brancher côté API si besoin.');
   }
 }

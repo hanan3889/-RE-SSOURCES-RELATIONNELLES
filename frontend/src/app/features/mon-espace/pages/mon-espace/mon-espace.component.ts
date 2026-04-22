@@ -13,9 +13,10 @@ import { FavorisService, Ressource, ProgressionStats } from 'src/app/core/servic
 })
 export class MonEspaceComponent implements OnInit {
   currentUser = null as ReturnType<AuthService['getCurrentUser']>;
-  stats: ProgressionStats = { nbFavoris: 0, nbMesRessources: 0, nbPubliees: 0, nbEnAttente: 0 };
+  stats: ProgressionStats = { nbFavoris: 0, nbMesRessources: 0, nbPubliees: 0, nbEnAttente: 0, nbExploitees: 0, nbSauvegardees: 0, nbActivitesDemarrees: 0 };
   favoris: Ressource[] = [];
   mesRessources: Ressource[] = [];
+  exploitedRessourceIds = new Set<number>();
   activeTab: 'favoris' | 'mes-ressources' = 'favoris';
   loading = true;
 
@@ -43,9 +44,27 @@ export class MonEspaceComponent implements OnInit {
       error: () => {}
     });
     this.favorisService.getMesRessources().subscribe({
-      next: (data) => { this.mesRessources = data; this.loading = false; },
+      next: (data) => {
+        this.mesRessources = data;
+        this.loadExploitationStatuses();
+        this.loading = false;
+      },
       error: () => { this.loading = false; }
     });
+  }
+
+  private loadExploitationStatuses(): void {
+    this.exploitedRessourceIds.clear();
+    for (const ressource of this.mesRessources) {
+      this.favorisService.getExploitationStatus(ressource.idRessource).subscribe({
+        next: (status) => {
+          if (status.exploitee) {
+            this.exploitedRessourceIds.add(ressource.idRessource);
+          }
+        },
+        error: () => {}
+      });
+    }
   }
 
   setTab(tab: 'favoris' | 'mes-ressources'): void {
@@ -57,6 +76,26 @@ export class MonEspaceComponent implements OnInit {
       next: () => {
         this.favoris = this.favoris.filter(f => f.idRessource !== ressourceId);
         this.stats.nbFavoris = Math.max(0, this.stats.nbFavoris - 1);
+      },
+      error: () => {}
+    });
+  }
+
+  isExploitee(ressourceId: number): boolean {
+    return this.exploitedRessourceIds.has(ressourceId);
+  }
+
+  toggleExploitation(ressourceId: number): void {
+    const nextValue = !this.isExploitee(ressourceId);
+    this.favorisService.setExploitationStatus(ressourceId, nextValue).subscribe({
+      next: () => {
+        if (nextValue) {
+          this.exploitedRessourceIds.add(ressourceId);
+          this.stats.nbExploitees += 1;
+        } else {
+          this.exploitedRessourceIds.delete(ressourceId);
+          this.stats.nbExploitees = Math.max(0, this.stats.nbExploitees - 1);
+        }
       },
       error: () => {}
     });

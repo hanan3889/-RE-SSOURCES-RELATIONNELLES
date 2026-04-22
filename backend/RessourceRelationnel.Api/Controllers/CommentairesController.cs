@@ -88,6 +88,31 @@ public class CommentairesController : ControllerBase
         return Created("", ToDto(reponse));
     }
 
+    // GET /api/commentaires/mes — commentaires de l'utilisateur connecté
+    [HttpGet("api/commentaires/mes")]
+    [Authorize]
+    public async Task<IActionResult> GetMine()
+    {
+        var userId = long.Parse(User.FindFirstValue(ClaimTypes.NameIdentifier)!);
+
+        var commentaires = await _context.Commentaires
+            .AsNoTracking()
+            .Where(c => c.IdUtilisateur == userId)
+            .Include(c => c.Ressource)
+            .OrderByDescending(c => c.DateCreation)
+            .Select(c => new MesCommentaireDto
+            {
+                IdCommentaire = c.IdCommentaire,
+                IdRessource = c.IdRessource,
+                TitreRessource = c.Ressource != null ? c.Ressource.Titre : string.Empty,
+                Contenu = c.Contenu,
+                DateCreation = c.DateCreation
+            })
+            .ToListAsync();
+
+        return Ok(commentaires);
+    }
+
     // DELETE /api/commentaires/{id} — auteur ou modérateur
     [HttpDelete("api/commentaires/{id:long}")]
     [Authorize]

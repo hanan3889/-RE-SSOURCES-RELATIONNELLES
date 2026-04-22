@@ -371,4 +371,56 @@ public class RessourcesControllerTests
 
         Assert.IsType<BadRequestObjectResult>(result);
     }
+
+    [Fact]
+    public async Task Create_ActivityFormat_ByCitizen_ReturnsForbid()
+    {
+        using var context = TestDbContextFactory.Create(nameof(Create_ActivityFormat_ByCitizen_ReturnsForbid));
+        TestDbContextFactory.SeedRoles(context);
+        var user = TestDbContextFactory.CreateUtilisateur(context);
+        var cat = TestDbContextFactory.CreateCategorie(context);
+
+        var controller = new RessourcesController(context);
+        ControllerTestHelper.SetUser(controller, user.IdUtilisateur, "citoyen");
+
+        var dto = new CreateRessourceDto
+        {
+            Titre = "Atelier citoyen",
+            Description = "Description",
+            Format = "Activité",
+            Visibilite = Visibilite.Publique,
+            IdCategorie = cat.IdCategorie
+        };
+
+        var result = await controller.Create(dto);
+
+        Assert.IsType<ForbidResult>(result);
+    }
+
+    [Fact]
+    public async Task Create_ActivityFormat_ByAdmin_ReturnsCreated()
+    {
+        using var context = TestDbContextFactory.Create(nameof(Create_ActivityFormat_ByAdmin_ReturnsCreated));
+        TestDbContextFactory.SeedRoles(context);
+        var admin = TestDbContextFactory.CreateUtilisateur(context, idRole: 3, email: "admin-activity@example.com");
+        var cat = TestDbContextFactory.CreateCategorie(context);
+
+        var controller = new RessourcesController(context);
+        ControllerTestHelper.SetUser(controller, admin.IdUtilisateur, "administrateur");
+
+        var dto = new CreateRessourceDto
+        {
+            Titre = "Jeu de coopération",
+            Description = "Description",
+            Format = "Jeu",
+            Visibilite = Visibilite.Publique,
+            IdCategorie = cat.IdCategorie
+        };
+
+        var result = await controller.Create(dto);
+
+        var created = Assert.IsType<CreatedResult>(result);
+        var ressourceDto = Assert.IsType<RessourceDto>(created.Value);
+        Assert.Equal("Jeu", ressourceDto.Format);
+    }
 }

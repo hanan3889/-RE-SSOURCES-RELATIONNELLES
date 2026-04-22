@@ -31,6 +31,8 @@ public class ProgressionControllerTests
         Assert.Equal(0, (int)value.GetType().GetProperty("nbMesRessources")!.GetValue(value));
         Assert.Equal(0, (int)value.GetType().GetProperty("nbPubliees")!.GetValue(value));
         Assert.Equal(0, (int)value.GetType().GetProperty("nbEnAttente")!.GetValue(value));
+        Assert.Equal(0, (int)value.GetType().GetProperty("nbExploitees")!.GetValue(value));
+        Assert.Equal(0, (int)value.GetType().GetProperty("nbSauvegardees")!.GetValue(value));
     }
 
     // ─── CT-PRO-003 — Tableau de bord avec données ───────────────────────────────
@@ -57,6 +59,8 @@ public class ProgressionControllerTests
         Assert.Equal(3, (int)value.GetType().GetProperty("nbMesRessources")!.GetValue(value));
         Assert.Equal(2, (int)value.GetType().GetProperty("nbPubliees")!.GetValue(value));
         Assert.Equal(1, (int)value.GetType().GetProperty("nbEnAttente")!.GetValue(value));
+        Assert.Equal(0, (int)value.GetType().GetProperty("nbExploitees")!.GetValue(value));
+        Assert.Equal(0, (int)value.GetType().GetProperty("nbSauvegardees")!.GetValue(value));
     }
 
     // ─── CT-PRO-001 — Marquer comme favori ───────────────────────────────────────
@@ -86,6 +90,8 @@ public class ProgressionControllerTests
         var ok = Assert.IsType<OkObjectResult>(result);
         dynamic value = ok.Value!;
         Assert.Equal(1, (int)value.GetType().GetProperty("nbFavoris")!.GetValue(value));
+        Assert.Equal(0, (int)value.GetType().GetProperty("nbExploitees")!.GetValue(value));
+        Assert.Equal(0, (int)value.GetType().GetProperty("nbSauvegardees")!.GetValue(value));
     }
 
     // ─── Dashboard isolé par utilisateur ─────────────────────────────────────────
@@ -110,5 +116,275 @@ public class ProgressionControllerTests
         var ok = Assert.IsType<OkObjectResult>(result);
         dynamic value = ok.Value!;
         Assert.Equal(1, (int)value.GetType().GetProperty("nbMesRessources")!.GetValue(value));
+        Assert.Equal(0, (int)value.GetType().GetProperty("nbExploitees")!.GetValue(value));
+        Assert.Equal(0, (int)value.GetType().GetProperty("nbSauvegardees")!.GetValue(value));
+    }
+
+    [Fact]
+    public async Task SetExploitationStatus_True_AddsProgressionEntry()
+    {
+        using var context = TestDbContextFactory.Create(nameof(SetExploitationStatus_True_AddsProgressionEntry));
+        TestDbContextFactory.SeedRoles(context);
+        var user = TestDbContextFactory.CreateUtilisateur(context);
+        var cat = TestDbContextFactory.CreateCategorie(context);
+        var ressource = TestDbContextFactory.CreateRessource(context, user.IdUtilisateur, cat.IdCategorie, Statut.Publiee);
+
+        var controller = new ProgressionController(context);
+        ControllerTestHelper.SetUser(controller, user.IdUtilisateur, "citoyen");
+
+        var result = await controller.SetExploitationStatus(
+            ressource.IdRessource,
+            new ProgressionController.SetExploitationDto { Exploitee = true });
+
+        Assert.IsType<OkObjectResult>(result);
+        Assert.True(context.Progressions.Any(p => p.IdUtilisateur == user.IdUtilisateur && p.Valeur == $"ressource:{ressource.IdRessource}:exploitee"));
+    }
+
+    [Fact]
+    public async Task SetExploitationStatus_False_RemovesProgressionEntry()
+    {
+        using var context = TestDbContextFactory.Create(nameof(SetExploitationStatus_False_RemovesProgressionEntry));
+        TestDbContextFactory.SeedRoles(context);
+        var user = TestDbContextFactory.CreateUtilisateur(context);
+        var cat = TestDbContextFactory.CreateCategorie(context);
+        var ressource = TestDbContextFactory.CreateRessource(context, user.IdUtilisateur, cat.IdCategorie, Statut.Publiee);
+
+        context.Progressions.Add(new Progression
+        {
+            IdUtilisateur = user.IdUtilisateur,
+            Valeur = $"ressource:{ressource.IdRessource}:exploitee"
+        });
+        context.SaveChanges();
+
+        var controller = new ProgressionController(context);
+        ControllerTestHelper.SetUser(controller, user.IdUtilisateur, "citoyen");
+
+        var result = await controller.SetExploitationStatus(
+            ressource.IdRessource,
+            new ProgressionController.SetExploitationDto { Exploitee = false });
+
+        Assert.IsType<OkObjectResult>(result);
+        Assert.False(context.Progressions.Any(p => p.IdUtilisateur == user.IdUtilisateur && p.Valeur == $"ressource:{ressource.IdRessource}:exploitee"));
+    }
+
+    [Fact]
+    public async Task GetExploitationStatus_ReturnsTrueWhenMarked()
+    {
+        using var context = TestDbContextFactory.Create(nameof(GetExploitationStatus_ReturnsTrueWhenMarked));
+        TestDbContextFactory.SeedRoles(context);
+        var user = TestDbContextFactory.CreateUtilisateur(context);
+        var cat = TestDbContextFactory.CreateCategorie(context);
+        var ressource = TestDbContextFactory.CreateRessource(context, user.IdUtilisateur, cat.IdCategorie, Statut.Publiee);
+
+        context.Progressions.Add(new Progression
+        {
+            IdUtilisateur = user.IdUtilisateur,
+            Valeur = $"ressource:{ressource.IdRessource}:exploitee"
+        });
+        context.SaveChanges();
+
+        var controller = new ProgressionController(context);
+        ControllerTestHelper.SetUser(controller, user.IdUtilisateur, "citoyen");
+
+        var result = await controller.GetExploitationStatus(ressource.IdRessource);
+
+        var ok = Assert.IsType<OkObjectResult>(result);
+        dynamic value = ok.Value!;
+        Assert.True((bool)value.GetType().GetProperty("exploitee")!.GetValue(value));
+    }
+
+    [Fact]
+    public async Task GetDashboard_WithExploitedResources_CountsCorrectly()
+    {
+        using var context = TestDbContextFactory.Create(nameof(GetDashboard_WithExploitedResources_CountsCorrectly));
+        TestDbContextFactory.SeedRoles(context);
+        var user = TestDbContextFactory.CreateUtilisateur(context);
+        var cat = TestDbContextFactory.CreateCategorie(context);
+        var ressource = TestDbContextFactory.CreateRessource(context, user.IdUtilisateur, cat.IdCategorie, Statut.Publiee);
+
+        context.Progressions.Add(new Progression
+        {
+            IdUtilisateur = user.IdUtilisateur,
+            Valeur = $"ressource:{ressource.IdRessource}:exploitee"
+        });
+        context.SaveChanges();
+
+        var controller = new ProgressionController(context);
+        ControllerTestHelper.SetUser(controller, user.IdUtilisateur, "citoyen");
+
+        var result = await controller.GetDashboard();
+
+        var ok = Assert.IsType<OkObjectResult>(result);
+        dynamic value = ok.Value!;
+        Assert.Equal(1, (int)value.GetType().GetProperty("nbExploitees")!.GetValue(value));
+        Assert.Equal(0, (int)value.GetType().GetProperty("nbSauvegardees")!.GetValue(value));
+    }
+
+    [Fact]
+    public async Task SetSauvegardeStatus_True_AddsProgressionEntry()
+    {
+        using var context = TestDbContextFactory.Create(nameof(SetSauvegardeStatus_True_AddsProgressionEntry));
+        TestDbContextFactory.SeedRoles(context);
+        var user = TestDbContextFactory.CreateUtilisateur(context);
+        var cat = TestDbContextFactory.CreateCategorie(context);
+        var ressource = TestDbContextFactory.CreateRessource(context, user.IdUtilisateur, cat.IdCategorie, Statut.Publiee);
+
+        var controller = new ProgressionController(context);
+        ControllerTestHelper.SetUser(controller, user.IdUtilisateur, "citoyen");
+
+        var result = await controller.SetSauvegardeStatus(
+            ressource.IdRessource,
+            new ProgressionController.SetSauvegardeDto { Sauvegardee = true });
+
+        Assert.IsType<OkObjectResult>(result);
+        Assert.True(context.Progressions.Any(p => p.IdUtilisateur == user.IdUtilisateur && p.Valeur == $"ressource:{ressource.IdRessource}:saved"));
+    }
+
+    [Fact]
+    public async Task SetSauvegardeStatus_False_RemovesProgressionEntry()
+    {
+        using var context = TestDbContextFactory.Create(nameof(SetSauvegardeStatus_False_RemovesProgressionEntry));
+        TestDbContextFactory.SeedRoles(context);
+        var user = TestDbContextFactory.CreateUtilisateur(context);
+        var cat = TestDbContextFactory.CreateCategorie(context);
+        var ressource = TestDbContextFactory.CreateRessource(context, user.IdUtilisateur, cat.IdCategorie, Statut.Publiee);
+
+        context.Progressions.Add(new Progression
+        {
+            IdUtilisateur = user.IdUtilisateur,
+            Valeur = $"ressource:{ressource.IdRessource}:saved"
+        });
+        context.SaveChanges();
+
+        var controller = new ProgressionController(context);
+        ControllerTestHelper.SetUser(controller, user.IdUtilisateur, "citoyen");
+
+        var result = await controller.SetSauvegardeStatus(
+            ressource.IdRessource,
+            new ProgressionController.SetSauvegardeDto { Sauvegardee = false });
+
+        Assert.IsType<OkObjectResult>(result);
+        Assert.False(context.Progressions.Any(p => p.IdUtilisateur == user.IdUtilisateur && p.Valeur == $"ressource:{ressource.IdRessource}:saved"));
+    }
+
+    [Fact]
+    public async Task GetSauvegardeStatus_ReturnsTrueWhenMarked()
+    {
+        using var context = TestDbContextFactory.Create(nameof(GetSauvegardeStatus_ReturnsTrueWhenMarked));
+        TestDbContextFactory.SeedRoles(context);
+        var user = TestDbContextFactory.CreateUtilisateur(context);
+        var cat = TestDbContextFactory.CreateCategorie(context);
+        var ressource = TestDbContextFactory.CreateRessource(context, user.IdUtilisateur, cat.IdCategorie, Statut.Publiee);
+
+        context.Progressions.Add(new Progression
+        {
+            IdUtilisateur = user.IdUtilisateur,
+            Valeur = $"ressource:{ressource.IdRessource}:saved"
+        });
+        context.SaveChanges();
+
+        var controller = new ProgressionController(context);
+        ControllerTestHelper.SetUser(controller, user.IdUtilisateur, "citoyen");
+
+        var result = await controller.GetSauvegardeStatus(ressource.IdRessource);
+
+        var ok = Assert.IsType<OkObjectResult>(result);
+        dynamic value = ok.Value!;
+        Assert.True((bool)value.GetType().GetProperty("sauvegardee")!.GetValue(value));
+    }
+
+    [Fact]
+    public async Task GetDashboard_WithSavedResources_CountsCorrectly()
+    {
+        using var context = TestDbContextFactory.Create(nameof(GetDashboard_WithSavedResources_CountsCorrectly));
+        TestDbContextFactory.SeedRoles(context);
+        var user = TestDbContextFactory.CreateUtilisateur(context);
+        var cat = TestDbContextFactory.CreateCategorie(context);
+        var ressource = TestDbContextFactory.CreateRessource(context, user.IdUtilisateur, cat.IdCategorie, Statut.Publiee);
+
+        context.Progressions.Add(new Progression
+        {
+            IdUtilisateur = user.IdUtilisateur,
+            Valeur = $"ressource:{ressource.IdRessource}:saved"
+        });
+        context.SaveChanges();
+
+        var controller = new ProgressionController(context);
+        ControllerTestHelper.SetUser(controller, user.IdUtilisateur, "citoyen");
+
+        var result = await controller.GetDashboard();
+
+        var ok = Assert.IsType<OkObjectResult>(result);
+        dynamic value = ok.Value!;
+        Assert.Equal(1, (int)value.GetType().GetProperty("nbSauvegardees")!.GetValue(value));
+    }
+
+    [Fact]
+    public async Task SetDemarrageStatus_Activity_True_AddsProgressionEntry()
+    {
+        using var context = TestDbContextFactory.Create(nameof(SetDemarrageStatus_Activity_True_AddsProgressionEntry));
+        TestDbContextFactory.SeedRoles(context);
+        var user = TestDbContextFactory.CreateUtilisateur(context);
+        var cat = TestDbContextFactory.CreateCategorie(context);
+        var ressource = TestDbContextFactory.CreateRessource(context, user.IdUtilisateur, cat.IdCategorie, Statut.Publiee);
+        ressource.Format = "Activité";
+        context.SaveChanges();
+
+        var controller = new ProgressionController(context);
+        ControllerTestHelper.SetUser(controller, user.IdUtilisateur, "citoyen");
+
+        var result = await controller.SetDemarrageStatus(
+            ressource.IdRessource,
+            new ProgressionController.SetDemarrageDto { Demarree = true });
+
+        Assert.IsType<OkObjectResult>(result);
+        Assert.True(context.Progressions.Any(p => p.IdUtilisateur == user.IdUtilisateur && p.Valeur == $"ressource:{ressource.IdRessource}:started"));
+    }
+
+    [Fact]
+    public async Task SetDemarrageStatus_NonActivity_ReturnsBadRequest()
+    {
+        using var context = TestDbContextFactory.Create(nameof(SetDemarrageStatus_NonActivity_ReturnsBadRequest));
+        TestDbContextFactory.SeedRoles(context);
+        var user = TestDbContextFactory.CreateUtilisateur(context);
+        var cat = TestDbContextFactory.CreateCategorie(context);
+        var ressource = TestDbContextFactory.CreateRessource(context, user.IdUtilisateur, cat.IdCategorie, Statut.Publiee);
+        ressource.Format = "Article";
+        context.SaveChanges();
+
+        var controller = new ProgressionController(context);
+        ControllerTestHelper.SetUser(controller, user.IdUtilisateur, "citoyen");
+
+        var result = await controller.SetDemarrageStatus(
+            ressource.IdRessource,
+            new ProgressionController.SetDemarrageDto { Demarree = true });
+
+        Assert.IsType<BadRequestObjectResult>(result);
+    }
+
+    [Fact]
+    public async Task GetDashboard_WithStartedActivities_CountsCorrectly()
+    {
+        using var context = TestDbContextFactory.Create(nameof(GetDashboard_WithStartedActivities_CountsCorrectly));
+        TestDbContextFactory.SeedRoles(context);
+        var user = TestDbContextFactory.CreateUtilisateur(context);
+        var cat = TestDbContextFactory.CreateCategorie(context);
+        var ressource = TestDbContextFactory.CreateRessource(context, user.IdUtilisateur, cat.IdCategorie, Statut.Publiee);
+
+        context.Progressions.Add(new Progression
+        {
+            IdUtilisateur = user.IdUtilisateur,
+            Valeur = $"ressource:{ressource.IdRessource}:started"
+        });
+        context.SaveChanges();
+
+        var controller = new ProgressionController(context);
+        ControllerTestHelper.SetUser(controller, user.IdUtilisateur, "citoyen");
+
+        var result = await controller.GetDashboard();
+
+        var ok = Assert.IsType<OkObjectResult>(result);
+        dynamic value = ok.Value!;
+        Assert.Equal(1, (int)value.GetType().GetProperty("nbActivitesDemarrees")!.GetValue(value));
     }
 }

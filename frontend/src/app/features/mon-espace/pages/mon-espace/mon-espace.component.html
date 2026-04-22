@@ -41,6 +41,18 @@
         <span class="stat-label">En attente</span>
       </div>
     </div>
+    <div class="stat-card">
+      <div class="stat-info">
+        <span class="stat-value">{{ stats.nbExploitees }}</span>
+        <span class="stat-label">Exploitées</span>
+      </div>
+    </div>
+    <div class="stat-card">
+      <div class="stat-info">
+        <span class="stat-value">{{ stats.nbSauvegardees }}</span>
+        <span class="stat-label">Mises de côté</span>
+      </div>
+    </div>
   </div>
 
   <!-- Actions rapides -->
@@ -133,6 +145,13 @@
                   <span class="date">{{ ressource.dateCreation | date:'dd/MM/yyyy' }}</span>
                   <div class="card-actions">
                     <a [routerLink]="['/ressources', ressource.idRessource]" class="btn btn-sm btn-outline">Voir</a>
+                    <button
+                      class="btn btn-sm"
+                      [class.btn-primary]="!isExploitee(ressource.idRessource)"
+                      [class.btn-outline]="isExploitee(ressource.idRessource)"
+                      (click)="toggleExploitation(ressource.idRessource)">
+                      {{ isExploitee(ressource.idRessource) ? 'Marquer non exploitée' : 'Marquer exploitée' }}
+                    </button>
                     <a
                       *ngIf="canEditRessource(ressource.statut)"
                       [routerLink]="['/ressources', ressource.idRessource, 'editer']"

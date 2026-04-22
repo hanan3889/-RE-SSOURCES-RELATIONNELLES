@@ -15,12 +15,15 @@ import { AuthService } from 'src/app/core/services/auth.service';
 })
 export class RessourceCreateComponent implements OnInit {
   categories: Categorie[] = [];
+  readonly standardFormats = ['Article', 'Vidéo', 'PDF', 'Audio'];
+  readonly adminOnlyFormats = ['Activité', 'Jeu'];
   form!: FormGroup;
   isSubmitting = false;
   isLoading = false;
   isEditMode = false;
   resourceId: number | null = null;
   errorMessage = '';
+  isAdmin = false;
 
   constructor(
     private readonly fb: FormBuilder,
@@ -32,10 +35,12 @@ export class RessourceCreateComponent implements OnInit {
   ) { }
 
   ngOnInit(): void {
+    this.isAdmin = this.authService.isAdmin();
+
     this.form = this.fb.group({
       titre: ['', [Validators.required, Validators.maxLength(255)]],
       description: ['', [Validators.required]],
-      format: ['', [Validators.required, Validators.maxLength(100)]],
+      format: ['Article', [Validators.required, Validators.maxLength(100)]],
       visibilite: ['0', [Validators.required]],
       idCategorie: [null, [Validators.required]]
     });
@@ -124,5 +129,11 @@ export class RessourceCreateComponent implements OnInit {
         this.isSubmitting = false;
       }
     });
+  }
+
+  get availableFormats(): string[] {
+    return this.isAdmin
+      ? [...this.standardFormats, ...this.adminOnlyFormats]
+      : this.standardFormats;
   }
 }
