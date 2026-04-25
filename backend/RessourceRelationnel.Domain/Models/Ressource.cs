@@ -18,4 +18,5 @@ public class Ressource
 
     public ICollection<Favori> Favoris { get; set; } = new List<Favori>();
     public ICollection<Commentaire> Commentaires { get; set; } = new List<Commentaire>();
+    public ICollection<Message> Messages { get; set; } = new List<Message>();
 }

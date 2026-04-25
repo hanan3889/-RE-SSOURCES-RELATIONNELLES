@@ -1,5 +1,5 @@
 import { Injectable } from '@angular/core';
-import { HttpClient } from '@angular/common/http';
+import { HttpClient, HttpParams } from '@angular/common/http';
 import { Observable, map } from 'rxjs';
 import { environment } from 'src/environments/environment';
 
@@ -29,6 +29,13 @@ export interface EditableRessourceDto extends CreateRessourceDto {
   idRessource: number;
 }
 
+export interface RessourceFilters {
+  categorie?: string;
+  format?: string;
+  recherche?: string;
+  tri?: 'date' | 'popularite';
+}
+
 interface ApiRessourceDto {
   idRessource: number;
   titre: string;
@@ -52,10 +59,12 @@ export class RessourceService {
 
   constructor(private readonly http: HttpClient) { }
 
-  getRessources(): Observable<Ressource[]> {
-    return this.http
-      .get<ApiRessourceDto[]>(this.apiUrl)
-      .pipe(map((items) => items.map((item) => this.mapDtoToRessource(item))));
+  getRessources(filters?: RessourceFilters): Observable<Ressource[]> {
+    return this.fetchRessources(this.apiUrl, filters);
+  }
+
+  getRestrictedRessources(filters?: RessourceFilters): Observable<Ressource[]> {
+    return this.fetchRessources(`${this.apiUrl}/restreintes`, filters);
   }
 
   getRessourceById(id: number): Observable<Ressource | undefined> {
@@ -93,6 +102,30 @@ export class RessourceService {
 
   addFavori(ressourceId: number) {
     return this.http.post(`${this.apiUrl}/${ressourceId}/favoris`, {});
+  }
+
+  private fetchRessources(url: string, filters?: RessourceFilters): Observable<Ressource[]> {
+    let params = new HttpParams();
+
+    if (filters?.categorie) {
+      params = params.set('categorie', filters.categorie);
+    }
+
+    if (filters?.format) {
+      params = params.set('format', filters.format);
+    }
+
+    if (filters?.recherche) {
+      params = params.set('recherche', filters.recherche);
+    }
+
+    if (filters?.tri) {
+      params = params.set('tri', filters.tri);
+    }
+
+    return this.http
+      .get<ApiRessourceDto[]>(url, { params })
+      .pipe(map((items) => items.map((item) => this.mapDtoToRessource(item))));
   }
 
   private mapDtoToRessource(dto: ApiRessourceDto): Ressource {

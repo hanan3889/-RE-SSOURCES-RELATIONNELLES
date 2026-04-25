@@ -1,16 +1,249 @@
 <div class="dashboard-container">
-  <div style="display:flex; justify-content:space-between; align-items:center; margin-bottom:1.5rem;">
-    <h1 class="text-3xl font-bold text-marianne-title">Tableau de bord Admin</h1>
+  <div class="dashboard-header">
+    <div>
+      <p class="dashboard-kicker">Back office</p>
+      <h1 class="text-3xl font-bold text-marianne-title">Tableau de bord {{ currentRoleLabel }}</h1>
+      <p class="dashboard-subtitle">Validation des ressources, modération des commentaires et filtrage du référentiel.</p>
+    </div>
     <button (click)="logout()" style="padding:0.5rem 1.25rem; background:#ef4444; color:white; border:none; border-radius:6px; cursor:pointer; font-size:0.9rem;">
       Déconnexion
     </button>
   </div>
-  <p class="text-gray-custom">Bienvenue sur le tableau de bord administrateur. Ici, vous pourrez gérer les utilisateurs, les ressources et les catégories.</p>
 
-  <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6 mt-8">
+  <div class="dashboard-tabs">
+    <button type="button" class="dashboard-tab" [class.active]="activeTab === 'resources'" (click)="setActiveTab('resources')">
+      Ressources BO
+    </button>
+    <button type="button" class="dashboard-tab" [class.active]="activeTab === 'queue'" (click)="setActiveTab('queue')">
+      Validation publication
+    </button>
+    <button type="button" class="dashboard-tab" [class.active]="activeTab === 'comments'" (click)="setActiveTab('comments')">
+      Modération commentaires
+    </button>
+    <button *ngIf="canManageCategories" type="button" class="dashboard-tab" [class.active]="activeTab === 'categories'" (click)="setActiveTab('categories')">
+      Catégories
+    </button>
+    <button *ngIf="canManageUsers" type="button" class="dashboard-tab" [class.active]="activeTab === 'users'" (click)="setActiveTab('users')">
+      Comptes utilisateurs
+    </button>
+    <button *ngIf="canCreatePrivilegedAccounts" type="button" class="dashboard-tab" [class.active]="activeTab === 'privileged'" (click)="setActiveTab('privileged')">
+      Comptes privilégiés
+    </button>
+    <button *ngIf="canSeeStatistics" type="button" class="dashboard-tab" [class.active]="activeTab === 'stats'" (click)="setActiveTab('stats')">
+      Statistiques
+    </button>
+  </div>
+
+  <section *ngIf="activeTab === 'resources'" class="dashboard-panel">
+    <div class="panel-header">
+      <div>
+        <h2>Référentiel ressources</h2>
+        <p>Liste et filtres back office pour les administrateurs et modérateurs.</p>
+      </div>
+      <button type="button" class="secondary-btn" (click)="resetResourceFilters()">Réinitialiser</button>
+    </div>
+
+    <div class="filters-grid">
+      <label>
+        <span>Recherche</span>
+        <input [(ngModel)]="resourceFilters.recherche" placeholder="Titre ou description" />
+      </label>
+
+      <label>
+        <span>Auteur</span>
+        <input [(ngModel)]="resourceFilters.auteur" placeholder="Prénom nom" />
+      </label>
+
+      <label>
+        <span>Statut</span>
+        <select [(ngModel)]="resourceFilters.statut">
+          <option value="">Tous</option>
+          <option *ngFor="let status of statusOptions" [value]="status">{{ status }}</option>
+        </select>
+      </label>
+
+      <label>
+        <span>Catégorie</span>
+        <select [(ngModel)]="resourceFilters.categorie">
+          <option value="">Toutes</option>
+          <option *ngFor="let category of categories" [value]="category.nomCategorie">{{ category.nomCategorie }}</option>
+        </select>
+      </label>
+
+      <label>
+        <span>Format</span>
+        <select [(ngModel)]="resourceFilters.format">
+          <option value="">Tous</option>
+          <option *ngFor="let format of formatOptions" [value]="format">{{ format }}</option>
+        </select>
+      </label>
+
+      <label>
+        <span>Visibilité</span>
+        <select [(ngModel)]="resourceFilters.visibilite">
+          <option value="">Toutes</option>
+          <option *ngFor="let visibility of visibilityOptions" [value]="visibility">{{ visibility }}</option>
+        </select>
+      </label>
+    </div>
+
+    <div class="panel-actions">
+      <button type="button" class="primary-btn" (click)="loadAdminResources()">Appliquer les filtres</button>
+      <span class="panel-count">{{ adminResources.length }} ressource{{ adminResources.length > 1 ? 's' : '' }}</span>
+    </div>
+
+    <p *ngIf="resourceError" class="error-banner">{{ resourceError }}</p>
+    <p *ngIf="isLoadingResources" class="loading-banner">Chargement des ressources...</p>
+
+    <div class="table-wrapper" *ngIf="!isLoadingResources">
+      <table class="dashboard-table">
+        <thead>
+          <tr>
+            <th>Titre</th>
+            <th>Auteur</th>
+            <th>Catégorie</th>
+            <th>Format</th>
+            <th>Visibilité</th>
+            <th>Statut</th>
+            <th>Date</th>
+            <th *ngIf="canManageAdminResources">Actions</th>
+          </tr>
+        </thead>
+        <tbody>
+          <tr *ngFor="let resource of adminResources">
+            <td>{{ resource.title }}</td>
+            <td>{{ resource.author }}</td>
+            <td>{{ resource.category }}</td>
+            <td>{{ resource.format }}</td>
+            <td>{{ resource.visibilite }}</td>
+            <td>{{ resource.statut }}</td>
+            <td>{{ resource.createdAt | date:'shortDate' }}</td>
+            <td *ngIf="canManageAdminResources" class="actions-cell">
+              <button type="button" class="link-btn" (click)="editResource(resource.id)">Éditer</button>
+              <button type="button" class="link-btn warn" *ngIf="resource.statut !== 'Archivée'" (click)="suspendResource(resource.id)">Suspendre</button>
+              <button type="button" class="link-btn danger" (click)="deleteResource(resource.id)">Supprimer</button>
+            </td>
+          </tr>
+          <tr *ngIf="adminResources.length === 0">
+            <td [attr.colspan]="canManageAdminResources ? 8 : 7" class="empty-state">Aucune ressource ne correspond aux filtres.</td>
+          </tr>
+        </tbody>
+      </table>
+    </div>
+  </section>
+
+  <section *ngIf="activeTab === 'queue'" class="dashboard-panel">
+    <div class="panel-header">
+      <div>
+        <h2>Validation de publication</h2>
+        <p>Ressources en attente de validation modérateur.</p>
+      </div>
+      <button type="button" class="secondary-btn" (click)="loadModerationQueue()">Rafraîchir</button>
+    </div>
+
+    <p *ngIf="queueError" class="error-banner">{{ queueError }}</p>
+    <p *ngIf="isLoadingQueue" class="loading-banner">Chargement de la file de validation...</p>
+
+    <div class="queue-list" *ngIf="!isLoadingQueue">
+      <article *ngFor="let resource of moderationQueue" class="queue-card">
+        <div>
+          <p class="queue-meta">{{ resource.category }} · {{ resource.format }} · {{ resource.author }}</p>
+          <h3>{{ resource.title }}</h3>
+          <p>{{ resource.description }}</p>
+        </div>
+        <div class="queue-actions">
+          <button type="button" class="approve-btn" (click)="approveResource(resource.id)">Valider</button>
+          <button type="button" class="reject-btn" (click)="rejectResource(resource.id)">Refuser</button>
+        </div>
+      </article>
+
+      <p *ngIf="moderationQueue.length === 0" class="empty-state">Aucune ressource en attente de validation.</p>
+    </div>
+  </section>
+
+  <section *ngIf="activeTab === 'comments'" class="dashboard-panel">
+    <div class="panel-header">
+      <div>
+        <h2>Modération des commentaires</h2>
+        <p>Suppression rapide des commentaires signalés ou inadaptés.</p>
+      </div>
+      <button type="button" class="secondary-btn" (click)="loadModerationComments()">Rafraîchir</button>
+    </div>
+
+    <p *ngIf="commentsError" class="error-banner">{{ commentsError }}</p>
+    <p *ngIf="isLoadingComments" class="loading-banner">Chargement des commentaires...</p>
+
+    <div class="comment-list" *ngIf="!isLoadingComments">
+      <article *ngFor="let comment of moderationComments" class="comment-card">
+        <div>
+          <p class="queue-meta">{{ comment.prenomAuteur }} {{ comment.nomAuteur }} · {{ comment.titreRessource }}</p>
+          <p class="comment-content">{{ comment.contenu }}</p>
+          <p class="comment-date">{{ comment.dateCreation | date:'short' }}</p>
+        </div>
+        <button type="button" class="reject-btn" (click)="deleteComment(comment.idCommentaire)">Supprimer</button>
+      </article>
+
+      <p *ngIf="moderationComments.length === 0" class="empty-state">Aucun commentaire à modérer.</p>
+    </div>
+  </section>
+
+  <section *ngIf="activeTab === 'categories' && canManageCategories" class="dashboard-panel">
+    <div class="panel-header">
+      <div>
+        <h2>Gestion des catégories</h2>
+        <p>Créer, modifier et supprimer les catégories du référentiel.</p>
+      </div>
+      <button type="button" class="secondary-btn" (click)="resetCategoryForm()">Nouvelle catégorie</button>
+    </div>
+
+    <div class="category-editor">
+      <label>
+        <span>Nom de la catégorie</span>
+        <input [(ngModel)]="categoryDraft" placeholder="Ex: Communication bienveillante" />
+      </label>
+
+      <div class="queue-actions">
+        <button type="button" class="primary-btn" (click)="saveCategory()" [disabled]="isSavingCategory">
+          {{ editingCategoryId ? 'Mettre à jour' : 'Créer' }}
+        </button>
+        <button *ngIf="editingCategoryId" type="button" class="secondary-btn" (click)="resetCategoryForm()">Annuler</button>
+      </div>
+    </div>
+
+    <p *ngIf="categoryError" class="error-banner">{{ categoryError }}</p>
+    <p *ngIf="categorySuccess" class="success-banner">{{ categorySuccess }}</p>
+
+    <div class="table-wrapper">
+      <table class="dashboard-table">
+        <thead>
+          <tr>
+            <th>Nom</th>
+            <th>Actions</th>
+          </tr>
+        </thead>
+        <tbody>
+          <tr *ngFor="let category of categories">
+            <td>{{ category.nomCategorie }}</td>
+            <td class="actions-cell">
+              <button type="button" class="link-btn" (click)="startCategoryEdit(category)">Modifier</button>
+              <button type="button" class="link-btn danger" (click)="deleteCategory(category.idCategorie)">Supprimer</button>
+            </td>
+          </tr>
+          <tr *ngIf="categories.length === 0">
+            <td colspan="2" class="empty-state">Aucune catégorie disponible.</td>
+          </tr>
+        </tbody>
+      </table>
+    </div>
+  </section>
+
+  <section *ngIf="activeTab === 'users' && canManageUsers" class="dashboard-panel">
     <div class="bg-white p-6 rounded-lg shadow-soft col-span-full">
       <h2 class="text-xl font-semibold text-marianne-title mb-3">Gestion des utilisateurs</h2>
       <p class="text-gray-custom text-sm mb-4">Gérez les comptes utilisateurs : modifiez les informations, réinitialisez les mots de passe ou supprimez les comptes.</p>
+
+      <p *ngIf="userError" class="error-banner">{{ userError }}</p>
+      <p *ngIf="isLoadingUsers" class="loading-banner">Chargement des utilisateurs...</p>
 
       <div class="overflow-x-auto">
         <table class="min-w-full bg-white">
@@ -44,19 +277,183 @@
         </table>
       </div>
     </div>
+  </section>
 
-    <div class="bg-white p-6 rounded-lg shadow-soft">
-      <h2 class="text-xl font-semibold text-marianne-title mb-3">Gestion des ressources</h2>
-      <p class="text-gray-custom text-sm">Ajoutez, modifiez ou supprimez des ressources.</p>
-      <button class="mt-4 btn-primary bg-marianne-blue text-white px-4 py-2 rounded-full text-sm hover:bg-marianne-blue-hover transition-colors">Gérer les ressources</button>
+  <section *ngIf="activeTab === 'privileged' && canCreatePrivilegedAccounts" class="dashboard-panel">
+    <div class="panel-header">
+      <div>
+        <h2>Création de comptes privilégiés</h2>
+        <p>Créer un compte modérateur, administrateur ou super-administrateur.</p>
+      </div>
     </div>
 
-    <div class="bg-white p-6 rounded-lg shadow-soft">
-      <h2 class="text-xl font-semibold text-marianne-title mb-3">Gestion des catégories</h2>
-      <p class="text-gray-custom text-sm">Ajoutez, modifiez ou supprimez des catégories de ressources.</p>
-      <button class="mt-4 btn-primary bg-marianne-blue text-white px-4 py-2 rounded-full text-sm hover:bg-marianne-blue-hover transition-colors">Gérer les catégories</button>
+    <div class="filters-grid">
+      <label>
+        <span>Nom</span>
+        <input [(ngModel)]="privilegedUserDraft.nom" placeholder="Nom" />
+      </label>
+      <label>
+        <span>Prénom</span>
+        <input [(ngModel)]="privilegedUserDraft.prenom" placeholder="Prénom" />
+      </label>
+      <label>
+        <span>Email</span>
+        <input [(ngModel)]="privilegedUserDraft.email" placeholder="email@example.com" />
+      </label>
+      <label>
+        <span>Mot de passe</span>
+        <input [(ngModel)]="privilegedUserDraft.password" type="password" placeholder="Mot de passe" />
+      </label>
+      <label>
+        <span>Rôle</span>
+        <select [(ngModel)]="privilegedUserDraft.idRole">
+          <option *ngFor="let role of privilegedRoleOptions" [ngValue]="role.id">{{ role.label }}</option>
+        </select>
+      </label>
     </div>
-  </div>
+
+    <button type="button" class="primary-btn" (click)="createPrivilegedUser()" [disabled]="isCreatingPrivilegedUser">
+      Créer le compte
+    </button>
+
+    <p *ngIf="privilegedUserError" class="error-banner">{{ privilegedUserError }}</p>
+    <p *ngIf="privilegedUserSuccess" class="success-banner">{{ privilegedUserSuccess }}</p>
+  </section>
+
+  <section *ngIf="activeTab === 'stats' && canSeeStatistics" class="dashboard-panel">
+    <div class="panel-header">
+      <div>
+        <h2>Statistiques administrateur</h2>
+        <p>Vue synthétique des créations, exploitations, favoris, commentaires et échanges suivis par la plateforme.</p>
+      </div>
+      <div class="queue-actions">
+        <button type="button" class="secondary-btn" (click)="resetStatisticsFilters()">Réinitialiser</button>
+        <button type="button" class="primary-btn" (click)="exportStatistics()">Exporter CSV</button>
+      </div>
+    </div>
+
+    <div class="filters-grid">
+      <label>
+        <span>Date début</span>
+        <input [(ngModel)]="statisticsFilters.dateDebut" type="date" />
+      </label>
+      <label>
+        <span>Date fin</span>
+        <input [(ngModel)]="statisticsFilters.dateFin" type="date" />
+      </label>
+      <label>
+        <span>Catégorie</span>
+        <select [(ngModel)]="statisticsFilters.categorie">
+          <option value="">Toutes</option>
+          <option *ngFor="let category of categories" [value]="category.nomCategorie">{{ category.nomCategorie }}</option>
+        </select>
+      </label>
+      <label>
+        <span>Format</span>
+        <select [(ngModel)]="statisticsFilters.format">
+          <option value="">Tous</option>
+          <option *ngFor="let format of formatOptions" [value]="format">{{ format }}</option>
+        </select>
+      </label>
+      <label>
+        <span>Visibilité</span>
+        <select [(ngModel)]="statisticsFilters.visibilite">
+          <option value="">Toutes</option>
+          <option *ngFor="let visibility of visibilityOptions" [value]="visibility">{{ visibility }}</option>
+        </select>
+      </label>
+    </div>
+
+    <button type="button" class="primary-btn" (click)="loadStatistics()">Appliquer les filtres</button>
+
+    <p *ngIf="statisticsError" class="error-banner">{{ statisticsError }}</p>
+    <p *ngIf="isLoadingStatistics" class="loading-banner">Chargement des statistiques...</p>
+
+    <div *ngIf="statistics && !isLoadingStatistics" class="stats-layout">
+      <div class="stats-grid">
+        <article class="stat-card">
+          <span>Ressources totales</span>
+          <strong>{{ statistics.resume.totalRessources }}</strong>
+        </article>
+        <article class="stat-card">
+          <span>Ressources publiées</span>
+          <strong>{{ statistics.resume.ressourcesPubliees }}</strong>
+        </article>
+        <article class="stat-card">
+          <span>Ressources en validation</span>
+          <strong>{{ statistics.resume.ressourcesEnValidation }}</strong>
+        </article>
+        <article class="stat-card">
+          <span>Ressources archivées</span>
+          <strong>{{ statistics.resume.ressourcesArchivees }}</strong>
+        </article>
+        <article class="stat-card">
+          <span>Comptes actifs</span>
+          <strong>{{ statistics.resume.utilisateursActifs }} / {{ statistics.resume.totalUtilisateurs }}</strong>
+        </article>
+        <article class="stat-card">
+          <span>Comptes créés sur la période</span>
+          <strong>{{ statistics.resume.comptesCreesPeriode }}</strong>
+        </article>
+        <article class="stat-card">
+          <span>Favoris</span>
+          <strong>{{ statistics.resume.favoris }}</strong>
+        </article>
+        <article class="stat-card">
+          <span>Commentaires</span>
+          <strong>{{ statistics.resume.commentaires }}</strong>
+        </article>
+        <article class="stat-card">
+          <span>Exploitations</span>
+          <strong>{{ statistics.resume.exploitations }}</strong>
+        </article>
+        <article class="stat-card">
+          <span>Sauvegardes</span>
+          <strong>{{ statistics.resume.sauvegardes }}</strong>
+        </article>
+        <article class="stat-card">
+          <span>Activités démarrées</span>
+          <strong>{{ statistics.resume.activitesDemarrees }}</strong>
+        </article>
+        <article class="stat-card">
+          <span>Invitations acceptées</span>
+          <strong>{{ statistics.resume.invitationsAcceptees }} / {{ statistics.resume.invitationsEnvoyees }}</strong>
+        </article>
+      </div>
+
+      <div class="breakdowns-grid">
+        <article class="breakdown-card">
+          <h3>Créations par catégorie</h3>
+          <ul>
+            <li *ngFor="let item of statistics.creationsParCategorie">
+              <span>{{ item.label }}</span>
+              <strong>{{ item.value }}</strong>
+            </li>
+          </ul>
+        </article>
+
+        <article class="breakdown-card">
+          <h3>Créations par format</h3>
+          <ul>
+            <li *ngFor="let item of statistics.creationsParFormat">
+              <span>{{ item.label }}</span>
+              <strong>{{ item.value }}</strong>
+            </li>
+          </ul>
+        </article>
+
+        <article class="breakdown-card">
+          <h3>Répartition par visibilité</h3>
+          <ul>
+            <li *ngFor="let item of statistics.repartitionVisibilite">
+              <span>{{ item.label }}</span>
+              <strong>{{ item.value }}</strong>
+            </li>
+          </ul>
+        </article>
+      </div>
+    </div>
+  </section>
 
   <app-user-edit-modal
     [user]="selectedUser"

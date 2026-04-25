@@ -69,9 +69,17 @@ export class AuthService {
     return this.getCurrentUser()?.role ?? null;
   }
 
+  hasRole(role: string): boolean {
+    return this.getRole() === role;
+  }
+
+  hasAnyRole(roles: string[]): boolean {
+    const currentRole = this.getRole();
+    return !!currentRole && roles.includes(currentRole);
+  }
+
   isAdmin(): boolean {
-    const role = this.getRole();
-    return role === 'administrateur' || role === 'super_administrateur';
+    return this.hasAnyRole(['administrateur', 'super_administrateur']);
   }
 
   private saveSession(response: AuthResponse): void {

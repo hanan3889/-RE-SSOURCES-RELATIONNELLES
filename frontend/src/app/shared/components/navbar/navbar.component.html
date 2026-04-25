@@ -21,6 +21,9 @@
     <div class="navbar-links">
       <a routerLink="/home" routerLinkActive="active" [routerLinkActiveOptions]="{exact:true}" class="nav-link">Accueil</a>
       <a routerLink="/ressources" routerLinkActive="active" class="nav-link">Ressources</a>
+      @if (isLoggedIn) {
+        <a routerLink="/messagerie" routerLinkActive="active" class="nav-link">Messagerie</a>
+      }
       @if (isLoggedIn && !isAdmin) {
         <a routerLink="/mon-espace" routerLinkActive="active" class="nav-link">Mon espace</a>
       }
@@ -54,6 +57,9 @@
     <div class="mobile-menu">
       <a routerLink="/home" (click)="menuOpen=false" class="mobile-link">Accueil</a>
       <a routerLink="/ressources" (click)="menuOpen=false" class="mobile-link">Ressources</a>
+      @if (isLoggedIn) {
+        <a routerLink="/messagerie" (click)="menuOpen=false" class="mobile-link">Messagerie</a>
+      }
       @if (isLoggedIn && !isAdmin) {
         <a routerLink="/mon-espace" (click)="menuOpen=false" class="mobile-link">Mon espace</a>
       }

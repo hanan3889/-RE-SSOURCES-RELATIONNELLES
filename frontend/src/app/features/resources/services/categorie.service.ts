@@ -8,6 +8,10 @@ export interface Categorie {
   nomCategorie: string;
 }
 
+export interface SaveCategorieDto {
+  nomCategorie: string;
+}
+
 @Injectable({
   providedIn: 'root'
 })
@@ -18,5 +22,17 @@ export class CategorieService {
 
   getCategories(): Observable<Categorie[]> {
     return this.http.get<Categorie[]>(this.apiUrl);
+  }
+
+  createCategory(dto: SaveCategorieDto): Observable<Categorie> {
+    return this.http.post<Categorie>(this.apiUrl, dto);
+  }
+
+  updateCategory(id: number, dto: SaveCategorieDto): Observable<Categorie> {
+    return this.http.put<Categorie>(`${this.apiUrl}/${id}`, dto);
+  }
+
+  deleteCategory(id: number): Observable<void> {
+    return this.http.delete<void>(`${this.apiUrl}/${id}`);
   }
 }

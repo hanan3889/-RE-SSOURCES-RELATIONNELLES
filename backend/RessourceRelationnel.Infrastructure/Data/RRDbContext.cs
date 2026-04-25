@@ -206,11 +206,32 @@ public class RRDbContext : DbContext
         modelBuilder.Entity<Message>()
             .Property(m => m.Contenu).HasColumnName("contenu").HasMaxLength(2000).IsRequired();
         modelBuilder.Entity<Message>()
+            .Property(m => m.TypeMessage).HasColumnName("type_message").HasMaxLength(30).IsRequired();
+        modelBuilder.Entity<Message>()
+            .Property(m => m.StatutInvitation).HasColumnName("statut_invitation").HasMaxLength(30);
+        modelBuilder.Entity<Message>()
             .Property(m => m.IdUtilisateur).HasColumnName("id_utilisateur").IsRequired();
+        modelBuilder.Entity<Message>()
+            .Property(m => m.IdDestinataire).HasColumnName("id_destinataire");
+        modelBuilder.Entity<Message>()
+            .Property(m => m.IdRessource).HasColumnName("id_ressource");
 
         modelBuilder.Entity<Message>()
-            .HasOne(m => m.Utilisateur)
-            .WithMany(u => u.Messages)
-            .HasForeignKey(m => m.IdUtilisateur);
+            .HasOne(m => m.Auteur)
+            .WithMany(u => u.MessagesEmis)
+            .HasForeignKey(m => m.IdUtilisateur)
+            .OnDelete(DeleteBehavior.Cascade);
+
+        modelBuilder.Entity<Message>()
+            .HasOne(m => m.Destinataire)
+            .WithMany(u => u.MessagesRecus)
+            .HasForeignKey(m => m.IdDestinataire)
+            .OnDelete(DeleteBehavior.SetNull);
+
+        modelBuilder.Entity<Message>()
+            .HasOne(m => m.Ressource)
+            .WithMany(r => r.Messages)
+            .HasForeignKey(m => m.IdRessource)
+            .OnDelete(DeleteBehavior.SetNull);
     }
 }
