@@ -28,6 +28,14 @@ export const routes: Routes = [
     loadChildren: () => import('./features/profile/profile.routes').then(m => m.PROFILE_ROUTES)
   },
 
+  // Route Messagerie (citoyen connecte)
+  {
+    path: 'messagerie',
+    loadComponent: () => import('./features/messagerie/pages/messagerie/messagerie.component').then(m => m.MessagerieComponent),
+    canActivate: [AuthGuard],
+    title: 'Messagerie - Ressources Relationnelles'
+  },
+
   // Route Resources
   {
     path: 'ressources',
@@ -48,7 +56,7 @@ export const routes: Routes = [
     path: 'dashboard',
     loadChildren: () => import('./features/dashboard/dashboard.module').then(m => m.DashboardModule),
     canActivate: [AuthGuard],
-    data: { role: 'admin' },
+    data: { allowedRoles: ['moderateur', 'administrateur', 'super_administrateur'] },
     title: 'Tableau de bord - Ressources Relationnelles'
   },
 

@@ -23,7 +23,8 @@ public class Utilisateur
     public ICollection<Ressource> Ressources { get; set; } = new List<Ressource>();
     public ICollection<Favori> Favoris { get; set; } = new List<Favori>();
     public ICollection<Commentaire> Commentaires { get; set; } = new List<Commentaire>();
-    public ICollection<Message> Messages { get; set; } = new List<Message>();
+    public ICollection<Message> MessagesEmis { get; set; } = new List<Message>();
+    public ICollection<Message> MessagesRecus { get; set; } = new List<Message>();
     public ICollection<Progression> Progressions { get; set; } = new List<Progression>();
     public ICollection<Statistique> Statistiques { get; set; } = new List<Statistique>();
 }

@@ -18,7 +18,7 @@ export class NavbarComponent implements OnInit {
   menuOpen = false;
   hideNavbar = false;
 
-  private hiddenRoutes = ['/auth/login', '/auth/register', '/dashboard'];
+  private hiddenRoutes = ['/auth/login', '/auth/register'];
 
   constructor(private authService: AuthService, private router: Router) {}
 

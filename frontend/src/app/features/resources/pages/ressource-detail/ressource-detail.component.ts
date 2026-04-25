@@ -9,6 +9,7 @@ import { SafeHtmlPipe } from '../../../../core/pipes/safe-html.pipe';
 import { AuthService } from 'src/app/core/services/auth.service';
 import { Commentaire, CommentaireService } from '../../services/commentaire.service';
 import { FavorisService } from 'src/app/core/services/favoris.service';
+import { MessageItem, MessageService } from 'src/app/core/services/message.service';
 
 interface ActivityQuestion {
   prompt: string;
@@ -52,6 +53,15 @@ export class RessourceDetailComponent implements OnInit {
     }
   ];
   currentRessourceId: number | null = null;
+  inviteTarget = '';
+  inviteMessage = '';
+  inviteFeedback = '';
+  discussionMessages: MessageItem[] = [];
+  discussionDraft = '';
+  discussionLoading = false;
+  discussionError = '';
+  isSubmittingDiscussion = false;
+  canAccessDiscussion = false;
   replyBoxOpenFor: number | null = null;
   replyDrafts: Record<number, string> = {};
   commentForm!: FormGroup;
@@ -61,6 +71,7 @@ export class RessourceDetailComponent implements OnInit {
     private ressourceService: RessourceService,
     private commentaireService: CommentaireService,
     private favorisService: FavorisService,
+    private messageService: MessageService,
     private authService: AuthService,
     private fb: FormBuilder,
     private router: Router
@@ -80,6 +91,7 @@ export class RessourceDetailComponent implements OnInit {
           this.loadComments(id);
           this.loadExploitationStatus(id);
           this.loadSauvegardeStatus(id);
+          this.loadDiscussion(id);
         }
         return this.ressourceService.getRessourceById(id);
       }),
@@ -93,6 +105,105 @@ export class RessourceDetailComponent implements OnInit {
           this.isStarted = false;
         }
       })
+    );
+  }
+
+  envoyerInvitation(ressourceId: number): void {
+    if (!this.isLoggedIn) {
+      this.router.navigate(['/auth/login']);
+      return;
+    }
+
+    const cible = this.inviteTarget.trim();
+    if (!cible) {
+      this.inviteFeedback = 'Renseignez un destinataire (ex: prenom nom).';
+      return;
+    }
+
+    this.messageService.inviteParticipant(ressourceId, cible, this.inviteMessage.trim() || undefined).subscribe({
+      next: () => {
+        this.inviteFeedback = 'Invitation envoyee. Utilisez la messagerie (onglet Interactions) pour echanger en DM.';
+        this.inviteTarget = '';
+        this.inviteMessage = '';
+        this.loadDiscussion(ressourceId);
+      },
+      error: (err) => {
+        this.inviteFeedback = err?.error?.message || 'Impossible d\'envoyer l\'invitation.';
+      }
+    });
+  }
+
+  private loadDiscussion(ressourceId: number): void {
+    if (!this.isLoggedIn) {
+      this.discussionMessages = [];
+      this.canAccessDiscussion = false;
+      this.discussionError = '';
+      return;
+    }
+
+    this.discussionLoading = true;
+    this.discussionError = '';
+
+    this.messageService.getDiscussion(ressourceId).subscribe({
+      next: (messages) => {
+        this.discussionMessages = messages;
+        this.canAccessDiscussion = true;
+        this.discussionLoading = false;
+      },
+      error: (err) => {
+        this.discussionMessages = [];
+        this.canAccessDiscussion = false;
+        this.discussionLoading = false;
+
+        if (err?.status === 403) {
+          this.discussionError = 'Discussion reservee au createur de la ressource et aux participants invites qui ont accepte.';
+        } else if (err?.status === 404) {
+          this.discussionError = 'Discussion introuvable pour cette ressource.';
+        } else {
+          this.discussionError = 'Impossible de charger la discussion de cette ressource.';
+        }
+      }
+    });
+  }
+
+  sendDiscussionMessage(): void {
+    if (!this.isLoggedIn) {
+      this.router.navigate(['/auth/login']);
+      return;
+    }
+
+    if (!this.currentRessourceId || !this.canAccessDiscussion) {
+      return;
+    }
+
+    const contenu = this.discussionDraft.trim();
+    if (!contenu) {
+      return;
+    }
+
+    this.isSubmittingDiscussion = true;
+    this.messageService.sendDiscussionMessage(this.currentRessourceId, contenu).subscribe({
+      next: (created) => {
+        this.discussionMessages = [...this.discussionMessages, created];
+        this.discussionDraft = '';
+        this.isSubmittingDiscussion = false;
+      },
+      error: (err) => {
+        this.isSubmittingDiscussion = false;
+        this.discussionError = err?.error?.message || 'Impossible d\'envoyer le message dans la discussion.';
+      }
+    });
+  }
+
+  isOwnDiscussionMessage(message: MessageItem): boolean {
+    return message.idAuteur === (this.authService.getCurrentUser()?.idUtilisateur ?? -1);
+  }
+
+  copyResourceLink(): void {
+    const url = window.location.href;
+    navigator.clipboard.writeText(url).then(
+      () => alert('Lien copié dans le presse-papiers !'),
+      () => alert('Impossible de copier le lien automatiquement. Copiez l\'URL depuis la barre d\'adresse.')
     );
   }
 

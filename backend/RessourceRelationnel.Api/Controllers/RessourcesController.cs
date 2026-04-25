@@ -15,6 +15,8 @@ namespace RessourceRelationnel.Api.Controllers;
 public class RessourcesController : ControllerBase
 {
     private readonly RRDbContext _context;
+    private const string InvitationType = "invitation";
+    private const string AcceptedInvitationStatus = "accepted";
 
     public RessourcesController(RRDbContext context)
     {
@@ -52,6 +54,50 @@ public class RessourcesController : ControllerBase
         return Ok(result);
     }
 
+    // GET /api/ressources/restreintes — Ressources restreintes accessibles au citoyen connecté
+    [HttpGet("restreintes")]
+    [Authorize]
+    public async Task<IActionResult> GetRestrictedAccessible(
+        [FromQuery] string? categorie,
+        [FromQuery] string? format,
+        [FromQuery] string? recherche,
+        [FromQuery] string? tri = "date")
+    {
+        var userId = long.Parse(User.FindFirstValue(ClaimTypes.NameIdentifier)!);
+
+        var accessibleByInvitationResourceIds = _context.Messages
+            .Where(m => m.TypeMessage == "invitation"
+                && m.IdDestinataire == userId
+                && m.IdRessource.HasValue
+                && m.StatutInvitation == "accepted")
+            .Select(m => m.IdRessource!.Value)
+            .Distinct();
+
+        var query = _context.Ressources
+            .Include(r => r.Utilisateur)
+            .Include(r => r.Categorie)
+            .Where(r => r.Statut == Statut.Publiee
+                && r.Visibilite == Visibilite.Connectes
+                && (r.IdUtilisateur == userId || accessibleByInvitationResourceIds.Contains(r.IdRessource)))
+            .AsQueryable();
+
+        if (!string.IsNullOrEmpty(categorie))
+            query = query.Where(r => r.Categorie!.NomCategorie == categorie);
+
+        if (!string.IsNullOrEmpty(format))
+            query = query.Where(r => r.Format == format);
+
+        if (!string.IsNullOrEmpty(recherche))
+            query = query.Where(r => r.Titre.Contains(recherche) || r.Description.Contains(recherche));
+
+        query = tri == "popularite"
+            ? query.OrderByDescending(r => r.IdRessource)
+            : query.OrderByDescending(r => r.DateCreation);
+
+        var result = await query.Select(r => ToDto(r)).ToListAsync();
+        return Ok(result);
+    }
+
     // GET /api/ressources/{id}
     [HttpGet("{id:long}")]
     public async Task<IActionResult> GetById(long id)
@@ -62,10 +108,43 @@ public class RessourcesController : ControllerBase
             .FirstOrDefaultAsync(r => r.IdRessource == id);
 
         if (r == null) return NotFound();
-        if (r.Statut != Statut.Publiee || r.Visibilite != Visibilite.Publique)
+
+        // Public and published resources are openly accessible.
+        if (r.Statut == Statut.Publiee && r.Visibilite == Visibilite.Publique)
         {
-            // Seuls les utilisateurs connectés ou auteurs/admins peuvent voir
-            if (!User.Identity!.IsAuthenticated) return NotFound();
+            return Ok(ToDto(r));
+        }
+
+        if (!User.Identity!.IsAuthenticated)
+        {
+            return NotFound();
+        }
+
+        var userId = long.Parse(User.FindFirstValue(ClaimTypes.NameIdentifier)!);
+        var role = User.FindFirstValue(ClaimTypes.Role);
+        var isAdmin = role == "administrateur" || role == "super_administrateur";
+        var isOwner = r.IdUtilisateur == userId;
+
+        // Unpublished resources are only visible to owner/admin.
+        if (r.Statut != Statut.Publiee)
+        {
+            if (!isAdmin && !isOwner)
+                return NotFound();
+
+            return Ok(ToDto(r));
+        }
+
+        // Published but restricted/private resources require owner/admin or accepted invitation.
+        if (r.Visibilite != Visibilite.Publique)
+        {
+            var hasAcceptedInvitation = await _context.Messages.AnyAsync(m =>
+                m.TypeMessage == InvitationType
+                && m.IdRessource == r.IdRessource
+                && m.IdDestinataire == userId
+                && m.StatutInvitation == AcceptedInvitationStatus);
+
+            if (!isAdmin && !isOwner && !hasAcceptedInvitation)
+                return NotFound();
         }
 
         return Ok(ToDto(r));
@@ -163,6 +242,20 @@ public class RessourcesController : ControllerBase
         return NoContent();
     }
 
+    // PATCH /api/admin/ressources/{id}/suspendre
+    [HttpPatch("/api/admin/ressources/{id:long}/suspendre")]
+    [Authorize(Roles = "administrateur,super_administrateur")]
+    public async Task<IActionResult> Suspend(long id)
+    {
+        var ressource = await _context.Ressources.FindAsync(id);
+        if (ressource == null) return NotFound();
+
+        ressource.Statut = Statut.Archivee;
+        await _context.SaveChangesAsync();
+
+        return NoContent();
+    }
+
     // GET /api/ressources/mes-ressources — Ressources du citoyen connecté
     [HttpGet("mes-ressources")]
     [Authorize]
@@ -182,7 +275,13 @@ public class RessourcesController : ControllerBase
     // GET /api/admin/ressources — Toutes les ressources (Admin/Modérateur)
     [HttpGet("/api/admin/ressources")]
     [Authorize(Roles = "administrateur,super_administrateur,moderateur")]
-    public async Task<IActionResult> GetAllAdmin([FromQuery] string? statut)
+    public async Task<IActionResult> GetAllAdmin(
+        [FromQuery] string? statut,
+        [FromQuery] string? categorie,
+        [FromQuery] string? format,
+        [FromQuery] string? visibilite,
+        [FromQuery] string? auteur,
+        [FromQuery] string? recherche)
     {
         var query = _context.Ressources
             .Include(r => r.Utilisateur)
@@ -191,6 +290,31 @@ public class RessourcesController : ControllerBase
 
         if (!string.IsNullOrEmpty(statut) && Enum.TryParse<Statut>(statut, true, out var statutEnum))
             query = query.Where(r => r.Statut == statutEnum);
+
+        if (!string.IsNullOrWhiteSpace(categorie))
+            query = query.Where(r => r.Categorie != null && r.Categorie.NomCategorie == categorie);
+
+        if (!string.IsNullOrWhiteSpace(format))
+            query = query.Where(r => r.Format == format);
+
+        if (!string.IsNullOrWhiteSpace(visibilite) && Enum.TryParse<Visibilite>(visibilite, true, out var visibiliteEnum))
+            query = query.Where(r => r.Visibilite == visibiliteEnum);
+
+        if (!string.IsNullOrWhiteSpace(auteur))
+        {
+            var trimmedAuteur = auteur.Trim();
+            query = query.Where(r => r.Utilisateur != null
+                && ((r.Utilisateur.Prenom + " " + r.Utilisateur.Nom).Contains(trimmedAuteur)
+                    || (r.Utilisateur.Nom + " " + r.Utilisateur.Prenom).Contains(trimmedAuteur)
+                    || r.Utilisateur.Nom.Contains(trimmedAuteur)
+                    || r.Utilisateur.Prenom.Contains(trimmedAuteur)));
+        }
+
+        if (!string.IsNullOrWhiteSpace(recherche))
+        {
+            var trimmedRecherche = recherche.Trim();
+            query = query.Where(r => r.Titre.Contains(trimmedRecherche) || r.Description.Contains(trimmedRecherche));
+        }
 
         var result = await query.OrderByDescending(r => r.DateCreation).Select(r => ToDto(r)).ToListAsync();
         return Ok(result);
