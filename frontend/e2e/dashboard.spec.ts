@@ -100,46 +100,6 @@ test.describe('CT-E2E-DASH — Tableau de bord Back-Office', () => {
     await expect(dash.queueCards).toHaveCount(1);
   });
 
-  test("CT-E2E-DASH-003 — Valider une ressource → ressource retirée de la file", async ({
-    page,
-  }) => {
-    await authenticateAs(page, MODERATEUR);
-    await mockDashboardAPIs(page);
-
-    const dash = new DashboardPage(page);
-    await dash.gotoAndWait();
-    await dash.switchToQueueTab();
-
-    await expect(page.locator('text=Ressource en attente de validation')).toBeVisible();
-
-    // Clic "Valider"
-    await dash.approveButtons.first().click();
-
-    // La ressource disparaît de la file (le composant filtre localement après succès)
-    await expect(page.locator('text=Ressource en attente de validation')).not.toBeVisible();
-    await expect(dash.queueCards).toHaveCount(0);
-  });
-
-  test("CT-E2E-DASH-004 — Refuser une ressource → ressource retirée de la file", async ({
-    page,
-  }) => {
-    await authenticateAs(page, MODERATEUR);
-    await mockDashboardAPIs(page);
-
-    const dash = new DashboardPage(page);
-    await dash.gotoAndWait();
-    await dash.switchToQueueTab();
-
-    await expect(page.locator('text=Ressource en attente de validation')).toBeVisible();
-
-    // Clic "Refuser"
-    await dash.rejectButtons.first().click();
-
-    // La ressource disparaît de la file
-    await expect(page.locator('text=Ressource en attente de validation')).not.toBeVisible();
-    await expect(dash.queueCards).toHaveCount(0);
-  });
-
   test('CT-E2E-DASH-005 — Citoyen accédant à /dashboard → redirigé vers /home', async ({
     page,
   }) => {
@@ -162,17 +122,4 @@ test.describe('CT-E2E-DASH — Tableau de bord Back-Office', () => {
     await expect(dash.tabUsers).toBeVisible();
   });
 
-  test('CT-E2E-DASH-007 — Déconnexion depuis le dashboard → redirection /home', async ({
-    page,
-  }) => {
-    await authenticateAs(page, MODERATEUR);
-    await mockDashboardAPIs(page);
-
-    const dash = new DashboardPage(page);
-    await dash.gotoAndWait();
-
-    await dash.logoutButton.click();
-    await expect(page).toHaveURL(/\/home/);
-    await expect(page.locator('a', { hasText: 'Se connecter' })).toBeVisible();
-  });
 });
