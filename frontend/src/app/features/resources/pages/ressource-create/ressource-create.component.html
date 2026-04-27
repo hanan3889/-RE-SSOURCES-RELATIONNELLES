@@ -1,0 +1,77 @@
+<div class="min-h-screen bg-slate-50 py-10">
+  <div class="container mx-auto px-4">
+    <div class="max-w-3xl mx-auto bg-white rounded-3xl shadow-lg p-8 sm:p-10">
+      <div class="mb-8">
+        <a routerLink="/ressources" class="inline-flex items-center gap-2 text-blue-600 hover:text-blue-800">
+          <svg xmlns="http://www.w3.org/2000/svg" class="h-5 w-5" viewBox="0 0 20 20" fill="currentColor">
+            <path fill-rule="evenodd" d="M12.707 5.293a1 1 0 010 1.414L9.414 10l3.293 3.293a1 1 0 01-1.414 1.414l-4-4a1 1 0 010-1.414l4-4a1 1 0 011.414 0z" clip-rule="evenodd" />
+          </svg>
+          Retour à la liste des ressources
+        </a>
+      </div>
+
+      <h1 class="text-3xl font-bold mb-4">{{ isEditMode ? 'Éditer la ressource' : 'Créer une nouvelle ressource' }}</h1>
+      <p class="text-gray-600 mb-8">
+        {{ isEditMode
+          ? 'Les modifications seront renvoyées en validation avant publication.'
+          : 'Les ressources soumises seront envoyées en validation avant publication.' }}
+      </p>
+
+      <div *ngIf="isLoading" class="rounded-xl bg-slate-100 border border-slate-200 px-4 py-3 text-sm text-slate-700 mb-6">
+        Chargement de la ressource...
+      </div>
+
+      <form [formGroup]="form" (ngSubmit)="submit()" class="space-y-6">
+        <div>
+          <label class="block text-sm font-semibold mb-2" for="titre">Titre</label>
+          <input id="titre" type="text" formControlName="titre" class="w-full rounded-xl border border-slate-200 px-4 py-3 focus:outline-none focus:ring-2 focus:ring-blue-500" />
+          <p *ngIf="form.get('titre')?.invalid && form.get('titre')?.touched" class="mt-2 text-sm text-red-600">Veuillez saisir un titre (max 255 caractères).</p>
+        </div>
+
+        <div>
+          <label class="block text-sm font-semibold mb-2" for="description">Description</label>
+          <textarea id="description" rows="4" formControlName="description" class="w-full rounded-xl border border-slate-200 px-4 py-3 focus:outline-none focus:ring-2 focus:ring-blue-500"></textarea>
+          <p *ngIf="form.get('description')?.invalid && form.get('description')?.touched" class="mt-2 text-sm text-red-600">Veuillez saisir une description.</p>
+        </div>
+
+        <div class="grid sm:grid-cols-2 gap-6">
+          <div>
+            <label class="block text-sm font-semibold mb-2" for="format">Format</label>
+            <select id="format" formControlName="format" class="w-full rounded-xl border border-slate-200 px-4 py-3 focus:outline-none focus:ring-2 focus:ring-blue-500">
+              <option *ngFor="let format of availableFormats" [value]="format">{{ format }}</option>
+            </select>
+            <p *ngIf="form.get('format')?.invalid && form.get('format')?.touched" class="mt-2 text-sm text-red-600">Veuillez indiquer un format.</p>
+            <p *ngIf="!isAdmin" class="mt-2 text-xs text-slate-500">Les formats Activité et Jeu sont réservés aux administrateurs.</p>
+          </div>
+
+          <div>
+            <label class="block text-sm font-semibold mb-2" for="visibilite">Visibilité</label>
+            <select id="visibilite" formControlName="visibilite" class="w-full rounded-xl border border-slate-200 px-4 py-3 focus:outline-none focus:ring-2 focus:ring-blue-500">
+              <option value="0">Publique</option>
+              <option value="1">Citoyens connectés</option>
+              <option value="2">Privée</option>
+            </select>
+          </div>
+        </div>
+
+        <div>
+          <label class="block text-sm font-semibold mb-2" for="idCategorie">Catégorie</label>
+          <select id="idCategorie" formControlName="idCategorie" class="w-full rounded-xl border border-slate-200 px-4 py-3 focus:outline-none focus:ring-2 focus:ring-blue-500">
+            <option value="" disabled selected>Choisissez une catégorie</option>
+            <option *ngFor="let categorie of categories" [value]="categorie.idCategorie">{{ categorie.nomCategorie }}</option>
+          </select>
+          <p *ngIf="form.get('idCategorie')?.invalid && form.get('idCategorie')?.touched" class="mt-2 text-sm text-red-600">Veuillez choisir une catégorie.</p>
+        </div>
+
+        <div *ngIf="errorMessage" class="rounded-xl bg-red-50 border border-red-200 px-4 py-3 text-sm text-red-700">{{ errorMessage }}</div>
+
+        <div class="flex items-center justify-between gap-4">
+          <button type="submit" [disabled]="isSubmitting || isLoading" class="btn btn-primary">
+            {{ isSubmitting ? (isEditMode ? 'Mise à jour…' : 'Envoi…') : (isEditMode ? 'Mettre à jour la ressource' : 'Envoyer la ressource') }}
+          </button>
+          <a routerLink="/ressources" class="text-sm text-gray-600 hover:text-gray-900">Annuler</a>
+        </div>
+      </form>
+    </div>
+  </div>
+</div>

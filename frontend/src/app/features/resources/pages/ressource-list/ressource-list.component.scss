@@ -1,0 +1,343 @@
+// Styles for the filter buttons
+button {
+  @apply px-4 py-2 text-base font-medium text-gray-600 bg-white border border-gray-200 rounded-full hover:bg-gray-100 hover:text-gray-800 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-blue-500 transition-colors;
+
+  &.active-filter {
+    @apply bg-blue-600 text-white border-blue-600 shadow-md;
+  }
+}
+
+// ============================================
+// Variables
+// ============================================
+$primary-color: #000091;
+$accent-color: #E1000F;
+$text-dark: #161616;
+$text-light: #666666;
+
+// ============================================
+// Animations
+// ============================================
+@keyframes fadeIn {
+  from {
+    opacity: 0;
+    transform: translateY(30px);
+  }
+  to {
+    opacity: 1;
+    transform: translateY(0);
+  }
+}
+
+@keyframes pulse-slow {
+  0%, 100% {
+    opacity: 1;
+  }
+  50% {
+    opacity: 0.8;
+  }
+}
+
+// ============================================
+// Scroll Animations
+// ============================================
+.scroll-animation {
+  opacity: 0;
+  transform: translateY(20px);
+  transition: opacity 0.7s cubic-bezier(0.16, 1, 0.3, 1), transform 0.7s cubic-bezier(0.16, 1, 0.3, 1);
+
+  &.animate-fade-in {
+    opacity: 1;
+    transform: translateY(0);
+  }
+}
+
+// ============================================
+// Hero Section
+// ============================================
+.hero-section {
+  position: relative;
+  min-height: auto;
+  display: flex;
+  align-items: center;
+  
+  h1 {
+    animation: fadeIn 0.8s cubic-bezier(0.16, 1, 0.3, 1);
+  }
+
+  p {
+    animation: fadeIn 0.8s cubic-bezier(0.16, 1, 0.3, 1) 0.15s backwards;
+  }
+
+  .btn-primary,
+  .btn-secondary {
+    animation: fadeIn 0.8s cubic-bezier(0.16, 1, 0.3, 1) 0.3s backwards;
+  }
+}
+
+.resource-meta {
+  display: flex;
+  justify-content: space-between;
+  align-items: flex-start;
+  gap: 0.75rem;
+}
+
+.resource-chips {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 0.4rem;
+  min-width: 0;
+}
+
+.resource-chip {
+  display: inline-flex;
+  align-items: center;
+  max-width: 100%;
+  padding: 0.2rem 0.65rem;
+  border-radius: 9999px;
+  font-size: 0.72rem;
+  font-weight: 600;
+  line-height: 1.2;
+  white-space: normal;
+  overflow-wrap: anywhere;
+}
+
+.chip-category {
+  color: #1e40af;
+  background: #dbeafe;
+}
+
+.chip-visibility {
+  color: #6b21a8;
+  background: #f3e8ff;
+}
+
+.chip-status {
+  color: #166534;
+  background: #dcfce7;
+}
+
+.resource-type {
+  display: inline-flex;
+  align-items: center;
+  gap: 0.25rem;
+  flex-shrink: 0;
+  color: #6b7280;
+  font-size: 0.82rem;
+}
+
+// ============================================
+// Buttons
+// ============================================
+.btn-primary,
+.btn-secondary {
+  cursor: pointer;
+  user-select: none;
+  white-space: nowrap;
+
+  &:active {
+    transform: scale(0.98);
+  }
+}
+
+// ============================================
+// Stats Section
+// ============================================
+.stats-section {
+  .scroll-animation:nth-child(1) {
+    transition-delay: 0s;
+  }
+  .scroll-animation:nth-child(2) {
+    transition-delay: 0.1s;
+  }
+  .scroll-animation:nth-child(3) {
+    transition-delay: 0.2s;
+  }
+  .scroll-animation:nth-child(4) {
+    transition-delay: 0.3s;
+  }
+}
+
+// ============================================
+// Feature Cards
+// ============================================
+.feature-card {
+  position: relative;
+  overflow: hidden;
+  transition: all 0.35s cubic-bezier(0.16, 1, 0.3, 1);
+
+  &::before {
+    content: '';
+    position: absolute;
+    top: 0;
+    left: 0;
+    right: 0;
+    height: 3px;
+    background: $primary-color;
+    transform: scaleX(0);
+    transform-origin: left;
+    transition: transform 0.4s cubic-bezier(0.16, 1, 0.3, 1);
+  }
+
+  &:hover {
+    border-color: rgba($primary-color, 0.12);
+
+    &::before {
+      transform: scaleX(1);
+    }
+  }
+
+  // Stagger animation delays
+  @for $i from 1 through 6 {
+    &:nth-child(#{$i}) {
+      transition-delay: #{$i * 0.08}s;
+    }
+  }
+}
+
+// ============================================
+// Category Cards
+// ============================================
+.category-card {
+  position: relative;
+  overflow: hidden;
+
+  &::after {
+    content: '';
+    position: absolute;
+    inset: 0;
+    background: linear-gradient(135deg, transparent 0%, rgba(0, 0, 0, 0.1) 100%);
+    opacity: 0;
+    transition: opacity 0.3s ease;
+  }
+
+  &:hover::after {
+    opacity: 1;
+  }
+
+  // Stagger animation delays
+  @for $i from 1 through 6 {
+    &:nth-child(#{$i}) {
+      transition-delay: #{$i * 0.1}s;
+    }
+  }
+}
+
+// ============================================
+// Testimonial Cards
+// ============================================
+.testimonial-card {
+  position: relative;
+  border-top: 3px solid transparent;
+  transition: all 0.35s cubic-bezier(0.16, 1, 0.3, 1);
+  min-width: 0; // empêche le débordement dans la grid
+
+  &:hover {
+    border-top-color: $primary-color;
+    transform: translateY(-4px);
+    box-shadow: 0 20px 40px -12px rgba(0, 0, 0, 0.1);
+  }
+
+  // Stagger animation delays
+  @for $i from 1 through 3 {
+    &:nth-child(#{$i}) {
+      transition-delay: #{$i * 0.08}s;
+    }
+  }
+}
+
+// ============================================
+// CTA Section
+// ============================================
+.cta-section {
+  position: relative;
+
+  &::before {
+    content: '';
+    position: absolute;
+    top: 0;
+    left: 0;
+    right: 0;
+    bottom: 0;
+    background: 
+      radial-gradient(circle at 20% 50%, rgba(255, 255, 255, 0.1) 0%, transparent 50%),
+      radial-gradient(circle at 80% 50%, rgba(255, 255, 255, 0.1) 0%, transparent 50%);
+    animation: pulse-slow 4s ease-in-out infinite;
+  }
+}
+
+// ============================================
+// Footer
+// ============================================
+.footer {
+  a {
+    position: relative;
+
+    &::after {
+      content: '';
+      position: absolute;
+      bottom: -2px;
+      left: 0;
+      width: 0;
+      height: 1px;
+      background-color: currentColor;
+      transition: width 0.3s cubic-bezier(0.16, 1, 0.3, 1);
+    }
+
+    &:hover::after {
+      width: 100%;
+    }
+  }
+}
+
+// ============================================
+// Responsive
+// ============================================
+@media (max-width: 768px) {
+  .hero-section {
+    min-height: auto;
+    padding-top: 40px;
+    padding-bottom: 60px;
+
+    h1 {
+      font-size: 1.875rem;
+      line-height: 1.2;
+    }
+
+    p {
+      font-size: 0.938rem;
+    }
+  }
+
+  .feature-card,
+  .category-card,
+  .testimonial-card {
+    &:hover {
+      transform: none;
+    }
+  }
+
+  .stats-section,
+  .features-section,
+  .categories-section,
+  .testimonials-section {
+    padding-top: 3rem;
+    padding-bottom: 3rem;
+  }
+
+  .resource-meta {
+    flex-direction: column;
+    align-items: flex-start;
+  }
+}
+
+// ============================================
+// Print Styles
+// ============================================
+@media print {
+  .hero-section,
+  .cta-section,
+  .footer {
+    display: none;
+  }
+}

@@ -1,17 +1,13 @@
 import { Component, OnInit } from '@angular/core';
 import { CommonModule } from '@angular/common';
 import { FormBuilder, FormGroup, Validators, ReactiveFormsModule, AbstractControl, ValidationErrors } from '@angular/forms';
-import { RouterModule } from '@angular/router';
+import { RouterModule, Router } from '@angular/router';
+import { AuthService } from 'src/app/core/services/auth.service';
 
-// Validateur personnalisé pour vérifier que les mots de passe correspondent
 function passwordMatchValidator(control: AbstractControl): ValidationErrors | null {
   const password = control.get('password');
   const confirmPassword = control.get('confirmPassword');
-
-  if (!password || !confirmPassword) {
-    return null;
-  }
-
+  if (!password || !confirmPassword) return null;
   return password.value === confirmPassword.value ? null : { passwordMismatch: true };
 }
 
@@ -28,11 +24,17 @@ export class RegisterComponent implements OnInit {
   isSubmitting = false;
   errorMessage = '';
 
-  constructor(private fb: FormBuilder) {}
+  constructor(
+    private fb: FormBuilder,
+    private router: Router,
+    private authService: AuthService
+  ) {}
 
   ngOnInit(): void {
     this.registerForm = this.fb.group(
       {
+        nom: ['', [Validators.required, Validators.maxLength(255)]],
+        prenom: ['', [Validators.required, Validators.maxLength(255)]],
         email: ['', [Validators.required, Validators.email]],
         password: ['', [Validators.required, Validators.minLength(8)]],
         confirmPassword: ['', [Validators.required]],
@@ -48,32 +50,30 @@ export class RegisterComponent implements OnInit {
 
   isFieldInvalid(fieldName: string): boolean {
     const field = this.registerForm.get(fieldName);
-    
     if (fieldName === 'confirmPassword') {
-      return !!(field && field.invalid && (field.dirty || field.touched)) || 
+      return !!(field && field.invalid && (field.dirty || field.touched)) ||
              this.registerForm.hasError('passwordMismatch');
     }
-    
     return !!(field && field.invalid && (field.dirty || field.touched));
   }
 
   onSubmit(): void {
-    if (this.registerForm.valid) {
-      this.isSubmitting = true;
-      this.errorMessage = '';
-      
-      const { email, password } = this.registerForm.value;
-      
-      // Simul d'inscription API
-      console.log('Inscription avec:', { email, password });
-      
-      // TODO: Appeler le service d'authentification
-      // this.authService.register(email, password).subscribe(...)
-      
-      setTimeout(() => {
+    if (this.registerForm.invalid) return;
+
+    this.isSubmitting = true;
+    this.errorMessage = '';
+
+    const { nom, prenom, email, password } = this.registerForm.value;
+
+    this.authService.register({ nom, prenom, email, password }).subscribe({
+      next: () => {
+        const destination = this.authService.isAdmin() ? '/dashboard' : '/mon-espace';
+        this.router.navigate([destination]);
+      },
+      error: (err) => {
         this.isSubmitting = false;
-        // this.router.navigate(['/auth/login']);
-      }, 1500);
-    }
+        this.errorMessage = err.error?.message ?? 'Erreur lors de l\'inscription.';
+      }
+    });
   }
 }

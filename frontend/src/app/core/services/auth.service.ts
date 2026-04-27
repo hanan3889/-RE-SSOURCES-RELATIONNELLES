@@ -1,9 +1,94 @@
 import { Injectable } from '@angular/core';
+import { HttpClient } from '@angular/common/http';
+import { Observable, tap } from 'rxjs';
+import { Router } from '@angular/router';
+import { environment } from 'src/environments/environment';
+
+export interface LoginDto {
+  email: string;
+  password: string;
+}
+
+export interface RegisterDto {
+  nom: string;
+  prenom: string;
+  email: string;
+  password: string;
+}
+
+export interface AuthResponse {
+  token: string;
+  idUtilisateur: number;
+  email: string;
+  nom: string;
+  prenom: string;
+  role: string;
+}
 
 @Injectable({
   providedIn: 'root'
 })
 export class AuthService {
+  private apiUrl = `${environment.apiUrl}/auth`;
 
-  constructor() { }
+  constructor(private http: HttpClient, private router: Router) {}
+
+  login(dto: LoginDto): Observable<AuthResponse> {
+    return this.http.post<AuthResponse>(`${this.apiUrl}/login`, dto).pipe(
+      tap(response => this.saveSession(response))
+    );
+  }
+
+  register(dto: RegisterDto): Observable<AuthResponse> {
+    return this.http.post<AuthResponse>(`${this.apiUrl}/register`, dto).pipe(
+      tap(response => this.saveSession(response))
+    );
+  }
+
+  logout(): void {
+    localStorage.removeItem(environment.jwtTokenName);
+    localStorage.removeItem('currentUser');
+    this.router.navigate(['/home']);
+  }
+
+  getToken(): string | null {
+    return localStorage.getItem(environment.jwtTokenName);
+  }
+
+  isLoggedIn(): boolean {
+    const token = this.getToken();
+    return !!token && token !== 'undefined' && token !== 'null';
+  }
+
+  getCurrentUser(): AuthResponse | null {
+    const user = localStorage.getItem('currentUser');
+    return user ? JSON.parse(user) : null;
+  }
+
+  getRole(): string | null {
+    return this.getCurrentUser()?.role ?? null;
+  }
+
+  hasRole(role: string): boolean {
+    return this.getRole() === role;
+  }
+
+  hasAnyRole(roles: string[]): boolean {
+    const currentRole = this.getRole();
+    return !!currentRole && roles.includes(currentRole);
+  }
+
+  isAdmin(): boolean {
+    return this.hasAnyRole(['administrateur', 'super_administrateur']);
+  }
+
+  private saveSession(response: AuthResponse): void {
+    const token = response.token ?? (response as any).Token ?? (response as any).access_token;
+    if (!token || token === 'undefined' || token === 'null') {
+      return;
+    }
+
+    localStorage.setItem(environment.jwtTokenName, token);
+    localStorage.setItem('currentUser', JSON.stringify(response));
+  }
 }

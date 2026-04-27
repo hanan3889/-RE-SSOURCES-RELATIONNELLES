@@ -1,7 +1,8 @@
 import { Component, OnInit } from '@angular/core';
 import { CommonModule } from '@angular/common';
 import { FormBuilder, FormGroup, Validators, ReactiveFormsModule } from '@angular/forms';
-import { RouterModule } from '@angular/router';
+import { RouterModule, Router } from '@angular/router';
+import { AuthService } from 'src/app/core/services/auth.service';
 
 @Component({
   selector: 'app-login',
@@ -16,9 +17,18 @@ export class LoginComponent implements OnInit {
   isSubmitting = false;
   errorMessage = '';
 
-  constructor(private fb: FormBuilder) {}
+  constructor(
+    private fb: FormBuilder,
+    private router: Router,
+    private authService: AuthService
+  ) {}
 
   ngOnInit(): void {
+    if (this.authService.isLoggedIn()) {
+      const dest = this.authService.isAdmin() ? '/dashboard' : '/mon-espace';
+      this.router.navigate([dest]);
+    }
+
     this.loginForm = this.fb.group({
       email: ['', [Validators.required, Validators.email]],
       password: ['', [Validators.required, Validators.minLength(8)]],
@@ -36,22 +46,22 @@ export class LoginComponent implements OnInit {
   }
 
   onSubmit(): void {
-    if (this.loginForm.valid) {
-      this.isSubmitting = true;
-      this.errorMessage = '';
-      
-      const { email, password } = this.loginForm.value;
-      
-      // Simul de connexion API
-      console.log('Connexion avec:', { email, password });
-      
-      // TODO: Appeler le service d'authentification
-      // this.authService.login(email, password).subscribe(...)
-      
-      setTimeout(() => {
+    if (this.loginForm.invalid) return;
+
+    this.isSubmitting = true;
+    this.errorMessage = '';
+
+    const { email, password } = this.loginForm.value;
+
+    this.authService.login({ email, password }).subscribe({
+      next: () => {
+        const dest = this.authService.isAdmin() ? '/dashboard' : '/mon-espace';
+        this.router.navigate([dest]);
+      },
+      error: (err) => {
         this.isSubmitting = false;
-        // this.router.navigate(['/home']);
-      }, 1500);
-    }
+        this.errorMessage = err.error?.message ?? 'Erreur de connexion.';
+      }
+    });
   }
 }

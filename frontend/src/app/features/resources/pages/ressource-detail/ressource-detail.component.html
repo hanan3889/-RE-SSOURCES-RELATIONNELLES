@@ -1,0 +1,334 @@
+<div class="bg-gray-50 min-h-screen">
+  <!-- Header -->
+  <header class="bg-white shadow-sm sticky top-0 z-20">
+    <div class="container mx-auto px-4">
+      <a routerLink="/ressources" class="inline-flex items-center gap-2 py-4 text-gray-600 hover:text-blue-600 transition-colors">
+        <svg xmlns="http://www.w3.org/2000/svg" class="h-5 w-5" viewBox="0 0 20 20" fill="currentColor">
+          <path fill-rule="evenodd" d="M12.707 5.293a1 1 0 010 1.414L9.414 10l3.293 3.293a1 1 0 01-1.414 1.414l-4-4a1 1 0 010-1.414l4-4a1 1 0 011.414 0z" clip-rule="evenodd" />
+        </svg>
+        <span>Retour à la liste</span>
+      </a>
+    </div>
+  </header>
+
+  <!-- Main Content -->
+  <main class="py-12">
+    <div class="container mx-auto px-4">
+      <div *ngIf="ressource$ | async as ressource; else loadingOrError" class="max-w-4xl mx-auto">
+        
+        <!-- Ressource Header -->
+        <div class="ressource-header mb-8">
+          <span class="text-blue-600 font-semibold text-sm uppercase tracking-wider">{{ ressource.category }}</span>
+          <h1 class="text-4xl md:text-5xl font-bold text-gray-900 mt-2 mb-4 leading-tight">{{ ressource.title }}</h1>
+          <div class="flex items-center gap-4 text-gray-500 text-sm flex-wrap">
+            <span>Par {{ ressource.author }}</span>
+            <span class="mx-2">|</span>
+            <span>{{ ressource.createdAt | date: 'longDate' }}</span>
+            <span class="mx-2">|</span>
+            <span>Visibilité: {{ ressource.visibilite }}</span>
+            <span class="mx-2">|</span>
+            <span>Statut: {{ ressource.statut }}</span>
+          </div>
+          <div class="mt-6 flex flex-wrap gap-3">
+            <button *ngIf="isLoggedIn" type="button" (click)="addToFavorites(ressource.id)" class="rounded-full bg-[#000091] px-6 py-2 text-white text-sm font-semibold hover:bg-[#1d1db5] transition">
+              ★ Ajouter aux favoris
+            </button>
+            <button
+              *ngIf="isLoggedIn && isDemarrable(ressource)"
+              type="button"
+              (click)="toggleDemarrage(ressource.id)"
+              class="rounded-full bg-emerald-600 px-6 py-2 text-white text-sm font-semibold hover:bg-emerald-700 transition"
+            >
+              {{ isStarted ? 'Arrêter l\'activité' : 'Démarrer l\'activité' }}
+            </button>
+            <button
+              *ngIf="isLoggedIn"
+              type="button"
+              (click)="toggleSauvegarde(ressource.id)"
+              class="rounded-full border border-orange-500 px-6 py-2 text-orange-600 text-sm font-semibold hover:bg-orange-50 transition"
+            >
+              {{ isSavedForLater ? 'Annuler la mise de côté' : 'Mettre de côté' }}
+            </button>
+            <button
+              *ngIf="isLoggedIn"
+              type="button"
+              (click)="toggleExploitation(ressource.id)"
+              class="rounded-full border border-[#000091] px-6 py-2 text-[#000091] text-sm font-semibold hover:bg-[#f2f2ff] transition"
+            >
+              {{ isExploitee ? 'Marquer non exploitée' : 'Marquer exploitée' }}
+            </button>
+              <button
+                type="button"
+                (click)="copyResourceLink()"
+                class="rounded-full border border-gray-400 px-6 py-2 text-gray-600 text-sm font-semibold hover:bg-gray-100 transition"
+              >
+                🔗 Copier le lien
+              </button>
+          </div>
+        </div>
+
+        <section
+          *ngIf="isLoggedIn && isDemarrable(ressource) && isStarted"
+          class="mb-8 rounded-2xl border border-emerald-200 bg-emerald-50 p-6 md:p-8 shadow-sm"
+        >
+          <div class="mb-4 flex items-center justify-between gap-4">
+            <h2 class="text-2xl font-bold text-emerald-900">Sondage</h2>
+            <span class="rounded-full bg-emerald-100 px-3 py-1 text-xs font-semibold text-emerald-800">
+              Question {{ quizCompleted ? totalQuestions : currentQuestionIndex + 1 }}/{{ totalQuestions }}
+            </span>
+          </div>
+
+          <p class="mb-6 text-sm text-emerald-800">
+            Thème: les choses que l'on aime. Choisissez une option, validez, puis passez à la question suivante.
+          </p>
+
+          <div *ngIf="!quizCompleted && currentQuestion as question" class="space-y-4">
+            <h3 class="text-lg font-semibold text-emerald-950">{{ question.prompt }}</h3>
+
+            <div class="grid gap-3">
+              <button
+                *ngFor="let option of question.options; let i = index"
+                type="button"
+                (click)="selectOption(i)"
+                class="w-full rounded-xl border px-4 py-3 text-left text-sm font-medium transition"
+                [ngClass]="selectedOptionIndex === i
+                  ? 'border-emerald-600 bg-emerald-100 text-emerald-900'
+                  : 'border-emerald-200 bg-white text-emerald-800 hover:border-emerald-400'"
+              >
+                {{ option }}
+              </button>
+            </div>
+
+            <p *ngIf="quizError" class="text-sm font-medium text-red-700">{{ quizError }}</p>
+
+            <div class="pt-2">
+              <button
+                type="button"
+                (click)="validateAnswer()"
+                class="rounded-full bg-emerald-600 px-6 py-2 text-sm font-semibold text-white transition hover:bg-emerald-700"
+              >
+                {{ currentQuestionIndex + 1 === totalQuestions ? 'Valider le questionnaire' : 'Valider et continuer' }}
+              </button>
+            </div>
+          </div>
+
+          <div *ngIf="quizCompleted" class="rounded-xl border border-emerald-300 bg-white p-5">
+            <h3 class="text-lg font-semibold text-emerald-900">Sondage terminé</h3>
+            <p class="mt-2 text-sm text-emerald-800">
+              Merci pour vos réponses.
+            </p>
+            <button
+              type="button"
+              (click)="startQuiz()"
+              class="mt-4 rounded-full border border-emerald-500 px-5 py-2 text-sm font-semibold text-emerald-700 transition hover:bg-emerald-50"
+            >
+              Recommencer
+            </button>
+          </div>
+        </section>
+
+        <section *ngIf="isLoggedIn" class="mb-8 rounded-2xl border border-slate-200 bg-white p-6 md:p-8 shadow-sm">
+          <h2 class="text-2xl font-bold text-gray-900">Inviter un participant</h2>
+          <p class="mt-2 text-sm text-gray-600">
+            Invitez un participant avec son prenom et son nom. Les echanges se font ensuite en messagerie privee (DM) dans l'onglet Interactions du profil.
+          </p>
+
+          <div class="mt-5 grid gap-3 md:grid-cols-[1fr_2fr_auto]">
+            <input
+              type="text"
+              [(ngModel)]="inviteTarget"
+              placeholder="prenom nom"
+              class="rounded-lg border border-slate-300 px-3 py-2 text-sm focus:outline-none focus:ring-2 focus:ring-blue-500"
+            />
+            <input
+              type="text"
+              [(ngModel)]="inviteMessage"
+              placeholder="Message d'invitation (optionnel)"
+              class="rounded-lg border border-slate-300 px-3 py-2 text-sm focus:outline-none focus:ring-2 focus:ring-blue-500"
+            />
+            <button
+              type="button"
+              (click)="envoyerInvitation(ressource.id)"
+              class="rounded-lg bg-blue-600 px-4 py-2 text-sm font-semibold text-white hover:bg-blue-700"
+            >
+              Inviter
+            </button>
+          </div>
+          <p *ngIf="inviteFeedback" class="mt-2 text-sm text-slate-700">{{ inviteFeedback }}</p>
+        </section>
+
+        <section *ngIf="isLoggedIn" class="mb-8 rounded-2xl border border-slate-200 bg-white p-6 md:p-8 shadow-sm">
+          <h2 class="text-2xl font-bold text-gray-900">Discussion liee a la ressource</h2>
+          <p class="mt-2 text-sm text-gray-600">
+            Fil de discussion contextuel a cette ressource entre le createur et les participants invites ayant accepte.
+          </p>
+
+          <p *ngIf="discussionLoading" class="mt-4 text-sm text-gray-500">Chargement de la discussion...</p>
+          <p *ngIf="discussionError" class="mt-4 rounded-lg border border-amber-200 bg-amber-50 px-3 py-2 text-sm text-amber-800">{{ discussionError }}</p>
+
+          <div *ngIf="canAccessDiscussion && !discussionLoading" class="mt-4 space-y-3">
+            <div *ngIf="discussionMessages.length === 0" class="rounded-lg border border-slate-200 bg-slate-50 px-3 py-3 text-sm text-slate-600">
+              Aucun message pour le moment dans ce fil.
+            </div>
+
+            <div *ngFor="let message of discussionMessages" class="rounded-xl border px-4 py-3"
+                 [ngClass]="isOwnDiscussionMessage(message) ? 'border-blue-200 bg-blue-50' : 'border-slate-200 bg-white'">
+              <div class="flex items-center justify-between gap-3">
+                <p class="text-sm font-semibold text-gray-900">{{ message.prenomAuteur }} {{ message.nomAuteur }}</p>
+                <p class="text-xs text-gray-500">{{ message.dateCreation | date:'dd/MM/yyyy HH:mm' }}</p>
+              </div>
+              <p class="mt-2 whitespace-pre-line text-sm text-gray-700">{{ message.contenu }}</p>
+            </div>
+
+            <div class="rounded-lg border border-slate-200 p-3">
+              <label class="mb-2 block text-sm font-semibold text-gray-700">Votre message</label>
+              <textarea
+                rows="3"
+                [(ngModel)]="discussionDraft"
+                placeholder="Ecrire un message pour ce fil..."
+                class="w-full rounded-lg border border-slate-300 px-3 py-2 text-sm focus:outline-none focus:ring-2 focus:ring-blue-500"
+              ></textarea>
+              <div class="mt-2 flex justify-end">
+                <button
+                  type="button"
+                  (click)="sendDiscussionMessage()"
+                  [disabled]="isSubmittingDiscussion"
+                  class="rounded-lg bg-blue-600 px-4 py-2 text-sm font-semibold text-white hover:bg-blue-700"
+                >
+                  {{ isSubmittingDiscussion ? 'Envoi...' : 'Envoyer' }}
+                </button>
+              </div>
+            </div>
+          </div>
+        </section>
+
+        <!-- Ressource Content -->
+        <article *ngIf="!isDemarrable(ressource)" class="prose lg:prose-xl max-w-none bg-white p-8 md:p-12 rounded-2xl shadow-lg">
+          
+          
+
+          <!-- Text Content -->
+          <p class="lead text-lg text-gray-600">{{ ressource.description }}</p>
+          <div [innerHTML]="ressource.content | safeHtml"></div>
+
+        </article>
+
+        <section class="bg-white mt-8 p-6 md:p-8 rounded-2xl shadow-lg">
+          <div class="flex items-center justify-between gap-4 mb-6">
+            <h2 class="text-2xl font-bold text-gray-900">Commentaires</h2>
+            <span class="text-sm text-gray-500">{{ comments.length }} commentaire(s)</span>
+          </div>
+
+          <form *ngIf="isLoggedIn" [formGroup]="commentForm" (ngSubmit)="submitComment()" class="mb-8">
+            <label for="contenu" class="block text-sm font-semibold text-gray-700 mb-2">Ajouter un commentaire</label>
+            <textarea
+              id="contenu"
+              rows="4"
+              formControlName="contenu"
+              placeholder="Partagez votre avis sur cette ressource..."
+              class="w-full rounded-xl border border-slate-200 px-4 py-3 focus:outline-none focus:ring-2 focus:ring-blue-500"
+            ></textarea>
+            <p *ngIf="commentForm.get('contenu')?.invalid && commentForm.get('contenu')?.touched" class="mt-2 text-sm text-red-600">
+              Le commentaire est requis (max 2000 caractères).
+            </p>
+            <div class="mt-3 flex justify-end">
+              <button type="submit" [disabled]="isSubmittingComment" class="rounded-full bg-[#000091] px-5 py-2 text-white text-sm font-semibold hover:bg-[#1d1db5] transition">
+                {{ isSubmittingComment ? 'Publication...' : 'Publier' }}
+              </button>
+            </div>
+          </form>
+
+          <div *ngIf="!isLoggedIn" class="mb-8 rounded-xl border border-blue-100 bg-blue-50 p-4 text-sm text-blue-900">
+            Connectez-vous pour ajouter un commentaire.
+          </div>
+
+          <p *ngIf="commentsLoading" class="text-gray-500">Chargement des commentaires...</p>
+
+          <div *ngIf="!commentsLoading && comments.length === 0" class="rounded-xl border border-slate-200 bg-slate-50 p-4 text-sm text-slate-600">
+            Aucun commentaire pour le moment.
+          </div>
+
+          <div class="space-y-4" *ngIf="!commentsLoading && comments.length > 0">
+            <div *ngFor="let comment of topLevelComments" class="rounded-xl border border-slate-200 p-4">
+              <div class="flex items-start justify-between gap-4">
+                <div>
+                  <p class="font-semibold text-gray-900">{{ comment.prenomAuteur }} {{ comment.nomAuteur }}</p>
+                  <p class="text-xs text-gray-500">{{ comment.dateCreation | date:'dd/MM/yyyy HH:mm' }}</p>
+                </div>
+                <div class="flex items-center gap-3">
+                  <button
+                    *ngIf="isLoggedIn"
+                    type="button"
+                    (click)="toggleReplyBox(comment.idCommentaire)"
+                    class="text-sm text-blue-700 hover:text-blue-800"
+                  >
+                    Répondre
+                  </button>
+                  <button
+                    *ngIf="canDeleteComment(comment)"
+                    type="button"
+                    (click)="deleteComment(comment.idCommentaire)"
+                    class="text-sm text-red-600 hover:text-red-700"
+                  >
+                    Supprimer
+                  </button>
+                </div>
+              </div>
+              <p class="mt-3 whitespace-pre-line text-gray-700">{{ comment.contenu }}</p>
+
+              <div *ngIf="replyBoxOpenFor === comment.idCommentaire" class="mt-4 rounded-lg border border-blue-100 bg-blue-50 p-3">
+                <label class="block text-xs font-semibold text-blue-900 mb-2">Votre réponse</label>
+                <textarea
+                  rows="3"
+                  [(ngModel)]="replyDrafts[comment.idCommentaire]"
+                  class="w-full rounded-lg border border-blue-200 px-3 py-2 text-sm focus:outline-none focus:ring-2 focus:ring-blue-500"
+                  placeholder="Répondez à ce commentaire..."
+                ></textarea>
+                <div class="mt-2 flex justify-end gap-2">
+                  <button type="button" (click)="toggleReplyBox(comment.idCommentaire)" class="text-sm text-gray-600 hover:text-gray-800">Annuler</button>
+                  <button
+                    type="button"
+                    [disabled]="isSubmittingReply"
+                    (click)="submitReply(comment.idCommentaire)"
+                    class="rounded-full bg-[#000091] px-4 py-1.5 text-white text-xs font-semibold hover:bg-[#1d1db5] transition"
+                  >
+                    {{ isSubmittingReply ? 'Envoi...' : 'Répondre' }}
+                  </button>
+                </div>
+              </div>
+
+              <div class="mt-4 space-y-3 pl-4 border-l-2 border-slate-200" *ngIf="getRepliesFor(comment.idCommentaire).length > 0">
+                <div *ngFor="let reply of getRepliesFor(comment.idCommentaire)" class="rounded-lg bg-slate-50 p-3 border border-slate-200">
+                  <div class="flex items-start justify-between gap-4">
+                    <div>
+                      <p class="font-semibold text-gray-900 text-sm">{{ reply.prenomAuteur }} {{ reply.nomAuteur }}</p>
+                      <p class="text-xs text-gray-500">{{ reply.dateCreation | date:'dd/MM/yyyy HH:mm' }}</p>
+                    </div>
+                    <button
+                      *ngIf="canDeleteComment(reply)"
+                      type="button"
+                      (click)="deleteComment(reply.idCommentaire)"
+                      class="text-xs text-red-600 hover:text-red-700"
+                    >
+                      Supprimer
+                    </button>
+                  </div>
+                  <p class="mt-2 whitespace-pre-line text-sm text-gray-700">{{ reply.contenu }}</p>
+                </div>
+              </div>
+            </div>
+          </div>
+        </section>
+
+      </div>
+    </div>
+  </main>
+</div>
+
+<!-- Loading/Error Template -->
+<ng-template #loadingOrError>
+  <div class="text-center py-20">
+    <p class="text-gray-500">Chargement de la ressource...</p>
+    <!-- You could add a spinner here -->
+  </div>
+</ng-template>

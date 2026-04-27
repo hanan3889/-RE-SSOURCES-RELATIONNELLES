@@ -3,21 +3,23 @@ import { provideRouter } from '@angular/router';
 import { provideToastr } from 'ngx-toastr';
 import { JWT_OPTIONS, JwtHelperService } from '@auth0/angular-jwt';
 import { provideAnimations } from '@angular/platform-browser/animations';
-import { provideHttpClient, withInterceptorsFromDi } from '@angular/common/http';
+import { provideHttpClient, withInterceptors } from '@angular/common/http';
+import { authInterceptor } from './core/interceptors/auth.interceptor';
 import { providePrimeNG } from 'primeng/config';
 import Lara from '@primeng/themes/lara';
+import { environment } from 'src/environments/environment';
 
 import { routes } from './app.routes';
 
 export function tokenGetter() {
-  return localStorage.getItem('access_token');
+  return localStorage.getItem(environment.jwtTokenName);
 }
 
 export const appConfig: ApplicationConfig = {
   providers: [
     provideZoneChangeDetection({ eventCoalescing: true }),
     provideRouter(routes),
-    provideHttpClient(withInterceptorsFromDi()),
+    provideHttpClient(withInterceptors([authInterceptor])),
     provideToastr(),
     provideAnimations(),
     providePrimeNG({
