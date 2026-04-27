@@ -13,7 +13,7 @@ describe('AuthGuard', () => {
   const mockState = { url: '/dashboard' } as RouterStateSnapshot;
 
   beforeEach(() => {
-    authServiceSpy = jasmine.createSpyObj('AuthService', ['isLoggedIn', 'isAdmin']);
+    authServiceSpy = jasmine.createSpyObj('AuthService', ['isLoggedIn', 'isAdmin', 'hasAnyRole']);
     routerSpy = jasmine.createSpyObj('Router', ['navigate']);
 
     TestBed.configureTestingModule({
@@ -64,6 +64,29 @@ describe('AuthGuard', () => {
     authServiceSpy.isLoggedIn.and.returnValue(true);
     authServiceSpy.isAdmin.and.returnValue(true);
     const route = { data: { role: 'admin' } } as unknown as ActivatedRouteSnapshot;
+
+    const result = guard.canActivate(route, mockState);
+
+    expect(result).toBeTrue();
+  });
+
+  // ─── allowedRoles — accès refusé si rôle hors liste ─────────────────────────
+  it('devrait refuser si allowedRoles est défini et le rôle n est pas dans la liste', () => {
+    authServiceSpy.isLoggedIn.and.returnValue(true);
+    authServiceSpy.hasAnyRole.and.returnValue(false);
+    const route = { data: { allowedRoles: ['moderateur', 'administrateur'] } } as unknown as ActivatedRouteSnapshot;
+
+    const result = guard.canActivate(route, mockState);
+
+    expect(result).toBeFalse();
+    expect(routerSpy.navigate).toHaveBeenCalledWith(['/home']);
+  });
+
+  // ─── allowedRoles — accès autorisé si rôle dans la liste ─────────────────────
+  it('devrait autoriser si allowedRoles est défini et le rôle est dans la liste', () => {
+    authServiceSpy.isLoggedIn.and.returnValue(true);
+    authServiceSpy.hasAnyRole.and.returnValue(true);
+    const route = { data: { allowedRoles: ['moderateur', 'administrateur'] } } as unknown as ActivatedRouteSnapshot;
 
     const result = guard.canActivate(route, mockState);
 
