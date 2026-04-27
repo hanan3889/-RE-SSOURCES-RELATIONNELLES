@@ -36,59 +36,42 @@ const mockEditableDto = {
   idCategorie: 1,
 };
 
-function buildComponent(
-  params: Record<string, string> = {},
-  isAdminUser = false
-): {
-  fixture: ComponentFixture<RessourceCreateComponent>;
-  component: RessourceCreateComponent;
-  ressourceSpy: jasmine.SpyObj<RessourceService>;
-  categorieSpy: jasmine.SpyObj<CategorieService>;
-  authSpy: jasmine.SpyObj<AuthService>;
-  routerSpy: jasmine.SpyObj<Router>;
-} {
-  const ressourceSpy = jasmine.createSpyObj('RessourceService', ['createRessource', 'updateRessource', 'getRessourceForEdit']);
-  const categorieSpy = jasmine.createSpyObj('CategorieService', ['getCategories']);
-  const authSpy = jasmine.createSpyObj('AuthService', ['isAdmin', 'getToken']);
-  const routerSpy = jasmine.createSpyObj('Router', ['navigate']);
-
-  categorieSpy.getCategories.and.returnValue(of(mockCategories));
-  authSpy.isAdmin.and.returnValue(isAdminUser);
-  authSpy.getToken.and.returnValue('fake-token');
-
-  const paramMap = { get: (key: string) => params[key] ?? null };
-
-  TestBed.configureTestingModule({
-    imports: [RessourceCreateComponent, RouterTestingModule, ReactiveFormsModule],
-    providers: [
-      { provide: RessourceService, useValue: ressourceSpy },
-      { provide: CategorieService, useValue: categorieSpy },
-      { provide: AuthService, useValue: authSpy },
-      { provide: Router, useValue: routerSpy },
-      { provide: ActivatedRoute, useValue: { snapshot: { paramMap } } },
-    ],
-  }).compileComponents();
-
-  const fixture = TestBed.createComponent(RessourceCreateComponent);
-  const component = fixture.componentInstance;
-  fixture.detectChanges();
-
-  return { fixture, component, ressourceSpy, categorieSpy, authSpy, routerSpy };
-}
+// ─── Création (citoyen) ────────────────────────────────────────────────────
 
 describe('RessourceCreateComponent — Création', () => {
   let component: RessourceCreateComponent;
+  let fixture: ComponentFixture<RessourceCreateComponent>;
   let ressourceSpy: jasmine.SpyObj<RessourceService>;
-  let routerSpy: jasmine.SpyObj<Router>;
+  let router: Router;
 
-  beforeEach(() => {
-    const built = buildComponent();
-    component = built.component;
-    ressourceSpy = built.ressourceSpy;
-    routerSpy = built.routerSpy;
+  beforeEach(async () => {
+    ressourceSpy = jasmine.createSpyObj('RessourceService', ['createRessource', 'updateRessource', 'getRessourceForEdit']);
+    const categorieSpy = jasmine.createSpyObj('CategorieService', ['getCategories']);
+    const authSpy = jasmine.createSpyObj('AuthService', ['isAdmin', 'getToken']);
+
+    categorieSpy.getCategories.and.returnValue(of(mockCategories));
+    authSpy.isAdmin.and.returnValue(false);
+    authSpy.getToken.and.returnValue('fake-token');
+
+    const paramMap = { get: (_key: string) => null };
+
+    await TestBed.configureTestingModule({
+      imports: [RessourceCreateComponent, RouterTestingModule, ReactiveFormsModule],
+      providers: [
+        { provide: RessourceService, useValue: ressourceSpy },
+        { provide: CategorieService, useValue: categorieSpy },
+        { provide: AuthService, useValue: authSpy },
+        { provide: ActivatedRoute, useValue: { snapshot: { paramMap } } },
+      ],
+    }).compileComponents();
+
+    router = TestBed.inject(Router);
+    spyOn(router, 'navigate');
+
+    fixture = TestBed.createComponent(RessourceCreateComponent);
+    component = fixture.componentInstance;
+    fixture.detectChanges();
   });
-
-  afterEach(() => TestBed.resetTestingModule());
 
   // CT-RES-010 — Création d'une ressource
   it('devrait etre en mode creation par defaut', () => {
@@ -157,7 +140,7 @@ describe('RessourceCreateComponent — Création', () => {
     component.submit();
     tick();
 
-    expect(routerSpy.navigate).toHaveBeenCalledWith(['/ressources']);
+    expect(router.navigate).toHaveBeenCalledWith(['/ressources']);
   }));
 
   it('onSubmit() en cas d erreur serveur doit afficher le message', fakeAsync(() => {
@@ -185,22 +168,44 @@ describe('RessourceCreateComponent — Création', () => {
   });
 });
 
+// ─── Édition (citoyen) ─────────────────────────────────────────────────────
+
 describe('RessourceCreateComponent — Édition', () => {
   let component: RessourceCreateComponent;
+  let fixture: ComponentFixture<RessourceCreateComponent>;
   let ressourceSpy: jasmine.SpyObj<RessourceService>;
-  let routerSpy: jasmine.SpyObj<Router>;
+  let router: Router;
 
-  beforeEach(fakeAsync(() => {
-    const built = buildComponent({ id: '42' });
-    component = built.component;
-    ressourceSpy = built.ressourceSpy;
-    routerSpy = built.routerSpy;
+  beforeEach(async () => {
+    ressourceSpy = jasmine.createSpyObj('RessourceService', ['createRessource', 'updateRessource', 'getRessourceForEdit']);
+    const categorieSpy = jasmine.createSpyObj('CategorieService', ['getCategories']);
+    const authSpy = jasmine.createSpyObj('AuthService', ['isAdmin', 'getToken']);
+
+    categorieSpy.getCategories.and.returnValue(of(mockCategories));
+    authSpy.isAdmin.and.returnValue(false);
+    authSpy.getToken.and.returnValue('fake-token');
     ressourceSpy.getRessourceForEdit.and.returnValue(of(mockEditableDto));
-    component.ngOnInit();
-    tick();
-  }));
 
-  afterEach(() => TestBed.resetTestingModule());
+    const params: Record<string, string> = { id: '42' };
+    const paramMap = { get: (key: string) => params[key] ?? null };
+
+    await TestBed.configureTestingModule({
+      imports: [RessourceCreateComponent, RouterTestingModule, ReactiveFormsModule],
+      providers: [
+        { provide: RessourceService, useValue: ressourceSpy },
+        { provide: CategorieService, useValue: categorieSpy },
+        { provide: AuthService, useValue: authSpy },
+        { provide: ActivatedRoute, useValue: { snapshot: { paramMap } } },
+      ],
+    }).compileComponents();
+
+    router = TestBed.inject(Router);
+    spyOn(router, 'navigate');
+
+    fixture = TestBed.createComponent(RessourceCreateComponent);
+    component = fixture.componentInstance;
+    fixture.detectChanges();
+  });
 
   // CT-RES-012 — Édition d'une ressource
   it('devrait etre en mode edition avec l id de la route', () => {
@@ -224,11 +229,42 @@ describe('RessourceCreateComponent — Édition', () => {
     expect(ressourceSpy.updateRessource).toHaveBeenCalled();
     expect(ressourceSpy.createRessource).not.toHaveBeenCalled();
   }));
+});
+
+// ─── Admin formats ─────────────────────────────────────────────────────────
+
+describe('RessourceCreateComponent — Formats admin', () => {
+  let component: RessourceCreateComponent;
+  let fixture: ComponentFixture<RessourceCreateComponent>;
+
+  beforeEach(async () => {
+    const ressourceSpy = jasmine.createSpyObj('RessourceService', ['createRessource', 'updateRessource', 'getRessourceForEdit']);
+    const categorieSpy = jasmine.createSpyObj('CategorieService', ['getCategories']);
+    const authSpy = jasmine.createSpyObj('AuthService', ['isAdmin', 'getToken']);
+
+    categorieSpy.getCategories.and.returnValue(of(mockCategories));
+    authSpy.isAdmin.and.returnValue(true);
+    authSpy.getToken.and.returnValue('fake-token');
+
+    const paramMap = { get: (_key: string) => null };
+
+    await TestBed.configureTestingModule({
+      imports: [RessourceCreateComponent, RouterTestingModule, ReactiveFormsModule],
+      providers: [
+        { provide: RessourceService, useValue: ressourceSpy },
+        { provide: CategorieService, useValue: categorieSpy },
+        { provide: AuthService, useValue: authSpy },
+        { provide: ActivatedRoute, useValue: { snapshot: { paramMap } } },
+      ],
+    }).compileComponents();
+
+    fixture = TestBed.createComponent(RessourceCreateComponent);
+    component = fixture.componentInstance;
+    fixture.detectChanges();
+  });
 
   it('availableFormats doit inclure Activite et Jeu pour un admin', () => {
-    const built = buildComponent({ id: '42' }, true);
-    expect(built.component.availableFormats).toContain('Activité');
-    expect(built.component.availableFormats).toContain('Jeu');
-    TestBed.resetTestingModule();
+    expect(component.availableFormats).toContain('Activité');
+    expect(component.availableFormats).toContain('Jeu');
   });
 });

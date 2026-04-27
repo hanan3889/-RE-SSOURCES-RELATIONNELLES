@@ -6,7 +6,11 @@
     "start": "ng serve",
     "build": "ng build",
     "watch": "ng build --watch --configuration development",
-    "test": "ng test"
+    "test": "ng test",
+    "test:e2e": "playwright test",
+    "test:e2e:ui": "playwright test --ui",
+    "test:e2e:headed": "playwright test --headed",
+    "test:e2e:report": "playwright show-report"
   },
   "private": true,
   "dependencies": {
@@ -49,6 +53,8 @@
     "karma-jasmine-html-reporter": "~2.1.0",
     "postcss": "^8.5.6",
     "tailwindcss": "^3.4.1",
-    "typescript": "~5.7.2"
+    "typescript": "~5.7.2",
+    "@playwright/test": "^1.50.0",
+    "@types/node": "^20.0.0"
   }
 }
