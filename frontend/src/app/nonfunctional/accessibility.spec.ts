@@ -9,6 +9,7 @@ import { NavbarComponent } from '../shared/components/navbar/navbar.component';
 import { LoginComponent } from '../features/auth/pages/login/login.component';
 import { RessourceService, Ressource } from '../features/resources/services/ressource.service';
 import { AuthService } from '../core/services/auth.service';
+import { CategorieService } from '../features/resources/services/categorie.service';
 import { of } from 'rxjs';
 
 /** Helper : extrait les violations critiques/serious depuis les résultats axe bruts */
@@ -30,9 +31,10 @@ const mockRessources: Ressource[] = [
     author: 'Alice Dupont',
     category: 'Couple',
     createdAt: new Date('2026-01-01'),
+    format: 'Article',
     type: 'article',
     visibilite: 'Publique',
-    statut: 'Publi\u00e9e',
+    statut: 'Publiée',
   },
 ];
 
@@ -128,12 +130,21 @@ describe('CT-A11Y-001 — Accessibilite (axe-core)', () => {
     let fixture: ComponentFixture<RessourceListComponent>;
 
     beforeEach(async () => {
-      const ressourceSpy = jasmine.createSpyObj('RessourceService', ['getRessources']);
+      const ressourceSpy = jasmine.createSpyObj('RessourceService', ['getRessources', 'getRestrictedRessources']);
       ressourceSpy.getRessources.and.returnValue(of(mockRessources));
+      ressourceSpy.getRestrictedRessources.and.returnValue(of([]));
+      const authSpy = jasmine.createSpyObj('AuthService', ['isLoggedIn']);
+      authSpy.isLoggedIn.and.returnValue(false);
+      const categorieSpy = jasmine.createSpyObj('CategorieService', ['getCategories']);
+      categorieSpy.getCategories.and.returnValue(of([]));
 
       await TestBed.configureTestingModule({
         imports: [RessourceListComponent, RouterTestingModule],
-        providers: [{ provide: RessourceService, useValue: ressourceSpy }],
+        providers: [
+          { provide: RessourceService, useValue: ressourceSpy },
+          { provide: AuthService, useValue: authSpy },
+          { provide: CategorieService, useValue: categorieSpy },
+        ],
       }).compileComponents();
 
       fixture = TestBed.createComponent(RessourceListComponent);

@@ -1,6 +1,6 @@
 import { TestBed } from '@angular/core/testing';
 import { HttpClientTestingModule, HttpTestingController } from '@angular/common/http/testing';
-import { RessourceService, Ressource } from './ressource.service';
+import { RessourceService, Ressource, CreateRessourceDto } from './ressource.service';
 import { environment } from 'src/environments/environment';
 
 const mockApiRessource = {
@@ -127,5 +127,74 @@ describe('RessourceService', () => {
 
     const req = httpMock.expectOne(`${environment.apiUrl}/ressources`);
     req.flush([mockApiRessource]);
+  });
+
+  // CT-RES-010 — Créer une ressource
+  it('createRessource() devrait envoyer POST et retourner la ressource créée', () => {
+    const dto: CreateRessourceDto = {
+      titre: 'Nouveau guide',
+      description: 'Description',
+      format: 'Article',
+      visibilite: 0,
+      idCategorie: 1
+    };
+
+    service.createRessource(dto).subscribe((ressource: Ressource) => {
+      expect(ressource.title).toBe('Guide communication couple');
+    });
+
+    const req = httpMock.expectOne(`${environment.apiUrl}/ressources`);
+    expect(req.request.method).toBe('POST');
+    expect(req.request.body).toEqual(dto);
+    req.flush(mockApiRessource);
+  });
+
+  // CT-RES-012 — Modifier une ressource
+  it('updateRessource() devrait envoyer PUT avec les champs modifiés', () => {
+    const dto: CreateRessourceDto = {
+      titre: 'Guide modifié',
+      description: 'Nouvelle description',
+      format: 'PDF',
+      visibilite: 1,
+      idCategorie: 2
+    };
+
+    service.updateRessource(1, dto).subscribe((ressource: Ressource) => {
+      expect(ressource.id).toBe(1);
+    });
+
+    const req = httpMock.expectOne(`${environment.apiUrl}/ressources/1`);
+    expect(req.request.method).toBe('PUT');
+    req.flush(mockApiRessource);
+  });
+
+  it('getRestrictedRessources() devrait appeler le bon endpoint', () => {
+    service.getRestrictedRessources().subscribe((ressources: Ressource[]) => {
+      expect(ressources.length).toBe(1);
+    });
+
+    const req = httpMock.expectOne(`${environment.apiUrl}/ressources/restreintes`);
+    expect(req.request.method).toBe('GET');
+    req.flush([mockApiRessource]);
+  });
+
+  it('getRessourceForEdit() devrait retourner le DTO éditable', () => {
+    service.getRessourceForEdit(1).subscribe((dto) => {
+      expect(dto.idRessource).toBe(1);
+      expect(dto.titre).toBe('Guide communication couple');
+      expect(dto.idCategorie).toBe(3);
+    });
+
+    const req = httpMock.expectOne(`${environment.apiUrl}/ressources/1`);
+    expect(req.request.method).toBe('GET');
+    req.flush(mockApiRessource);
+  });
+
+  it('addFavori() devrait envoyer POST sur le bon endpoint', () => {
+    service.addFavori(1).subscribe();
+
+    const req = httpMock.expectOne(`${environment.apiUrl}/ressources/1/favoris`);
+    expect(req.request.method).toBe('POST');
+    req.flush({});
   });
 });

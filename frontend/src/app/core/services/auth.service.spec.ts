@@ -134,4 +134,32 @@ describe('AuthService', () => {
     localStorage.setItem(environment.jwtTokenName, 'test-token');
     expect(service.getToken()).toBe('test-token');
   });
+
+  // hasRole
+  it('hasRole() devrait retourner true si le role correspond', () => {
+    const modUser = { ...mockAuthResponse, role: 'moderateur' };
+    localStorage.setItem('currentUser', JSON.stringify(modUser));
+    expect(service.hasRole('moderateur')).toBeTrue();
+  });
+
+  it('hasRole() devrait retourner false si le role ne correspond pas', () => {
+    localStorage.setItem('currentUser', JSON.stringify(mockAuthResponse));
+    expect(service.hasRole('moderateur')).toBeFalse();
+  });
+
+  // hasAnyRole
+  it('hasAnyRole() devrait retourner true si le role est dans la liste', () => {
+    const modUser = { ...mockAuthResponse, role: 'moderateur' };
+    localStorage.setItem('currentUser', JSON.stringify(modUser));
+    expect(service.hasAnyRole(['moderateur', 'administrateur'])).toBeTrue();
+  });
+
+  it('hasAnyRole() devrait retourner false si le role n est pas dans la liste', () => {
+    localStorage.setItem('currentUser', JSON.stringify(mockAuthResponse));
+    expect(service.hasAnyRole(['moderateur', 'administrateur'])).toBeFalse();
+  });
+
+  it('hasAnyRole() devrait retourner false si pas connecte', () => {
+    expect(service.hasAnyRole(['moderateur', 'administrateur'])).toBeFalse();
+  });
 });

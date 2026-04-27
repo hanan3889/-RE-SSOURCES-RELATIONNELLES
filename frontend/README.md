@@ -1,59 +1,134 @@
-# RrWeb
+# (Re)sources Relationnelles — Frontend
 
-This project was generated using [Angular CLI](https://github.com/angular/angular-cli) version 19.2.19.
+Application Angular 19 de la plateforme nationale de développement des compétences relationnelles.
 
-## Development server
+## Prérequis
 
-To start a local development server, run:
+- Node.js >= 18
+- npm >= 9
+- Angular CLI 19 (`npm install -g @angular/cli`)
+
+---
+
+## Démarrage du serveur de développement
 
 ```bash
-ng serve
+npm install
+npm start
+# ou : ng serve
 ```
 
-Once the server is running, open your browser and navigate to `http://localhost:4200/`. The application will automatically reload whenever you modify any of the source files.
+L'application est accessible sur `http://localhost:4200/`.  
+Le rechargement à chaud est activé automatiquement.
 
-## Code scaffolding
+---
 
-Angular CLI includes powerful code scaffolding tools. To generate a new component, run:
+## Build
 
 ```bash
-ng generate component component-name
+# Build de développement
+npm run build
+
+# Build de production (optimisé)
+ng build --configuration production
 ```
 
-For a complete list of available schematics (such as `components`, `directives`, or `pipes`), run:
+Les artefacts sont générés dans `dist/`.
+
+---
+
+## Tests
+
+### Tests unitaires — Jasmine / Karma
+
+Exécutent les tests de composants, services, guards et intercepteurs Angular.
 
 ```bash
+# Mode interactif (watch)
+npm test
+
+# Exécution unique (CI)
+npm test -- --watch=false --browsers=ChromeHeadless
+```
+
+Couverture : 139 tests unitaires + 7 tests d'accessibilité (axe-core WCAG 2A/2AA) + 16 tests responsive.
+
+---
+
+### Tests E2E — Playwright
+
+Testent les parcours utilisateurs complets dans un vrai navigateur avec l'API mockée.
+
+#### Installation (première fois)
+
+```bash
+npm install
+npx playwright install          
+```
+
+#### Commandes
+
+```bash
+# Tous les tests, tous les navigateurs (mode CI)
+npm run test:e2e
+
+# Mode fenêtre visible (debug)
+npm run test:e2e:headed
+
+# Interface interactive Playwright UI
+npm run test:e2e:ui
+
+# Ouvrir le rapport HTML après exécution
+npm run test:e2e:report
+
+# Un seul fichier de test
+npx playwright test e2e/auth.spec.ts
+
+# Un seul test par nom
+npx playwright test -g "CT-E2E-AUTH-004"
+
+# Navigateur spécifique
+npx playwright test --project=chromium
+npx playwright test --project=firefox
+npx playwright test --project=mobile-chrome
+```
+
+#### Suites disponibles
+
+| Fichier | Scénarios couverts | Tests |
+|---|---|---|
+| `e2e/auth.spec.ts` | Connexion, inscription, déconnexion, validation | 11 |
+| `e2e/resources.spec.ts` | Liste, filtres, recherche, création de ressource | 8 |
+| `e2e/navigation.spec.ts` | Redirections, navbar, guards, menu mobile | 8 |
+| `e2e/dashboard.spec.ts` | Modération, validation/refus, droits par rôle | 7 |
+
+> L'application Angular doit être démarrée (`npm start`) avant de lancer les tests E2E,  
+> ou la config Playwright la démarre automatiquement via `webServer`.
+
+---
+
+### Tests backend — xUnit (.NET 8)
+
+```bash
+cd ../backend/RessourceRelationnel.Tests
+dotnet test
+```
+
+Couverture : 74 tests fonctionnels + 14 tests de sécurité + 8 tests de performance.
+
+---
+
+```bash
+ng generate component nom-du-composant
+ng generate service nom-du-service
 ng generate --help
 ```
 
-## Building
+---
 
-To build the project run:
+## Ressources
 
-```bash
-ng build
-```
-
-This will compile your project and store the build artifacts in the `dist/` directory. By default, the production build optimizes your application for performance and speed.
-
-## Running unit tests
-
-To execute unit tests with the [Karma](https://karma-runner.github.io) test runner, use the following command:
-
-```bash
-ng test
-```
-
-## Running end-to-end tests
-
-For end-to-end (e2e) testing, run:
-
-```bash
-ng e2e
-```
-
-Angular CLI does not come with an end-to-end testing framework by default. You can choose one that suits your needs.
-
-## Additional Resources
-
-For more information on using the Angular CLI, including detailed command references, visit the [Angular CLI Overview and Command Reference](https://angular.dev/tools/cli) page.
+- [Angular CLI](https://angular.dev/tools/cli)
+- [Playwright Test](https://playwright.dev/docs/intro)
+- [Jasmine](https://jasmine.github.io/)
+- [axe-core](https://github.com/dequelabs/axe-core)

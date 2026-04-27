@@ -7,12 +7,14 @@ import { RessourceListComponent } from '../features/resources/pages/ressource-li
 import { NavbarComponent } from '../shared/components/navbar/navbar.component';
 import { RessourceService, Ressource } from '../features/resources/services/ressource.service';
 import { AuthService } from '../core/services/auth.service';
+import { CategorieService } from '../features/resources/services/categorie.service';
 
 const mockRessources: Ressource[] = [
   {
     id: 1, title: 'Guide couple', description: 'Desc',
     content: 'Contenu', author: 'Alice Dupont', category: 'Couple',
-    createdAt: new Date(), type: 'article', visibilite: 'Publique', statut: 'Publi\u00e9e',
+    createdAt: new Date(), format: 'Article', type: 'article',
+    visibilite: 'Publique', statut: 'Publiée',
   },
 ];
 
@@ -34,8 +36,29 @@ describe('CT-RESP-001/002 — Tests Responsive (mobile/tablette)', () => {
     window.dispatchEvent(new Event('resize'));
   }
 
-  function checkNoHorizontalOverflow(element: HTMLElement): boolean {
-    return element.scrollWidth <= element.clientWidth + 5; // +5px de tolérance
+  function buildRessourceListProviders() {
+    const ressourceSpy = jasmine.createSpyObj('RessourceService', ['getRessources', 'getRestrictedRessources']);
+    ressourceSpy.getRessources.and.returnValue(of(mockRessources));
+    ressourceSpy.getRestrictedRessources.and.returnValue(of([]));
+    const authSpy = jasmine.createSpyObj('AuthService', ['isLoggedIn']);
+    authSpy.isLoggedIn.and.returnValue(false);
+    const categorieSpy = jasmine.createSpyObj('CategorieService', ['getCategories']);
+    categorieSpy.getCategories.and.returnValue(of([]));
+    return [
+      { provide: RessourceService, useValue: ressourceSpy },
+      { provide: AuthService, useValue: authSpy },
+      { provide: CategorieService, useValue: categorieSpy },
+    ];
+  }
+
+  function buildNavbarProviders() {
+    const authSpy = jasmine.createSpyObj('AuthService', [
+      'isLoggedIn', 'isAdmin', 'getCurrentUser', 'logout',
+    ]);
+    authSpy.isLoggedIn.and.returnValue(false);
+    authSpy.isAdmin.and.returnValue(false);
+    authSpy.getCurrentUser.and.returnValue(null);
+    return [{ provide: AuthService, useValue: authSpy }];
   }
 
   // ─── CT-RESP-001 — Mobile 375px (iPhone SE) ───────────────────────────────────
@@ -47,12 +70,9 @@ describe('CT-RESP-001/002 — Tests Responsive (mobile/tablette)', () => {
       let fixture: ComponentFixture<RessourceListComponent>;
 
       beforeEach(async () => {
-        const ressourceSpy = jasmine.createSpyObj('RessourceService', ['getRessources']);
-        ressourceSpy.getRessources.and.returnValue(of(mockRessources));
-
         await TestBed.configureTestingModule({
           imports: [RessourceListComponent, RouterTestingModule],
-          providers: [{ provide: RessourceService, useValue: ressourceSpy }],
+          providers: buildRessourceListProviders(),
         }).compileComponents();
 
         fixture = TestBed.createComponent(RessourceListComponent);
@@ -91,16 +111,9 @@ describe('CT-RESP-001/002 — Tests Responsive (mobile/tablette)', () => {
       let fixture: ComponentFixture<NavbarComponent>;
 
       beforeEach(async () => {
-        const authSpy = jasmine.createSpyObj('AuthService', [
-          'isLoggedIn', 'isAdmin', 'getCurrentUser', 'logout',
-        ]);
-        authSpy.isLoggedIn.and.returnValue(false);
-        authSpy.isAdmin.and.returnValue(false);
-        authSpy.getCurrentUser.and.returnValue(null);
-
         await TestBed.configureTestingModule({
           imports: [NavbarComponent, RouterTestingModule, HttpClientTestingModule],
-          providers: [{ provide: AuthService, useValue: authSpy }],
+          providers: buildNavbarProviders(),
         }).compileComponents();
 
         fixture = TestBed.createComponent(NavbarComponent);
@@ -132,12 +145,9 @@ describe('CT-RESP-001/002 — Tests Responsive (mobile/tablette)', () => {
       let fixture: ComponentFixture<RessourceListComponent>;
 
       beforeEach(async () => {
-        const ressourceSpy = jasmine.createSpyObj('RessourceService', ['getRessources']);
-        ressourceSpy.getRessources.and.returnValue(of(mockRessources));
-
         await TestBed.configureTestingModule({
           imports: [RessourceListComponent, RouterTestingModule],
-          providers: [{ provide: RessourceService, useValue: ressourceSpy }],
+          providers: buildRessourceListProviders(),
         }).compileComponents();
 
         fixture = TestBed.createComponent(RessourceListComponent);
@@ -176,16 +186,9 @@ describe('CT-RESP-001/002 — Tests Responsive (mobile/tablette)', () => {
       let fixture: ComponentFixture<NavbarComponent>;
 
       beforeEach(async () => {
-        const authSpy = jasmine.createSpyObj('AuthService', [
-          'isLoggedIn', 'isAdmin', 'getCurrentUser', 'logout',
-        ]);
-        authSpy.isLoggedIn.and.returnValue(false);
-        authSpy.isAdmin.and.returnValue(false);
-        authSpy.getCurrentUser.and.returnValue(null);
-
         await TestBed.configureTestingModule({
           imports: [NavbarComponent, RouterTestingModule, HttpClientTestingModule],
-          providers: [{ provide: AuthService, useValue: authSpy }],
+          providers: buildNavbarProviders(),
         }).compileComponents();
 
         fixture = TestBed.createComponent(NavbarComponent);
@@ -209,12 +212,9 @@ describe('CT-RESP-001/002 — Tests Responsive (mobile/tablette)', () => {
     beforeEach(() => setViewport(1280, 800));
 
     it('[1280px] le composant RessourceList doit se creer', async () => {
-      const ressourceSpy = jasmine.createSpyObj('RessourceService', ['getRessources']);
-      ressourceSpy.getRessources.and.returnValue(of(mockRessources));
-
       await TestBed.configureTestingModule({
         imports: [RessourceListComponent, RouterTestingModule],
-        providers: [{ provide: RessourceService, useValue: ressourceSpy }],
+        providers: buildRessourceListProviders(),
       }).compileComponents();
 
       const fixture = TestBed.createComponent(RessourceListComponent);
