@@ -5,6 +5,7 @@ import '../../../core/network/api_endpoints.dart';
 import '../../resources/models/ressource_model.dart';
 import '../../resources/models/categorie_model.dart';
 import '../models/utilisateur_model.dart';
+import '../models/statistics_model.dart';
 
 // ─── Utilisateurs ───
 
@@ -25,6 +26,14 @@ final adminRessourcesProvider =
   return (response.data as List)
       .map((e) => RessourceDto.fromJson(e as Map<String, dynamic>).toModel())
       .toList();
+});
+
+// ─── Statistiques admin ───
+
+final adminStatisticsProvider = FutureProvider<StatisticsResponse>((ref) async {
+  final dio = ref.read(apiClientProvider);
+  final response = await dio.get(ApiEndpoints.adminStatistiques);
+  return StatisticsResponse.fromJson(response.data as Map<String, dynamic>);
 });
 
 // ─── Admin actions ───
@@ -53,6 +62,11 @@ class AdminActions {
 
   Future<void> createAdminUser(Map<String, dynamic> data) async {
     await _dio.post(ApiEndpoints.createAdminUser, data: data);
+  }
+
+  // Ressources
+  Future<void> suspendRessource(int id) async {
+    await _dio.patch(ApiEndpoints.adminSuspendRessource(id));
   }
 
   // Catégories

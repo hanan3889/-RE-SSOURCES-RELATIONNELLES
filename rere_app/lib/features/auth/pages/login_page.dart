@@ -29,8 +29,21 @@ class _LoginPageState extends ConsumerState<LoginPage> {
     final success = await ref.read(authProvider.notifier).login(
           LoginDto(email: _emailCtrl.text.trim(), password: _passwordCtrl.text),
         );
-    if (success && mounted) {
+    if (!mounted) return;
+
+    if (success) {
+      ScaffoldMessenger.of(context)
+        ..hideCurrentSnackBar()
+        ..showSnackBar(const SnackBar(
+          content: Text('Connexion réussie.'),
+        ));
       context.go('/home');
+    } else {
+      final error = ref.read(authProvider).error ??
+          'Email ou mot de passe incorrect.';
+      ScaffoldMessenger.of(context)
+        ..hideCurrentSnackBar()
+        ..showSnackBar(SnackBar(content: Text(error)));
     }
   }
 
@@ -43,6 +56,11 @@ class _LoginPageState extends ConsumerState<LoginPage> {
         backgroundColor: Colors.transparent,
         elevation: 0,
         scrolledUnderElevation: 0,
+        automaticallyImplyLeading: true,
+        leading: GestureDetector(
+          onTap: () => context.go('/home'),
+          child: const Icon(Icons.arrow_back),
+        ),
       ),
       body: SafeArea(
         child: Center(
@@ -153,7 +171,7 @@ class _LoginPageState extends ConsumerState<LoginPage> {
                     children: [
                       const Text('Pas encore de compte ? '),
                       TextButton(
-                        onPressed: () => context.push('/register'),
+                        onPressed: () => context.go('/register'),
                         child: const Text('S\'inscrire'),
                       ),
                     ],

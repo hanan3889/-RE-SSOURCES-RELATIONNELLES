@@ -61,6 +61,11 @@ class _RegisterPageState extends ConsumerState<RegisterPage> {
         backgroundColor: Colors.transparent,
         elevation: 0,
         scrolledUnderElevation: 0,
+        automaticallyImplyLeading: true,
+        leading: GestureDetector(
+          onTap: () => context.go('/home'),
+          child: const Icon(Icons.arrow_back),
+        ),
       ),
       body: SafeArea(
         child: Center(
@@ -226,7 +231,7 @@ class _RegisterPageState extends ConsumerState<RegisterPage> {
                     children: [
                       const Text('Déjà un compte ? '),
                       TextButton(
-                        onPressed: () => context.push('/login'),
+                        onPressed: () => context.go('/login'),
                         child: const Text('Se connecter'),
                       ),
                     ],

@@ -24,6 +24,9 @@ class ApiEndpoints {
       '/ressources/$ressourceId/commentaires';
   static String commentaireById(int ressourceId, int commentId) =>
       '/commentaires/$commentId';
+  static String commentaireReponse(int commentId) =>
+      '/commentaires/$commentId/reponses';
+  static const String mesCommentaires = '/commentaires/mes';
 
   // Favoris
   static String favoriToggle(int ressourceId) =>
@@ -33,7 +36,14 @@ class ApiEndpoints {
   // Messages
   static const String messages = '/messages';
   static String messageById(int id) => '/messages/$id';
-  static const String messagesAdmin = '/messages';
+    static const String messagesAdmin = '/admin/messages';
+  static const String messagesInbox = '/messages/inbox';
+  static String invitationStatus(int messageId) =>
+      '/messages/$messageId/invitation';
+  static String messagesDiscussion(int ressourceId) =>
+      '/messages/ressources/$ressourceId/discussion';
+  static String messagesInvite(int ressourceId) =>
+      '/messages/ressources/$ressourceId/inviter';
 
   // Modération
   static const String moderationQueue = '/moderateur/ressources';
@@ -41,9 +51,22 @@ class ApiEndpoints {
       '/moderateur/ressources/$id/valider';
   static String modererRefuser(int id) =>
       '/moderateur/ressources/$id/refuser';
+  static const String moderationCommentaires = '/moderateur/commentaires';
+  static String moderationCommentaireDelete(int id) =>
+      '/moderateur/commentaires/$id';
+
+  // Admin statistiques
+  static const String adminStatistiques = '/admin/statistiques';
+  static const String adminStatistiquesExport = '/admin/statistiques/export';
 
   // Progression
   static const String progression = '/progression';
+  static String exploitationStatus(int ressourceId) =>
+      '/progression/ressources/$ressourceId/exploitation';
+  static String sauvegardeStatus(int ressourceId) =>
+      '/progression/ressources/$ressourceId/sauvegarde';
+  static String demarrageStatus(int ressourceId) =>
+      '/progression/ressources/$ressourceId/demarrage';
 
   // Utilisateurs
   static const String users = '/users';
@@ -51,4 +74,8 @@ class ApiEndpoints {
   static String userToggleActive(int id) => '/admin/utilisateurs/$id/statut';
   static String userResetPassword(int id) => '/users/$id/reset-password';
   static const String createAdminUser = '/superadmin/utilisateurs';
+
+    // Admin ressources
+    static String adminSuspendRessource(int id) =>
+            '/admin/ressources/$id/suspendre';
 }
