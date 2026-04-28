@@ -45,3 +45,9 @@ backend/.vs/
 # .NET build artifacts
 backend/**/bin/
 backend/**/obj/
+
+# Flutter (rere_app)
+/rere_app/windows/flutter/generated_plugin_registrant.*
+/rere_app/windows/flutter/generated_plugins.cmake
+/rere_app/test/widget_test.dart
+/rere_app/README_TECHNIQUE.md
