@@ -13,6 +13,7 @@ import '../features/resources/pages/create_ressource_page.dart';
 import '../features/mon_espace/pages/mon_espace_page.dart';
 import '../features/moderation/pages/moderation_page.dart';
 import '../features/admin/pages/admin_page.dart';
+import '../features/messages/pages/ressource_discussion_page.dart';
 import '../shared/widgets/app_scaffold.dart';
 
 // Cles de navigation pour chaque branche
@@ -25,13 +26,14 @@ final _monEspaceNavigatorKey =
 final _profilNavigatorKey = GlobalKey<NavigatorState>(debugLabel: 'profil');
 
 final routerProvider = Provider<GoRouter>((ref) {
-  final auth = ref.watch(authProvider);
+  late final GoRouter router;
 
-  return GoRouter(
+  router = GoRouter(
     navigatorKey: _rootNavigatorKey,
     initialLocation: '/home',
     debugLogDiagnostics: true,
     redirect: (context, state) {
+      final auth = ref.read(authProvider);
       final loggedIn = auth.isAuthenticated;
       final isAuthRoute = state.matchedLocation == '/login' ||
           state.matchedLocation == '/register';
@@ -96,6 +98,15 @@ final routerProvider = Provider<GoRouter>((ref) {
                       return RessourceDetailPage(ressourceId: id);
                     },
                   ),
+                  GoRoute(
+                    path: ':id/discussion',
+                    parentNavigatorKey: _rootNavigatorKey,
+                    builder: (context, state) {
+                      final id =
+                          int.parse(state.pathParameters['id'] ?? '0');
+                      return RessourceDiscussionPage(ressourceId: id);
+                    },
+                  ),
                 ],
               ),
             ],
@@ -108,6 +119,7 @@ final routerProvider = Provider<GoRouter>((ref) {
               GoRoute(
                 path: '/mon-espace',
                 builder: (context, state) {
+                  final auth = ref.read(authProvider);
                   if (!auth.isAuthenticated) {
                     return const _AuthRequiredPage();
                   }
@@ -124,6 +136,7 @@ final routerProvider = Provider<GoRouter>((ref) {
               GoRoute(
                 path: '/profil',
                 builder: (context, state) {
+                  final auth = ref.read(authProvider);
                   if (!auth.isAuthenticated) {
                     return const _AuthRequiredPage();
                   }
@@ -148,6 +161,12 @@ final routerProvider = Provider<GoRouter>((ref) {
       ),
     ],
   );
+
+  // Rafraîchit les redirections sans recréer le GoRouter
+  ref.listen<AuthState>(authProvider, (_, __) => router.refresh());
+  ref.onDispose(router.dispose);
+
+  return router;
 });
 
 /// Page affichee quand l utilisateur doit se connecter.

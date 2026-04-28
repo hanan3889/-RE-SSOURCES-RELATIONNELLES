@@ -2,6 +2,7 @@ import 'package:flutter_riverpod/flutter_riverpod.dart';
 import '../../../core/network/api_client.dart';
 import '../../../core/network/api_endpoints.dart';
 import '../../resources/models/ressource_model.dart';
+import '../models/moderation_comment_model.dart';
 
 /// File d'attente de modération.
 final moderationQueueProvider = FutureProvider<List<Ressource>>((ref) async {
@@ -10,6 +11,21 @@ final moderationQueueProvider = FutureProvider<List<Ressource>>((ref) async {
   return (response.data as List)
       .map((e) => RessourceDto.fromJson(e as Map<String, dynamic>).toModel())
       .toList();
+});
+
+/// Commentaires pour modération.
+final moderationCommentairesProvider =
+  FutureProvider.family<List<ModerationCommentaire>, int?>(
+    (ref, ressourceId) async {
+  final dio = ref.read(apiClientProvider);
+  final response = await dio.get(
+  ApiEndpoints.moderationCommentaires,
+  queryParameters:
+    ressourceId != null ? {'ressourceId': ressourceId} : null,
+  );
+  return (response.data as List)
+    .map((e) => ModerationCommentaire.fromJson(e as Map<String, dynamic>))
+    .toList();
 });
 
 /// Actions de modération.
@@ -27,6 +43,12 @@ class ModerationActions {
     final dio = _ref.read(apiClientProvider);
     await dio.patch(ApiEndpoints.modererRefuser(id));
     _ref.invalidate(moderationQueueProvider);
+  }
+
+  Future<void> deleteCommentaire(int id, {int? ressourceId}) async {
+    final dio = _ref.read(apiClientProvider);
+    await dio.delete(ApiEndpoints.moderationCommentaireDelete(id));
+    _ref.invalidate(moderationCommentairesProvider(ressourceId));
   }
 }
 

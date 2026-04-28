@@ -13,6 +13,17 @@ final messagesProvider = FutureProvider<List<Message>>((ref) async {
       .toList();
 });
 
+/// Discussion par ressource.
+final discussionMessagesProvider =
+  FutureProvider.family<List<Message>, int>((ref, ressourceId) async {
+  final dio = ref.read(apiClientProvider);
+  final response =
+    await dio.get(ApiEndpoints.messagesDiscussion(ressourceId));
+  return (response.data as List)
+    .map((e) => Message.fromJson(e as Map<String, dynamic>))
+    .toList();
+});
+
 /// Tous les messages (admin).
 final allMessagesProvider = FutureProvider<List<Message>>((ref) async {
   final dio = ref.read(apiClientProvider);
@@ -30,6 +41,29 @@ class MessageActions {
   Future<Message> send(CreateMessageDto dto) async {
     final response =
         await _dio.post(ApiEndpoints.messages, data: dto.toJson());
+    return Message.fromJson(response.data as Map<String, dynamic>);
+  }
+
+  Future<Message> getById(int id) async {
+    final response = await _dio.get(ApiEndpoints.messageById(id));
+    return Message.fromJson(response.data as Map<String, dynamic>);
+  }
+
+  Future<Message> sendDiscussionMessage(
+      int ressourceId, CreateDiscussionMessageDto dto) async {
+    final response = await _dio.post(
+      ApiEndpoints.messagesDiscussion(ressourceId),
+      data: dto.toJson(),
+    );
+    return Message.fromJson(response.data as Map<String, dynamic>);
+  }
+
+  Future<Message> inviteParticipant(
+      int ressourceId, InviteParticipantDto dto) async {
+    final response = await _dio.post(
+      ApiEndpoints.messagesInvite(ressourceId),
+      data: dto.toJson(),
+    );
     return Message.fromJson(response.data as Map<String, dynamic>);
   }
 

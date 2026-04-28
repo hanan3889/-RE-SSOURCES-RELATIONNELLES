@@ -106,6 +106,11 @@ class RessourceActions {
         data: dto.toJson());
   }
 
+  Future<void> replyComment(int commentId, CreateCommentaireDto dto) async {
+    await _dio.post(ApiEndpoints.commentaireReponse(commentId),
+        data: dto.toJson());
+  }
+
   Future<void> deleteComment(int ressourceId, int commentId) async {
     await _dio
         .delete(ApiEndpoints.commentaireById(ressourceId, commentId));

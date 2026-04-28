@@ -7,13 +7,35 @@ import '../../../shared/widgets/error_widget.dart';
 import '../../../shared/widgets/empty_state.dart';
 import '../providers/moderation_provider.dart';
 import '../../resources/models/ressource_model.dart';
+import '../models/moderation_comment_model.dart';
 
-class ModerationPage extends ConsumerWidget {
+class ModerationPage extends ConsumerStatefulWidget {
   const ModerationPage({super.key});
 
   @override
-  Widget build(BuildContext context, WidgetRef ref) {
+  ConsumerState<ModerationPage> createState() => _ModerationPageState();
+}
+
+class _ModerationPageState extends ConsumerState<ModerationPage>
+    with SingleTickerProviderStateMixin {
+  late TabController _tabCtrl;
+
+  @override
+  void initState() {
+    super.initState();
+    _tabCtrl = TabController(length: 2, vsync: this);
+  }
+
+  @override
+  void dispose() {
+    _tabCtrl.dispose();
+    super.dispose();
+  }
+
+  @override
+  Widget build(BuildContext context) {
     final queue = ref.watch(moderationQueueProvider);
+    final commentaires = ref.watch(moderationCommentairesProvider(null));
 
     return Scaffold(
       appBar: AppBar(
@@ -21,68 +43,127 @@ class ModerationPage extends ConsumerWidget {
         actions: [
           IconButton(
             icon: const Icon(Icons.refresh),
-            onPressed: () => ref.invalidate(moderationQueueProvider),
+            onPressed: () {
+              ref.invalidate(moderationQueueProvider);
+              ref.invalidate(moderationCommentairesProvider(null));
+            },
           ),
         ],
-      ),
-      body: RefreshIndicator(
-        onRefresh: () async => ref.invalidate(moderationQueueProvider),
-        child: queue.when(
-          data: (list) {
-            if (list.isEmpty) {
-              return const EmptyStateWidget(
-                icon: Icons.verified,
-                title: 'File vide',
-                subtitle: 'Aucune ressource en attente de moderation.',
-              );
-            }
-            return ListView.builder(
-              padding: const EdgeInsets.all(16),
-              itemCount: list.length,
-              itemBuilder: (_, i) => _ModerationCard(
-                ressource: list[i],
-                onValidate: () async {
-                  try {
-                    await ref
-                        .read(moderationActionsProvider)
-                        .valider(list[i].id);
-                    ref.invalidate(moderationQueueProvider);
-                    if (context.mounted) {
-                      ErrorHelpers.showSuccessSnackBar(
-                          context, 'Ressource validée');
-                    }
-                  } catch (e) {
-                    if (context.mounted) {
-                      ErrorHelpers.showErrorSnackBar(context, e);
-                    }
-                  }
-                },
-                onReject: () async {
-                  try {
-                    await ref
-                        .read(moderationActionsProvider)
-                        .refuser(list[i].id);
-                    ref.invalidate(moderationQueueProvider);
-                    if (context.mounted) {
-                      ErrorHelpers.showSuccessSnackBar(
-                          context, 'Ressource refusée');
-                    }
-                  } catch (e) {
-                    if (context.mounted) {
-                      ErrorHelpers.showErrorSnackBar(context, e);
-                    }
-                  }
-                },
-              ),
-            );
-          },
-          loading: () =>
-              const AppLoadingWidget(message: 'Chargement de la file...'),
-          error: (e, _) => AppErrorWidget(
-            error: e,
-            onRetry: () => ref.invalidate(moderationQueueProvider),
-          ),
+        bottom: TabBar(
+          controller: _tabCtrl,
+          tabs: const [
+            Tab(icon: Icon(Icons.verified), text: 'Ressources'),
+            Tab(icon: Icon(Icons.comment_outlined), text: 'Commentaires'),
+          ],
         ),
+      ),
+      body: TabBarView(
+        controller: _tabCtrl,
+        children: [
+          RefreshIndicator(
+            onRefresh: () async => ref.invalidate(moderationQueueProvider),
+            child: queue.when(
+              data: (list) {
+                if (list.isEmpty) {
+                  return const EmptyStateWidget(
+                    icon: Icons.verified,
+                    title: 'File vide',
+                    subtitle: 'Aucune ressource en attente de moderation.',
+                  );
+                }
+                return ListView.builder(
+                  padding: const EdgeInsets.all(16),
+                  itemCount: list.length,
+                  itemBuilder: (_, i) => _ModerationCard(
+                    ressource: list[i],
+                    onValidate: () async {
+                      try {
+                        await ref
+                            .read(moderationActionsProvider)
+                            .valider(list[i].id);
+                        ref.invalidate(moderationQueueProvider);
+                        if (context.mounted) {
+                          ErrorHelpers.showSuccessSnackBar(
+                              context, 'Ressource validée');
+                        }
+                      } catch (e) {
+                        if (context.mounted) {
+                          ErrorHelpers.showErrorSnackBar(context, e);
+                        }
+                      }
+                    },
+                    onReject: () async {
+                      try {
+                        await ref
+                            .read(moderationActionsProvider)
+                            .refuser(list[i].id);
+                        ref.invalidate(moderationQueueProvider);
+                        if (context.mounted) {
+                          ErrorHelpers.showSuccessSnackBar(
+                              context, 'Ressource refusée');
+                        }
+                      } catch (e) {
+                        if (context.mounted) {
+                          ErrorHelpers.showErrorSnackBar(context, e);
+                        }
+                      }
+                    },
+                  ),
+                );
+              },
+              loading: () => const AppLoadingWidget(
+                  message: 'Chargement de la file...'),
+              error: (e, _) => AppErrorWidget(
+                error: e,
+                onRetry: () => ref.invalidate(moderationQueueProvider),
+              ),
+            ),
+          ),
+          RefreshIndicator(
+            onRefresh: () async =>
+                ref.invalidate(moderationCommentairesProvider(null)),
+            child: commentaires.when(
+              data: (list) {
+                if (list.isEmpty) {
+                  return const EmptyStateWidget(
+                    icon: Icons.comment_outlined,
+                    title: 'Aucun commentaire',
+                    subtitle: 'Aucun commentaire à modérer.',
+                  );
+                }
+                return ListView.builder(
+                  padding: const EdgeInsets.all(16),
+                  itemCount: list.length,
+                  itemBuilder: (_, i) => _ModerationCommentCard(
+                    commentaire: list[i],
+                    onDelete: () async {
+                      try {
+                        await ref
+                            .read(moderationActionsProvider)
+                            .deleteCommentaire(list[i].idCommentaire);
+                        ref.invalidate(moderationCommentairesProvider(null));
+                        if (context.mounted) {
+                          ErrorHelpers.showSuccessSnackBar(
+                              context, 'Commentaire supprimé');
+                        }
+                      } catch (e) {
+                        if (context.mounted) {
+                          ErrorHelpers.showErrorSnackBar(context, e);
+                        }
+                      }
+                    },
+                  ),
+                );
+              },
+              loading: () => const AppLoadingWidget(message: 'Chargement...'),
+              error: (e, _) => AppErrorWidget(
+                error: e,
+                onRetry: () =>
+                    ref.invalidate(moderationCommentairesProvider(null)),
+              ),
+            ),
+          ),
+        ],
       ),
     );
   }
@@ -226,6 +307,65 @@ class _ModerationCard extends StatelessWidget {
                   ),
                 ),
               ],
+            ),
+          ],
+        ),
+      ),
+    );
+  }
+}
+
+class _ModerationCommentCard extends StatelessWidget {
+  final ModerationCommentaire commentaire;
+  final VoidCallback onDelete;
+
+  const _ModerationCommentCard({
+    required this.commentaire,
+    required this.onDelete,
+  });
+
+  @override
+  Widget build(BuildContext context) {
+    return Card(
+      margin: const EdgeInsets.only(bottom: 12),
+      child: Padding(
+        padding: const EdgeInsets.all(16),
+        child: Column(
+          crossAxisAlignment: CrossAxisAlignment.start,
+          children: [
+            Row(
+              children: [
+                Icon(Icons.comment_outlined,
+                    size: 16, color: AppColors.textSecondary),
+                const SizedBox(width: 6),
+                Expanded(
+                  child: Text(
+                    commentaire.titreRessource,
+                    style: const TextStyle(
+                      fontWeight: FontWeight.w600,
+                      fontSize: 13,
+                    ),
+                  ),
+                ),
+                IconButton(
+                  onPressed: onDelete,
+                  icon: const Icon(Icons.delete_outline,
+                      color: AppColors.error),
+                )
+              ],
+            ),
+            const SizedBox(height: 8),
+            Text(
+              commentaire.contenu,
+              style: const TextStyle(fontSize: 14),
+            ),
+            const SizedBox(height: 8),
+            Text(
+              'Par ${commentaire.auteurFullName}',
+              style: TextStyle(
+                fontSize: 12,
+                color: AppColors.textSecondary,
+              ),
             ),
           ],
         ),

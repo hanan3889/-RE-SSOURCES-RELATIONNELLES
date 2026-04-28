@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
+import 'package:go_router/go_router.dart';
 import '../../../config/theme.dart';
 import '../../../core/error/error_helpers.dart';
 import '../../../shared/widgets/loading_widget.dart';
@@ -7,6 +8,7 @@ import '../../../shared/widgets/error_widget.dart';
 import '../../../shared/widgets/empty_state.dart';
 import '../models/utilisateur_model.dart';
 import '../providers/admin_provider.dart';
+import '../models/statistics_model.dart';
 import '../../resources/models/categorie_model.dart';
 import '../../resources/providers/ressource_provider.dart';
 
@@ -23,7 +25,7 @@ class _AdminPageState extends ConsumerState<AdminPage>
   @override
   void initState() {
     super.initState();
-    _tabCtrl = TabController(length: 2, vsync: this);
+    _tabCtrl = TabController(length: 4, vsync: this);
   }
 
   @override
@@ -42,6 +44,8 @@ class _AdminPageState extends ConsumerState<AdminPage>
           tabs: const [
             Tab(icon: Icon(Icons.people_outline), text: 'Utilisateurs'),
             Tab(icon: Icon(Icons.category_outlined), text: 'Categories'),
+            Tab(icon: Icon(Icons.article_outlined), text: 'Ressources'),
+            Tab(icon: Icon(Icons.bar_chart), text: 'Stats'),
           ],
         ),
       ),
@@ -50,6 +54,8 @@ class _AdminPageState extends ConsumerState<AdminPage>
         children: [
           _UsersTab(),
           _CategoriesTab(),
+          _RessourcesTab(),
+          _StatsTab(),
         ],
       ),
     );
@@ -415,5 +421,273 @@ class _CategoriesTab extends ConsumerWidget {
         }
       }
     }
+  }
+}
+
+// ═══════════════════════════════════════════
+//  Onglet Ressources
+// ═══════════════════════════════════════════
+
+class _RessourcesTab extends ConsumerStatefulWidget {
+  const _RessourcesTab();
+
+  @override
+  ConsumerState<_RessourcesTab> createState() => _RessourcesTabState();
+}
+
+class _RessourcesTabState extends ConsumerState<_RessourcesTab> {
+  String? _statut;
+
+  @override
+  Widget build(BuildContext context) {
+    final ressources = ref.watch(adminRessourcesProvider(_statut));
+
+    return Column(
+      children: [
+        Padding(
+          padding: const EdgeInsets.fromLTRB(16, 16, 16, 8),
+          child: DropdownButtonFormField<String?>(
+            value: _statut,
+            decoration: const InputDecoration(
+              labelText: 'Filtre statut',
+              isDense: true,
+            ),
+            items: const [
+              DropdownMenuItem(value: null, child: Text('Tous')),
+              DropdownMenuItem(value: 'Publiee', child: Text('Publiées')),
+              DropdownMenuItem(
+                  value: 'EnValidation', child: Text('En validation')),
+              DropdownMenuItem(value: 'Rejetee', child: Text('Rejetées')),
+              DropdownMenuItem(value: 'Archivee', child: Text('Archivées')),
+            ],
+            onChanged: (value) => setState(() => _statut = value),
+          ),
+        ),
+        Expanded(
+          child: RefreshIndicator(
+            onRefresh: () async =>
+                ref.invalidate(adminRessourcesProvider(_statut)),
+            child: ressources.when(
+              data: (list) {
+                if (list.isEmpty) {
+                  return const EmptyStateWidget(
+                    icon: Icons.article_outlined,
+                    title: 'Aucune ressource',
+                    subtitle: 'Aucune ressource pour ce filtre.',
+                  );
+                }
+                return ListView.builder(
+                  padding: const EdgeInsets.all(16),
+                  itemCount: list.length,
+                  itemBuilder: (_, i) {
+                    final ressource = list[i];
+                    return Card(
+                      margin: const EdgeInsets.only(bottom: 12),
+                      child: ListTile(
+                        title: Text(
+                          ressource.titre,
+                          style: const TextStyle(fontWeight: FontWeight.w600),
+                        ),
+                        subtitle: Text(
+                          '${ressource.categorie} • ${ressource.statutLabel}',
+                          style: TextStyle(color: AppColors.textSecondary),
+                        ),
+                        trailing: PopupMenuButton<String>(
+                          onSelected: (action) =>
+                              _handleRessourceAction(context, ressource.id, action),
+                          itemBuilder: (_) => const [
+                            PopupMenuItem(
+                              value: 'view',
+                              child: Text('Voir'),
+                            ),
+                            PopupMenuItem(
+                              value: 'suspend',
+                              child: Text('Suspendre'),
+                            ),
+                          ],
+                        ),
+                      ),
+                    );
+                  },
+                );
+              },
+              loading: () => const AppLoadingWidget(message: 'Chargement...'),
+              error: (e, _) => AppErrorWidget(
+                error: e,
+                onRetry: () => ref.invalidate(adminRessourcesProvider(_statut)),
+              ),
+            ),
+          ),
+        ),
+      ],
+    );
+  }
+
+  Future<void> _handleRessourceAction(
+      BuildContext context, int id, String action) async {
+    final admin = ref.read(adminActionsProvider);
+    try {
+      switch (action) {
+        case 'view':
+          context.push('/ressources/$id');
+          return;
+        case 'suspend':
+          await admin.suspendRessource(id);
+          ref.invalidate(adminRessourcesProvider(_statut));
+          if (context.mounted) {
+            ErrorHelpers.showSuccessSnackBar(context, 'Ressource suspendue');
+          }
+          return;
+      }
+    } catch (e) {
+      if (context.mounted) {
+        ErrorHelpers.showErrorSnackBar(context, e);
+      }
+    }
+  }
+}
+
+// ═══════════════════════════════════════════
+//  Onglet Statistiques
+// ═══════════════════════════════════════════
+
+class _StatsTab extends ConsumerWidget {
+  const _StatsTab();
+
+  @override
+  Widget build(BuildContext context, WidgetRef ref) {
+    final stats = ref.watch(adminStatisticsProvider);
+
+    return RefreshIndicator(
+      onRefresh: () async => ref.invalidate(adminStatisticsProvider),
+      child: stats.when(
+        data: (data) => ListView(
+          padding: const EdgeInsets.all(16),
+          children: [
+            _StatsSection(
+              title: 'Résumé',
+              children: [
+                _StatRow('Ressources', data.resume.totalRessources),
+                _StatRow('Publiées', data.resume.ressourcesPubliees),
+                _StatRow('En validation', data.resume.ressourcesEnValidation),
+                _StatRow('Archivées', data.resume.ressourcesArchivees),
+                _StatRow('Utilisateurs', data.resume.totalUtilisateurs),
+                _StatRow('Utilisateurs actifs', data.resume.utilisateursActifs),
+                _StatRow('Comptes créés (période)', data.resume.comptesCreesPeriode),
+                _StatRow('Favoris', data.resume.favoris),
+                _StatRow('Commentaires', data.resume.commentaires),
+                _StatRow('Exploitations', data.resume.exploitations),
+                _StatRow('Sauvegardes', data.resume.sauvegardes),
+                _StatRow('Activités démarrées', data.resume.activitesDemarrees),
+                _StatRow('Invitations envoyées', data.resume.invitationsEnvoyees),
+                _StatRow('Invitations acceptées', data.resume.invitationsAcceptees),
+                _StatRow('Messages discussion', data.resume.messagesDiscussion),
+              ],
+            ),
+            const SizedBox(height: 16),
+            _StatsBreakdown(
+              title: 'Créations par catégorie',
+              items: data.creationsParCategorie,
+            ),
+            const SizedBox(height: 16),
+            _StatsBreakdown(
+              title: 'Créations par format',
+              items: data.creationsParFormat,
+            ),
+            const SizedBox(height: 16),
+            _StatsBreakdown(
+              title: 'Répartition visibilités',
+              items: data.repartitionVisibilite,
+            ),
+          ],
+        ),
+        loading: () => const AppLoadingWidget(message: 'Chargement...'),
+        error: (e, _) => AppErrorWidget(
+          error: e,
+          onRetry: () => ref.invalidate(adminStatisticsProvider),
+        ),
+      ),
+    );
+  }
+}
+
+class _StatsSection extends StatelessWidget {
+  final String title;
+  final List<Widget> children;
+
+  const _StatsSection({required this.title, required this.children});
+
+  @override
+  Widget build(BuildContext context) {
+    return Card(
+      child: Padding(
+        padding: const EdgeInsets.all(16),
+        child: Column(
+          crossAxisAlignment: CrossAxisAlignment.start,
+          children: [
+            Text(
+              title,
+              style: const TextStyle(fontWeight: FontWeight.w700),
+            ),
+            const SizedBox(height: 12),
+            ...children,
+          ],
+        ),
+      ),
+    );
+  }
+}
+
+class _StatRow extends StatelessWidget {
+  final String label;
+  final int value;
+
+  const _StatRow(this.label, this.value);
+
+  @override
+  Widget build(BuildContext context) {
+    return Padding(
+      padding: const EdgeInsets.symmetric(vertical: 4),
+      child: Row(
+        children: [
+          Expanded(child: Text(label)),
+          Text('$value', style: const TextStyle(fontWeight: FontWeight.w600)),
+        ],
+      ),
+    );
+  }
+}
+
+class _StatsBreakdown extends StatelessWidget {
+  final String title;
+  final List<StatisticsBreakdownItem> items;
+
+  const _StatsBreakdown({required this.title, required this.items});
+
+  @override
+  Widget build(BuildContext context) {
+    return Card(
+      child: Padding(
+        padding: const EdgeInsets.all(16),
+        child: Column(
+          crossAxisAlignment: CrossAxisAlignment.start,
+          children: [
+            Text(title, style: const TextStyle(fontWeight: FontWeight.w700)),
+            const SizedBox(height: 12),
+            if (items.isEmpty)
+              const Text('Aucune donnée disponible.'),
+            ...items.map((item) => Padding(
+                  padding: const EdgeInsets.symmetric(vertical: 4),
+                  child: Row(
+                    children: [
+                      Expanded(child: Text(item.label)),
+                      Text('${item.value}'),
+                    ],
+                  ),
+                )),
+          ],
+        ),
+      ),
+    );
   }
 }

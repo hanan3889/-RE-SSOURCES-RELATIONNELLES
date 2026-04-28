@@ -1,4 +1,7 @@
+import 'package:dio/dio.dart';
 import 'package:flutter/material.dart';
+import 'package:go_router/go_router.dart';
+import '../../../core/error/api_exception.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:intl/intl.dart';
 import '../../../config/theme.dart';
@@ -6,6 +9,8 @@ import '../../../core/error/error_helpers.dart';
 import '../../../shared/widgets/loading_widget.dart';
 import '../../../shared/widgets/error_widget.dart';
 import '../../auth/providers/auth_provider.dart';
+import '../../mon_espace/models/progression_model.dart';
+import '../../mon_espace/providers/mon_espace_provider.dart';
 import '../models/commentaire_model.dart';
 import '../providers/ressource_provider.dart';
 
@@ -21,7 +26,20 @@ class RessourceDetailPage extends ConsumerStatefulWidget {
 class _RessourceDetailPageState extends ConsumerState<RessourceDetailPage> {
   final _commentCtrl = TextEditingController();
   bool _isFavorite = false;
+  bool _isSavedForLater = false;
+  bool _isExploitee = false;
   bool _sendingComment = false;
+  bool _loadingSauvegarde = false;
+  bool _loadingExploitation = false;
+  bool _progressionLoaded = false;
+
+  @override
+  void initState() {
+    super.initState();
+    WidgetsBinding.instance.addPostFrameCallback((_) {
+      _loadProgressionStatuses();
+    });
+  }
 
   @override
   void dispose() {
@@ -43,6 +61,119 @@ class _RessourceDetailPageState extends ConsumerState<RessourceDetailPage> {
         ErrorHelpers.showErrorSnackBar(context, e);
       }
     }
+  }
+
+  Future<void> _loadProgressionStatuses() async {
+    if (_progressionLoaded) return;
+    final auth = ref.read(authProvider);
+    if (!auth.isAuthenticated) {
+      setState(() {
+        _progressionLoaded = true;
+        _isSavedForLater = false;
+        _isExploitee = false;
+      });
+      return;
+    }
+
+    try {
+      final actions = ref.read(progressionActionsProvider);
+      final results = await Future.wait([
+        actions.getSauvegardeStatus(widget.ressourceId),
+        actions.getExploitationStatus(widget.ressourceId),
+      ]);
+      if (!mounted) return;
+      final sauvegarde = results[0] as SauvegardeStatus;
+      final exploitation = results[1] as ExploitationStatus;
+      setState(() {
+        _progressionLoaded = true;
+        _isSavedForLater = sauvegarde.sauvegardee;
+        _isExploitee = exploitation.exploitee;
+      });
+    } catch (_) {
+      if (!mounted) return;
+      setState(() {
+        _progressionLoaded = true;
+      });
+    }
+  }
+
+  Future<void> _toggleSauvegarde() async {
+    final auth = ref.read(authProvider);
+    if (!auth.isAuthenticated) {
+      _showSuccessSnackBar('Veuillez vous connecter pour mettre de côté.');
+      return;
+    }
+    if (_loadingSauvegarde) return;
+    setState(() => _loadingSauvegarde = true);
+    try {
+      final actions = ref.read(progressionActionsProvider);
+      final nextValue = !_isSavedForLater;
+      final res = await actions.setSauvegardeStatus(
+          widget.ressourceId, nextValue);
+      if (!mounted) return;
+      setState(() => _isSavedForLater = res.sauvegardee);
+      _showSuccessSnackBar(
+        res.sauvegardee
+            ? 'Ressource mise de côté.'
+            : 'Ressource retirée de la mise de côté.',
+      );
+    } on DioException catch (e) {
+      if (!mounted) return;
+      final apiErr = e.error;
+      if (e.response?.statusCode == 404 ||
+          (apiErr is ApiException && apiErr.type == ApiErrorType.notFound)) {
+        _showSuccessSnackBar('Impossible d\'effectuer cette action. Vérifiez que le serveur est bien lancé.');
+      } else {
+        ErrorHelpers.showErrorSnackBar(context, e);
+      }
+    } catch (e) {
+      if (mounted) ErrorHelpers.showErrorSnackBar(context, e);
+    } finally {
+      if (mounted) setState(() => _loadingSauvegarde = false);
+    }
+  }
+
+  Future<void> _toggleExploitation() async {
+    final auth = ref.read(authProvider);
+    if (!auth.isAuthenticated) {
+      _showSuccessSnackBar('Veuillez vous connecter pour marquer exploitée.');
+      return;
+    }
+    if (_loadingExploitation) return;
+    setState(() => _loadingExploitation = true);
+    try {
+      final actions = ref.read(progressionActionsProvider);
+      final nextValue = !_isExploitee;
+      final res = await actions.setExploitationStatus(
+          widget.ressourceId, nextValue);
+      if (!mounted) return;
+      setState(() => _isExploitee = res.exploitee);
+      _showSuccessSnackBar(
+        res.exploitee
+            ? 'Ressource marquée comme exploitée.'
+            : 'Ressource marquée comme non exploitée.',
+      );
+    } on DioException catch (e) {
+      if (!mounted) return;
+      final apiErr = e.error;
+      if (e.response?.statusCode == 404 ||
+          (apiErr is ApiException && apiErr.type == ApiErrorType.notFound)) {
+        _showSuccessSnackBar('Impossible d\'effectuer cette action. Vérifiez que le serveur est bien lancé.');
+      } else {
+        ErrorHelpers.showErrorSnackBar(context, e);
+      }
+    } catch (e) {
+      if (mounted) ErrorHelpers.showErrorSnackBar(context, e);
+    } finally {
+      if (mounted) setState(() => _loadingExploitation = false);
+    }
+  }
+
+  void _showSuccessSnackBar(String message) {
+    if (!mounted) return;
+    ScaffoldMessenger.of(context)
+      ..hideCurrentSnackBar()
+      ..showSnackBar(SnackBar(content: Text(message)));
   }
 
   Future<void> _submitComment() async {
@@ -78,6 +209,49 @@ class _RessourceDetailPageState extends ConsumerState<RessourceDetailPage> {
     }
   }
 
+  Future<void> _replyToComment(int commentId) async {
+    final ctrl = TextEditingController();
+    final content = await showDialog<String>(
+      context: context,
+      builder: (ctx) => AlertDialog(
+        title: const Text('Répondre'),
+        content: TextField(
+          controller: ctrl,
+          maxLines: 3,
+          decoration: const InputDecoration(
+            hintText: 'Votre réponse...'
+          ),
+        ),
+        actions: [
+          TextButton(
+            onPressed: () => Navigator.pop(ctx),
+            child: const Text('Annuler'),
+          ),
+          TextButton(
+            onPressed: () => Navigator.pop(ctx, ctrl.text),
+            child: const Text('Envoyer'),
+          ),
+        ],
+      ),
+    );
+
+    if (content == null || content.trim().isEmpty) return;
+    try {
+      await ref.read(ressourceActionsProvider).replyComment(
+            commentId,
+            CreateCommentaireDto(contenu: content.trim()),
+          );
+      ref.invalidate(commentairesProvider(widget.ressourceId));
+      if (mounted) {
+        ErrorHelpers.showSuccessSnackBar(context, 'Réponse envoyée');
+      }
+    } catch (e) {
+      if (mounted) {
+        ErrorHelpers.showErrorSnackBar(context, e);
+      }
+    }
+  }
+
   @override
   Widget build(BuildContext context) {
     final ressource = ref.watch(ressourceDetailProvider(widget.ressourceId));
@@ -93,7 +267,17 @@ class _RessourceDetailPageState extends ConsumerState<RessourceDetailPage> {
             SliverAppBar(
               expandedHeight: 180,
               pinned: true,
+              backgroundColor: AppColors.primary,
+              foregroundColor: Colors.white,
+              titleTextStyle: const TextStyle(
+                fontSize: 14,
+                fontWeight: FontWeight.w600,
+                color: Colors.white,
+              ),
               flexibleSpace: FlexibleSpaceBar(
+                centerTitle: false,
+                titlePadding:
+                    const EdgeInsetsDirectional.only(start: 52, bottom: 12, end: 52),
                 background: Container(
                   decoration: const BoxDecoration(
                     gradient: LinearGradient(
@@ -112,7 +296,13 @@ class _RessourceDetailPageState extends ConsumerState<RessourceDetailPage> {
                 ),
                 title: Text(
                   r.titre,
-                  style: const TextStyle(fontSize: 16),
+                  maxLines: 1,
+                  overflow: TextOverflow.ellipsis,
+                  style: const TextStyle(
+                    fontSize: 14,
+                    fontWeight: FontWeight.w600,
+                    color: Colors.white,
+                  ),
                 ),
               ),
               actions: [
@@ -151,6 +341,76 @@ class _RessourceDetailPageState extends ConsumerState<RessourceDetailPage> {
                         ),
                       ],
                     ),
+                    const SizedBox(height: 16),
+
+                    // Titre complet de la ressource
+                    SizedBox(
+                      width: double.infinity,
+                      child: Text(
+                        r.titre,
+                        textAlign: TextAlign.center,
+                        style: const TextStyle(
+                          fontSize: 22,
+                          fontWeight: FontWeight.w700,
+                          color: AppColors.textPrimary,
+                          height: 1.3,
+                        ),
+                      ),
+                    ),
+                    const SizedBox(height: 16),
+
+                    if (auth.isAuthenticated)
+                      Wrap(
+                        spacing: 10,
+                        runSpacing: 10,
+                        children: [
+                          OutlinedButton.icon(
+                            onPressed: () =>
+                                context.push('/ressources/${r.id}/discussion'),
+                            icon: const Icon(Icons.forum_outlined),
+                            label: const Text('Discussion'),
+                          ),
+                          OutlinedButton.icon(
+                            onPressed:
+                                _loadingSauvegarde ? null : _toggleSauvegarde,
+                            icon: Icon(
+                              _isSavedForLater
+                                  ? Icons.bookmark
+                                  : Icons.bookmark_border,
+                              color: const Color(0xFFF59E0B),
+                            ),
+                            label: Text(
+                              _isSavedForLater
+                                  ? 'Annuler la mise de côté'
+                                  : 'Mettre de côté',
+                            ),
+                            style: OutlinedButton.styleFrom(
+                              foregroundColor: const Color(0xFFF59E0B),
+                              side: const BorderSide(color: Color(0xFFF59E0B)),
+                            ),
+                          ),
+                          OutlinedButton.icon(
+                            onPressed: _loadingExploitation
+                                ? null
+                                : _toggleExploitation,
+                            icon: Icon(
+                              _isExploitee
+                                  ? Icons.verified
+                                  : Icons.verified_outlined,
+                              color: const Color(0xFF000091),
+                            ),
+                            label: Text(
+                              _isExploitee
+                                  ? 'Marquer non exploitée'
+                                  : 'Marquer exploitée',
+                            ),
+                            style: OutlinedButton.styleFrom(
+                              foregroundColor: const Color(0xFF000091),
+                              side: const BorderSide(color: Color(0xFF000091)),
+                            ),
+                          ),
+                        ],
+                      ),
                     const SizedBox(height: 20),
 
                     // Auteur + date
@@ -290,6 +550,9 @@ class _RessourceDetailPageState extends ConsumerState<RessourceDetailPage> {
                               commentaire: c,
                               canDelete: canDelete,
                               onDelete: () => _deleteComment(c.id),
+                              onReply: auth.isAuthenticated
+                                  ? () => _replyToComment(c.id)
+                                  : null,
                             );
                           },
                         );
@@ -367,11 +630,13 @@ class _Badge extends StatelessWidget {
 class _CommentTile extends StatelessWidget {
   final Commentaire commentaire;
   final bool canDelete;
+  final VoidCallback? onReply;
   final VoidCallback onDelete;
 
   const _CommentTile({
     required this.commentaire,
     required this.canDelete,
+    this.onReply,
     required this.onDelete,
   });
 
@@ -418,6 +683,14 @@ class _CommentTile extends StatelessWidget {
                     ),
                   ),
                   const Spacer(),
+                  if (onReply != null)
+                    GestureDetector(
+                      onTap: onReply,
+                      child: const Padding(
+                        padding: EdgeInsets.only(right: 8),
+                        child: Icon(Icons.reply, size: 16),
+                      ),
+                    ),
                   if (canDelete)
                     GestureDetector(
                       onTap: onDelete,
