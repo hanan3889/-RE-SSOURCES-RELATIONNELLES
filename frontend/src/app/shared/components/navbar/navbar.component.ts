@@ -14,6 +14,7 @@ import { filter } from 'rxjs/operators';
 export class NavbarComponent implements OnInit {
   isLoggedIn = false;
   isAdmin = false;
+  isModerator = false;
   userName = '';
   menuOpen = false;
   hideNavbar = false;
@@ -40,6 +41,7 @@ export class NavbarComponent implements OnInit {
   private updateState(): void {
     this.isLoggedIn = this.authService.isLoggedIn();
     this.isAdmin = this.authService.isAdmin();
+    this.isModerator = this.authService.hasRole('moderateur');
     const user = this.authService.getCurrentUser();
     this.userName = user ? `${user.prenom} ${user.nom}` : '';
   }

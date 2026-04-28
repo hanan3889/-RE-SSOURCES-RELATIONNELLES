@@ -24,10 +24,10 @@
       @if (isLoggedIn) {
         <a routerLink="/messagerie" routerLinkActive="active" class="nav-link">Messagerie</a>
       }
-      @if (isLoggedIn && !isAdmin) {
+      @if (isLoggedIn && !isAdmin && !isModerator) {
         <a routerLink="/mon-espace" routerLinkActive="active" class="nav-link">Mon espace</a>
       }
-      @if (isAdmin) {
+      @if (isAdmin || isModerator) {
         <a routerLink="/dashboard" routerLinkActive="active" class="nav-link">Tableau de bord</a>
       }
     </div>
@@ -60,10 +60,10 @@
       @if (isLoggedIn) {
         <a routerLink="/messagerie" (click)="menuOpen=false" class="mobile-link">Messagerie</a>
       }
-      @if (isLoggedIn && !isAdmin) {
+      @if (isLoggedIn && !isAdmin && !isModerator) {
         <a routerLink="/mon-espace" (click)="menuOpen=false" class="mobile-link">Mon espace</a>
       }
-      @if (isAdmin) {
+      @if (isAdmin || isModerator) {
         <a routerLink="/dashboard" (click)="menuOpen=false" class="mobile-link">Tableau de bord</a>
       }
       <div class="mobile-sep"></div>

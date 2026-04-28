@@ -41,6 +41,31 @@ public static class DataSeeder
             await db.SaveChangesAsync();
         }
 
+        // --- Compte modérateur de test ---
+        const string moderateurEmail = "moderateur.test@ressourcesrelationnelles.fr";
+        var moderateurUser = await db.Utilisateurs.FirstOrDefaultAsync(u => u.Email == moderateurEmail);
+        if (moderateurUser == null)
+        {
+            db.Utilisateurs.Add(new Utilisateur
+            {
+                Nom = "Moderateur",
+                Prenom = "Test",
+                Email = moderateurEmail,
+                Password = BCrypt.Net.BCrypt.HashPassword("Moderateur@2026"),
+                IdRole = 2, // moderateur
+                IsActive = true,
+                IsEmailVerified = true,
+                CreatedAt = new DateTime(2026, 1, 1, 0, 0, 0, DateTimeKind.Utc),
+                UpdatedAt = new DateTime(2026, 1, 1, 0, 0, 0, DateTimeKind.Utc)
+            });
+            await db.SaveChangesAsync();
+        }
+        else if (moderateurUser.IdRole != 2)
+        {
+            moderateurUser.IdRole = 2; // corriger le rôle si le compte existait avec un mauvais rôle
+            await db.SaveChangesAsync();
+        }
+
         // --- Ressources (uniquement si aucune n'existe) ---
         if (!await db.Ressources.AnyAsync())
         {
